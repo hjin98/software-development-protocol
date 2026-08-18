@@ -103,6 +103,8 @@ Keep the workplan concise. Link to source/tests/evidence rather than pasting lar
 
 Promote to `READY_FOR_IMPLEMENTATION` only when design choices and mandatory acceptance are sufficiently resolved for bounded execution.
 
+Default workplan gates to `AUTO`: after objective PASS, the executing role should record evidence and continue without requesting routine human confirmation. Use `MANUAL_APPROVAL_REQUIRED` only when the design intentionally reserves a consequential decision or external/irreversible action for the user. When this role itself executes documentation/design-review gates, follow the same auto-advance policy and stop only on persistent FAIL, BLOCKED, `STALE_WORKPLAN`, `DESIGN_REVISION_REQUIRED`, or a genuinely unresolved user decision.
+
 ## REVIEW workflow
 
 ### 1. Resolve exact handoff identity

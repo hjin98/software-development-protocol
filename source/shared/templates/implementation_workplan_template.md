@@ -3,13 +3,14 @@ kind: implementation-workplan
 workplan_id: REPLACE_ME
 plan_revision: 1
 status: DRAFT
-protocol_version: 2.0.0
+protocol_version: 2.0.1
 analysis_base_ref: REPLACE_ME
 analysis_base_commit: REPLACE_ME
 assumption_paths: []
 architecture_refs: []
 spec_refs: []
 expected_change_paths: []
+default_gate_approval: AUTO
 ---
 
 # <Task> Implementation Workplan
@@ -53,11 +54,13 @@ expected_change_paths: []
 
 ## Gate summary
 
-| Gate | Status | Purpose | Evidence |
-|---|---|---|---|
-| G0 | PENDING | ... | - |
+| Gate | Approval | Status | Purpose | Evidence |
+|---|---|---|---|---|
+| G0 | AUTO | PENDING | ... | - |
 
 ## G0 — <name>
+
+**Approval:** AUTO
 
 **Goal:** ...
 
