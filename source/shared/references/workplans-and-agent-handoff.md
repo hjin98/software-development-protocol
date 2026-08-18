@@ -50,6 +50,26 @@ Use these statuses:
 
 Only the design/review role promotes a workplan to `READY_FOR_IMPLEMENTATION` or changes frozen design semantics. The implementation role may update execution/gate status and evidence references without redefining the design contract.
 
+## Default gate execution policy
+
+Sequential gates **auto-advance after objective PASS by default**. Human confirmation between passing gates is not required unless a gate is explicitly marked `MANUAL_APPROVAL_REQUIRED`. This preserves gated validation without requiring repetitive "proceed to the next gate" prompts.
+
+Use these approval modes:
+
+- `AUTO` - default when omitted; after the gate satisfies all mandatory acceptance criteria, record PASS and continue to the next gate automatically.
+- `MANUAL_APPROVAL_REQUIRED` - stop after reporting the gate result and wait for explicit user/design-owner approval before advancing. Use only for genuinely consequential human decisions, irreversible/external actions, policy choices, or checkpoints the workplan intentionally reserves for manual review.
+
+For an `AUTO` gate, the executing role may fix gate-local implementation/editorial/test problems and rerun that gate without asking for approval. Stop automatic advancement when any of the following occurs:
+
+- a mandatory acceptance criterion remains failed after reasonable gate-local correction;
+- the gate is `BLOCKED`;
+- stale-plan evidence requires `STALE_WORKPLAN`;
+- continuing requires `DESIGN_REVISION_REQUIRED`;
+- a user decision is materially required and cannot be resolved from the frozen workplan;
+- the next gate is explicitly `MANUAL_APPROVAL_REQUIRED`.
+
+A PASS is still a real gate boundary: record the acceptance evidence before auto-advancing. Auto-advance removes conversational ceremony, not verification.
+
 ## Versioned handoff contract
 
 A workplan should record at minimum:
@@ -162,6 +182,8 @@ A later unrelated commit is not sufficient reason to discard a valid plan. Conve
 
 Use task-local gate IDs unless a stage is genuinely part of the product/domain architecture. Prefer `G0`, `G1`, `G2`, etc. or concise scoped names. Avoid permanently proliferating architecture-stage names for temporary engineering steps.
 
+Each gate may include `Approval: AUTO | MANUAL_APPROVAL_REQUIRED`. If omitted, treat it as `AUTO`. Do not mark ordinary implementation/review checkpoints manual merely to request conversational confirmation.
+
 A strong sequence often includes:
 
 ### G0 - Baseline/oracle/preflight
@@ -201,6 +223,7 @@ Adapt the number and names of gates. Do not force this exact sequence onto small
 
 ```text
 Gate: <ID and short name>
+Approval: AUTO | MANUAL_APPROVAL_REQUIRED  # default AUTO
 Goal: <one coherent capability>
 Prerequisites: <prior gates/contracts/environment>
 Change surface: <modules/APIs/docs/tests>

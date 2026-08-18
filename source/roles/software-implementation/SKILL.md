@@ -62,6 +62,8 @@ Return the earliest violated assumption/invariant plus focused evidence and the 
 
 ## 3. Implement one workplan gate at a time
 
+**Auto-advance is the default.** Treat omitted gate approval as `AUTO`. After an `AUTO` gate objectively PASSes, record its evidence and continue directly to the next gate without asking for routine confirmation. Gate-local failures may be corrected and re-tested automatically. Stop on a persistent mandatory FAIL, BLOCKED state, `STALE_WORKPLAN`, `DESIGN_REVISION_REQUIRED`, a genuinely unresolved user decision, or before a gate explicitly marked `MANUAL_APPROVAL_REQUIRED`.
+
 For each gate:
 
 1. inspect the named implementation/test/current-contract surfaces;
