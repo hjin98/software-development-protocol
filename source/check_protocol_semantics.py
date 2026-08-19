@@ -95,7 +95,7 @@ def main() -> int:
         [
             "candidate_content_identity",
             "Qualification Handoff",
-            "Ambiguous dependency",
+            "ambiguous",
             "Do not mark the workplan `COMPLETE`",
         ],
     )
