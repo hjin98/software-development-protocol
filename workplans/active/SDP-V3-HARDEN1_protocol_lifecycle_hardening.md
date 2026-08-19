@@ -11,6 +11,7 @@ assumption_paths:
   - source/shared/references/
   - source/shared/templates/
   - source/build_skills.py
+  - source/check_protocol_semantics.py
   - dist/
   - workplans/active/SDP-V3_four_role_protocol_refactor.md
 architecture_refs:
@@ -51,7 +52,7 @@ The four-role split is accepted, but the first v3 review found that `source_comm
 - Workplan-level lifecycle states are derived from gate states where possible.
 - `DEFERRED` records whether it blocks current acceptance and where it moves.
 - Verification records independence metadata.
-- The original v2-governed `SDP-V3` plan remains historical lineage for G0-G3; this v3 workplan governs hardening and freeze validation.
+- The original v2-governed `SDP-V3` plan is preserved as bootstrap lineage for G0-G3 and marked `SUPERSEDED`; this v3 workplan governs hardening and freeze validation.
 
 ## Invariants and acceptance semantics
 
@@ -69,47 +70,50 @@ The four-role split is accepted, but the first v3 review found that `source_comm
 | Gate | Implementation | Qualification | Acceptance | Barrier | Purpose |
 |---|---|---|---|---|---|
 | H0 | PREPARED | NOT_REQUIRED | PENDING | no | Freeze identity/immutability model |
-| H1 | IN_PROGRESS | NOT_REQUIRED | PENDING | no | Update canonical lifecycle/role doctrine |
-| H2 | PENDING | NOT_REQUIRED | PENDING | no | Harden handoff/report templates |
-| H3 | PENDING | NOT_REQUIRED | PENDING | no | Harden builder/protocol regression checks |
-| H4 | PENDING | NOT_RUN | PENDING | yes | Rebuild/check generated v3 skills |
+| H1 | PREPARED | NOT_REQUIRED | PENDING | no | Update canonical lifecycle/role doctrine |
+| H2 | PREPARED | NOT_REQUIRED | PENDING | no | Harden handoff/report templates |
+| H3 | PREPARED | NOT_REQUIRED | PENDING | no | Add protocol semantic regression checks |
+| H4 | PREPARED | PASS | PENDING | yes | Rebuild/check generated v3 skills |
 | H5 | PENDING | NOT_RUN | PENDING | yes | Synthetic lifecycle cases |
 | H6 | PENDING | NOT_RUN | PENDING | yes | MVSEL2 real-workflow dogfood |
 | H7 | PENDING | NOT_RUN | PENDING | yes | Independent freeze verification |
 
 ## H0 — Identity and immutability freeze
 
-Acceptance:
-- candidate commit/content/evidence identities are unambiguous;
-- evidence-only commits can be represented without claiming a new product candidate;
-- dirty tracked/untracked execution surfaces are rejected;
-- tracked candidate generated outputs cannot be mutated in qualification.
+Prepared evidence:
+- canonical protocol separates candidate commit provenance, candidate content identity, and later evidence/coordination commits;
+- dirty tracked/untracked/source-origin preflight and postflight are mandatory;
+- tracked candidate generated outputs are immutable during qualification.
 
 ## H1 — Canonical doctrine and role hardening
 
-Work:
-- update protocol versioning/compatibility, workplan/handoff, testing/qualification, documentation/evidence, release and role skills;
-- define evidence dependency/retry/deferred/independence semantics;
-- define source preflight/postflight requirements.
+Prepared evidence:
+- `protocol-versioning-and-compatibility.md` defines identity, generated output classes, dependency invalidation, retry identity, and v2 bootstrap migration;
+- `workplans-and-agent-handoff.md` defines derived lifecycle, deferred semantics, evidence reuse, pre/postflight, role authority and independence metadata;
+- implementation, qualification, verification role skills consume those hardened contracts;
+- testing/qualification doctrine matches the same semantics.
 
 ## H2 — Artifact schema hardening
 
-Work:
-- update Implementation Workplan, Qualification Handoff, Qualification Report, Verification Report templates;
-- require candidate content identity, evidence exclusions, dirty-tree checks, dependencies, retries, per-check execution provenance, deferred blocking semantics, and verification independence metadata.
+Prepared evidence:
+- Implementation Workplan template requires candidate identity policy and dependency/comparability rules;
+- Qualification Handoff requires candidate identity, dirty-tree preflight, output classes, dependencies, retry policy and postflight;
+- Qualification Report records per-check command/cwd/timestamps/exit/attempts, pre/postflight, retry history and evidence reuse;
+- Verification Report records candidate/evidence identity, reuse audit, blocking deferred state and independence metadata.
 
 ## H3 — Builder/protocol regression checks
 
-Work:
-- extend canonical builder validation for critical v3 fields and authority invariants;
-- retain deterministic source/dist parity checks.
+Prepared evidence:
+- `source/check_protocol_semantics.py` asserts four-role registry and critical v3 identity/immutability/authority/template fields;
+- permanent CI runs the semantic checker before canonical/generated parity validation;
+- existing builder continues deterministic role/resource/frontmatter/template validation.
 
 ## H4 — Generated distributions
 
-Acceptance:
-- canonical builder succeeds;
-- `--check` succeeds against committed `dist/`;
-- four generated ZIPs contain hardened v3 doctrine/templates and no stale v2 runtime role.
+Qualification evidence:
+- one-shot branch workflow executed the semantic checker, rebuilt all four generated ZIPs, executed `source/build_skills.py --output dist --check`, then self-removed;
+- remote `dist/` now contains only `BUILD_INDEX.json` plus hardened `software-design.zip`, `software-implementation.zip`, `software-qualification.zip`, and `software-verification.zip`;
+- successful self-removal/commit is evidence that semantic and canonical/generated parity commands completed before publication.
 
 ## H5 — Synthetic lifecycle qualification
 
@@ -147,6 +151,5 @@ Stop if hardening would require:
 ## Closeout
 
 - Preserve the original `SDP-V3` v2 workplan as bootstrap lineage rather than rewriting it to v3.
-- Record v3 hardening/freeze under this workplan or a direct successor.
-- Regenerate/check all four distribution ZIPs.
-- Do not mark COMPLETE until real dogfood and independent freeze verification pass.
+- Regenerate/check all four distribution ZIPs after every canonical role/reference/template change.
+- Do not mark COMPLETE until synthetic lifecycle cases, real dogfood and independent freeze verification pass.
