@@ -72,9 +72,9 @@ The v2 protocol successfully prevents implementation agents from repeating broad
 | Gate | Status | Purpose |
 |---|---|---|
 | G0 | PASS | Review/freeze four-role architecture against v2 protocol |
-| G1 | IN_PROGRESS | Canonical role/lifecycle/artifact refactor |
-| G2 | PENDING | Builder, deterministic distribution, and CI drift enforcement |
-| G3 | PENDING | Protocol-source/generated-package static verification |
+| G1 | PASS | Canonical role/lifecycle/artifact refactor |
+| G2 | PASS | Builder, deterministic distribution, and CI drift enforcement |
+| G3 | PASS | Protocol-source/generated-package static verification |
 | G4 | PENDING | Synthetic lifecycle edge-case qualification |
 | G5 | PENDING | Representative real-workflow v3 dogfood |
 | G6 | PENDING | Independent final protocol verification/freeze decision |
@@ -108,6 +108,13 @@ The v2 protocol successfully prevents implementation agents from repeating broad
 - role skills reference only shared resources they actually package;
 - templates do not hard-code a semantic protocol version.
 
+**Evidence:**
+
+- canonical source commit: `7ce6a9da429d0062b919f9ae1c88f042218ac5af`;
+- current `source/roles/` contains exactly the four v3 role directories;
+- current v2 role names remain only in explicit compatibility/traceability lineage;
+- builder role/resource/frontmatter/template validation passes on the canonical working copy.
+
 ## G2 — Builder and generated distribution
 
 **Work:**
@@ -125,6 +132,15 @@ The v2 protocol successfully prevents implementation agents from repeating broad
 - `python source/build_skills.py --output dist --check` passes;
 - BUILD_INDEX lists exactly four v3 roles.
 
+**Evidence:**
+
+- two consecutive local canonical builds produced identical ZIP SHA-256 values;
+- local canonical `python source/build_skills.py --output dist --check` => PASS for protocol `3.0.0`;
+- branch one-shot Actions build regenerated `dist/` from canonical source and removed itself;
+- remote `dist/` contains exactly `software-design.zip`, `software-implementation.zip`, `software-qualification.zip`, `software-verification.zip`, plus `BUILD_INDEX.json`;
+- legacy `software-design-review.zip` is absent;
+- permanent `.github/workflows/protocol-check.yml` runs the canonical `--check` on PRs and `main`.
+
 ## G3 — Static verification
 
 **Acceptance:**
@@ -134,6 +150,14 @@ The v2 protocol successfully prevents implementation agents from repeating broad
 - no missing role-referenced resource;
 - legacy two-role wording appears only in compatibility/history;
 - v3 templates contain required identity/source fields.
+
+**Evidence:**
+
+- builder validates the role registry against `source/roles/`, SKILL frontmatter names, referenced packaged resources, and template protocol-version placeholders before generating packages;
+- generated BUILD_INDEX reports protocol `3.0.0` and exactly the four v3 skills;
+- remote canonical evidence/documentation reference includes Workplan, Qualification Handoff, Qualification Report, and Verification Report as distinct artifact classes;
+- one-shot maintenance patch and temporary rebuild workflow are absent from the resulting branch;
+- no G4/G5 lifecycle result is inferred from these static/build checks.
 
 ## G4 — Synthetic lifecycle qualification
 
