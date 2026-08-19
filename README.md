@@ -1,31 +1,17 @@
 # Software Development Protocol
 
-**Software Development Protocol** is a role-separated Agent Skills framework for disciplined, evidence-driven software engineering with AI agents and target execution environments.
+Software Development Protocol is a role-separated, evidence-driven workflow for AI-assisted software engineering.
 
-Protocol v3 separates four kinds of authority:
-
-- **`software-design`** — diagnoses problems, selects algorithms/architecture, freezes invariants/acceptance criteria, and owns Implementation Workplans.
-- **`software-implementation`** — consumes frozen design, implements code/tests/harnesses, stages the exact candidate, computes candidate identity, and produces a Qualification Handoff.
-- **`software-qualification`** — executes source-bound tests/benchmarks/production/hardware/release checks against the exact candidate while keeping product source and tracked candidate outputs read-only.
-- **`software-verification`** — independently reviews candidate content plus qualification evidence and returns `MERGE_READY`, `NOT_READY`, or `DESIGN_REVISION_REQUIRED`.
-
-The normal substantial-change flow is:
+Protocol v3 keeps four useful authority boundaries:
 
 ```text
-software-design
-  -> Implementation Workplan
-software-implementation
-  -> Qualification Handoff
-software-qualification
-  -> Qualification Report / evidence
-software-verification
-  -> MERGE_READY or corrective routing
+software-design -> software-implementation -> software-qualification -> software-verification
 ```
 
-Protocol v3 deliberately distinguishes **Git commit provenance**, **qualified candidate content identity**, and later **evidence/coordination commits**. Qualification binds both `candidate_commit` and `candidate_content_identity`; repository-resident reports may be committed afterward without invalidating qualification only when they preserve the declared candidate content identity. Dirty tracked state, undeclared execution-affecting untracked files, or tracked generated product mutations are not valid source-bound qualification states.
+The guiding rule is materiality: protocol mechanics exist to improve confidence in the software, not to become a second product that must be qualified. A process defect blocks acceptance only when it can materially change what code/input/environment was exercised or how a correctness, scientific, recovery, security, distribution, performance, or regression claim should be interpreted.
 
-These are authority roles, not product names. Chat, Codex, CI, a workstation/HPC session, a human, or another agent may occupy a role. Role boundaries remain useful even when one system performs multiple roles sequentially.
+For ordinary Git projects, the candidate commit is the default source identity. Extra hashes are used at real external/generated content boundaries, not as universal paperwork. Harmless qualification harness/report errors can be corrected in place without restarting valid software checks.
 
-`source/` is the canonical protocol library. `dist/` contains generated self-contained Agent Skill ZIPs. Generated packages must never be hand-edited; change canonical source and rebuild/check distributions with `source/build_skills.py`.
+Use the lightest lifecycle that preserves the needed authority separation. Small work may use `inspect -> implement -> relevant checks -> review`; substantial or cross-environment work uses a workplan and, when useful, a compact qualification run card.
 
-Protocol compatibility, candidate/evidence identity, retry/invalidation rules, and the v2-to-v3 transition are defined in `source/shared/references/protocol-versioning-and-compatibility.md`.
+`source/` is canonical. `dist/` contains generated role skill packages.

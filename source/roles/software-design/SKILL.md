@@ -1,125 +1,49 @@
 ---
 name: software-design
-description: Design nontrivial software changes before implementation. Use for repository inspection, debugging/root-cause diagnosis, algorithmic or architectural redesign, scientific/numerical reasoning, performance/scaling/I/O/storage analysis, security/trust-boundary design, configuration/persistence/concurrency design, and creation or revision of an Implementation Workplan. Freeze decisions and acceptance semantics here so implementation and qualification do not repeat the investigation. Do not perform broad implementation when a workplan is the appropriate deliverable.
+description: Design nontrivial software changes before implementation. Diagnose root causes, choose architecture/algorithms, freeze material product semantics and acceptance-critical requirements, and create or revise a concise Implementation Workplan. Use materiality: do not turn administrative provenance or report formatting into software acceptance criteria.
 ---
 
 # Software Design
 
-Use this skill as the **design authority** of Software Development Protocol v3. The cross-role lifecycle is defined in `references/workplans-and-agent-handoff.md`; protocol compatibility is defined in `references/protocol-versioning-and-compatibility.md`.
+Use this role as Protocol v3 design authority.
 
-## Role objective
+## Objective
 
 ```text
-understand
--> diagnose
--> compare materially plausible designs
--> freeze target semantics/invariants/acceptance
--> issue READY_FOR_IMPLEMENTATION workplan
+understand -> diagnose -> choose material design -> freeze acceptance -> hand to implementation
 ```
 
-This role owns the target design. It does not own implementation execution, target-environment qualification, or final merge acceptance.
+Read repository instructions and the relevant domain references. Inspect progressively; do not repeat repository-wide reconnaissance when focused evidence is enough.
 
-## 1. Build authoritative context
+## Own the material target
 
-Read repository/project instructions plus:
+Freeze only decisions implementation must not invent:
 
-- `references/repository-intake.md`
-- `references/git-and-version-control.md`
-- current architecture/specification owners relevant to the task.
-
-Inspect progressively. Establish current branch/commit, entry points/callers/tests, persistence/generated artifacts, relevant current evidence, trust/resource constraints, and assumption paths.
-
-## 2. Diagnose before redesigning
-
-For failures/incidents read `references/debugging-and-state-recovery.md`.
-
-Find the earliest violated invariant and distinguish algorithm defects from stale state, schema/configuration mismatch, dependency/backend failure, resource admission, storage/I/O, concurrency, packaging, or integration failures.
-
-Do not freeze a design around a symptom-level patch when ownership lies elsewhere.
-
-## 3. Resolve the target design
-
-Read `references/architecture-and-design.md` plus the domain references needed by the change:
-
-- `references/scientific-software.md`
-- `references/performance-and-parallelism.md`
-- `references/storage-and-io.md`
-- `references/concurrency-and-orchestration.md`
-- `references/configuration-and-policy.md`
-- `references/security-and-trust-boundaries.md`
-- `references/specification-and-implementation.md`
-- `references/testing-and-qualification.md`
-- `references/release-and-distribution.md`
-
-Freeze as applicable:
-
-- chosen algorithm/architecture and ownership;
+- algorithm/architecture and ownership;
 - scientific/numerical/API/data/configuration semantics;
-- persistence/schema/recovery contract;
-- compatibility and fallback behavior;
-- resource/security strategy;
-- objective acceptance thresholds;
-- qualification capabilities/barriers;
-- non-goals and design-revision triggers.
+- persistence/recovery/compatibility contracts;
+- resource/performance thresholds when claimed;
+- security/trust behavior when changed;
+- non-goals and true redesign triggers.
 
-For expensive baselines, permit reuse of existing authenticated evidence only when its source/input/method/environment identity remains applicable.
+## Acceptance-critical requirements
 
-## 4. Create or revise the Implementation Workplan
+For substantial work, make one explicit list of requirements whose failure would materially change acceptance. Write them in product/domain language.
 
-Use `templates/implementation_workplan_template.md`.
+Do not make workplan hashes, report hashes, evidence filenames, timestamps, redundant candidate fingerprints, or other administrative metadata blocking unless a concrete project/release boundary makes them material.
 
-A substantial workplan records:
+## Workplan
 
-- `workplan_id`, revision, protocol version, analyzed base/ref;
-- assumption paths and current authority refs;
-- concise diagnosis;
-- frozen design decisions and invariants;
-- expected change surface/non-goals;
-- qualification capability requirements;
-- implementation/qualification/acceptance state per gate;
-- explicit `qualification_barrier` where later implementation must wait for runtime evidence;
-- exact acceptance and evidence expectations;
-- `DESIGN_REVISION_REQUIRED` triggers;
-- candidate and final closeout requirements.
+Use `templates/implementation_workplan_template.md` when design reasoning is substantial. Keep it concise. A workplan revision is required only for material target/acceptance/scope/qualification-condition changes, not command/path/report corrections.
 
-Promote to `READY_FOR_IMPLEMENTATION` only when implementation can proceed without inventing architecture.
+A separate qualification run card is needed only when execution crosses a real environment boundary.
 
-## 5. Gate dependency design
+## Design revision
 
-Default approval is `AUTO`.
+Return to design only when evidence requires changing frozen product semantics, architecture, compatibility, recovery/security model, acceptance threshold, or a material scope boundary.
 
-A gate has three distinct concepts:
+Operational harness corrections belong to implementation/qualification.
 
-```text
-implementation state
-qualification state
-acceptance state
-```
+## Completion
 
-Implementation may prepare later independent gates before expensive qualification when `qualification_barrier: no`. Set `qualification_barrier: yes` when a later implementation decision is unsafe without that gate's runtime result.
-
-Do not weaken mandatory acceptance merely to batch execution.
-
-## 6. Protocol v2 intake
-
-For v2 workplans/artifacts follow `references/protocol-versioning-and-compatibility.md`.
-
-Do not mechanically rewrite completed v2 history. Upgrade active/substantial continuation work to a v3 workplan when split qualification is required.
-
-## Authority boundary
-
-This role owns/finalizes:
-
-- root-cause diagnosis;
-- algorithm/architecture choice;
-- scientific/numerical target semantics;
-- public/persistence/configuration target contracts;
-- resource/security strategy;
-- gate structure/mandatory acceptance;
-- design revisions.
-
-Implementation may refine local details but must escalate frozen-design contradictions.
-
-## Completion report
-
-Report the exact workplan ID/revision/base, frozen decisions, qualification capabilities/barriers, unresolved/deferred items, and repository branch state.
+Report the workplan/task, frozen material decisions, acceptance-critical requirements, true external qualification needs, and unresolved product-design questions.

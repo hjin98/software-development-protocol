@@ -1,133 +1,48 @@
 # Release and Distribution Qualification
 
-Source-tree correctness is not distribution correctness. A package can pass repository tests yet ship missing modules, stale generated documents, wrong version metadata, undeclared dependencies, or artifacts that work only because the source checkout is on `sys.path`.
+Source-tree correctness is not distribution correctness. Use these checks when a task actually ships or changes a package, build system, entry point, generated distribution artifact, or release process.
 
-Use this protocol for releases, package-format changes, build-system changes, entry-point changes, generated-artifact packaging, or any gate intended to produce a user-installable artifact.
+## Candidate boundary
 
-## Protocol v3 release-candidate boundary
+Build the intended candidate source. In Git projects, the commit is normally sufficient source identity. Use additional artifact hashes when exact built bytes matter.
 
-For release-significant work, `software-implementation` should stage the exact candidate source, version metadata, specifications/architecture/history, generated permanent documents, and packaging changes before target qualification whenever practical. `software-qualification` then builds/tests that exact source-bound candidate; `software-verification` decides whether the evidence is sufficient for acceptance.
+Qualification should not modify product source while claiming to test that candidate, but it may create build/install/evidence scratch freely in appropriate locations.
 
-If a required generated artifact can only be produced in the target environment, the Qualification Handoff must explicitly authorize that generated output path/command. Product source and hand-authored normative files otherwise remain read-only during qualification.
+## Build and inspect
 
-Any post-qualification source mutation invalidates release evidence for the new source unless the affected checks are rerun under a new handoff.
+As applicable:
 
-## Release inputs and identity
+- build the supported artifact types;
+- inspect expected modules/resources/entry points/package data;
+- exclude secrets, caches, checkpoints, accidental datasets, local paths, and developer scratch;
+- verify permissions/archive safety where relevant;
+- verify package/version metadata when version correctness is part of the release.
 
-Identify before building:
+## Isolated install
 
-- authoritative package/version source;
-- source revision/commit or source-archive identity;
-- build configuration and supported artifact types;
-- dependency/build-backend versions where they materially affect output;
-- generated documentation/assets that are required in the distribution;
-- expected CLI entry points and package data;
-- release exclusions: caches, local datasets, credentials, temporary files, developer-only evidence, private paths.
+Install the produced artifact into a clean/isolated target and exercise it outside the source checkout.
 
-A release artifact should have a stable digest recorded in release/evidence metadata after it is produced and accepted.
+Check the user-facing import/entry points/resources that matter. A source-tree test is not evidence for installed-artifact behavior.
 
-## Build from a clean source state
+## Dependencies/platforms
 
-Where practical, qualify release artifacts from a clean checkout/worktree/source archive rather than a developer tree containing untracked helpers or locally generated dependencies.
+Qualify supported dependency/platform/backend combinations proportionally to release scope. Missing required platforms/backends are `BLOCKED` or not part of current acceptance; do not infer PASS.
 
-- Regenerate required generated artifacts from authoritative sources before packaging.
-- Fail if required generated documentation is stale according to its provenance check.
-- Avoid release behavior that depends on files outside the declared build context.
-- Record deliberate local patches or unreleased dependency substitutions if a clean official environment cannot be reproduced.
+## Documentation and version closeout
 
-Do not silently clean or discard unrelated user work merely to obtain a clean tree; use a separate worktree/copy/build context when needed.
+For a release, ensure shipped specifications/user docs match shipped behavior, required history/release notes/version metadata are correct, and required generated documentation/assets are present.
 
-## Inspect the produced artifact
+PDFs or provenance manifests are checked only when the project actually ships/requires them.
 
-After building, inspect the distribution contents rather than assuming the manifest is correct.
+## Reproducibility
 
-Verify as applicable:
+Record enough to reproduce or diagnose the release: source commit/archive, material build configuration, material build/runtime versions, artifact identity when exact bytes matter, and executed release checks.
 
-- expected modules/packages/tools/examples/templates/specifications/manuals/PDFs are present;
-- package metadata/version is correct;
-- CLI entry points are declared;
-- required non-code resources are included;
-- generated files correspond to authoritative sources;
-- no caches, checkpoints, secrets, credentials, local absolute paths, large accidental datasets, build scratch, or unrelated developer artifacts are included;
-- file permissions/executable bits are appropriate;
-- archive paths are normalized and safe.
-
-For Python projects publishing both wheel and source distribution, inspect and test both because inclusion/build behavior can differ.
-
-## Clean-install verification
-
-Install the produced artifact into a fresh/isolated environment and test it outside the source tree.
-
-At minimum, as applicable:
-
-1. install using the supported user-facing mechanism;
-2. import the installed package from a directory unrelated to the checkout;
-3. verify reported package version;
-4. invoke expected CLI entry points/help/version;
-5. execute a minimal representative workflow using only packaged resources and declared dependencies;
-6. verify optional-dependency failure messages/fallbacks when relevant;
-7. confirm documentation/assets expected by runtime consumers are discoverable after installation.
-
-A successful source-tree test is not evidence for any of these installed-artifact behaviors.
-
-## Dependency and platform qualification
-
-Test the supported environment matrix proportionally to release scope.
-
-- Use the project's minimum/maximum or pinned dependency policy rather than only the developer environment.
-- Distinguish unavailable platform/backend checks as `BLOCKED` or `NOT RUN` rather than passing them by inference.
-- Record accelerator/native-library/ABI qualification separately from pure-Python package installation.
-- Avoid undeclared reliance on shell tools, environment variables, working-directory layout, or user-site packages.
-
-## Documentation/version closeout
-
-Before accepting a release:
-
-- specifications match the shipped implementation;
-- current architecture documentation reflects the accepted shipped architecture where it changed;
-- history/changelog/release notes record material completed changes and version transition;
-- package version and independent schema/protocol/model versions are not conflated;
-- authoritative Markdown and generated PDFs pass content-provenance checks;
-- release artifacts contain the documentation/assets required by repository policy.
-
-Read `documentation-and-evidence.md` for document roles and version history.
-
-## Reproducibility and retention
-
-Perfect byte-for-byte reproducible builds may not be practical for every project, but avoid gratuitous nondeterminism.
-
-Record enough build evidence to reproduce or diagnose the artifact:
-
-- source revision;
-- governing workplan ID/revision/SHA-256 when implementation was workplan-driven;
-- Qualification Handoff/report identity when target-environment qualification was split from implementation;
-- resolved build configuration;
-- build tool/runtime versions where material;
-- artifact filename/type/version;
-- artifact SHA-256;
-- executed qualification results.
-
-Retain accepted release artifacts according to project policy; do not confuse transient build directories with release records.
-
-## Release failure modes to test
-
-Representative qualification should catch:
-
-- missing package/module/data file;
-- stale or omitted generated PDF/manual;
-- wrong version metadata;
-- broken entry point;
-- implicit source-tree import;
-- undeclared runtime dependency;
-- missing optional-dependency diagnostic;
-- accidental inclusion of cache/checkpoint/data/secret files;
-- sdist that cannot build a wheel in isolation;
-- installed workflow that assumes repository-relative paths.
+Do not require workplan/handoff/report hash chains merely for completeness.
 
 ## Hard rules
 
-- Do not call a package/release qualified because tests passed only in the source checkout.
-- Do not publish an artifact whose contents have not been inspected or at least mechanically verified against repository policy.
-- Do not infer wheel behavior from sdist behavior or vice versa when both are distributed.
-- Do not ship stale generated documentation, local caches/checkpoints, credentials, or accidental large datasets.
-- Do not overwrite/replace an accepted release artifact without changing identity or recording the replacement according to project policy.
+- Do not call an installable artifact qualified solely because source-tree tests passed.
+- Do not publish artifacts with uninspected accidental secrets/data/scratch.
+- Do not hide source-checkout imports during installed-package testing.
+- Treat wrong package/version metadata as blocking when it is part of the release contract, not when it is merely an unrelated administrative assertion.

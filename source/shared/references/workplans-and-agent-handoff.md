@@ -1,347 +1,82 @@
-# Workplans, Qualification Handoffs, and Agent Roles
+# Workplans, Qualification, and Agent Roles
 
 ## Purpose
 
-Protocol v3 separates four kinds of software-development authority:
+Protocol v3 separates four authority roles:
 
 ```text
-software-design
-  -> Implementation Workplan
-software-implementation
-  -> Qualification Handoff
-software-qualification
-  -> Qualification Report / evidence
-software-verification
-  -> Verification Report / acceptance decision
+software-design -> software-implementation -> software-qualification -> software-verification
 ```
 
-These roles are authority boundaries, not product or vendor names. Chat, Codex, CI, a workstation/HPC session, a human, or another agent may occupy a role. The same system may perform multiple roles sequentially when appropriate, but downstream artifacts must still bind exact upstream and candidate identities.
+The roles prevent silent redesign, invented PASS claims, and self-acceptance of substantial work. They are authority boundaries, not a requirement for four different people, agents, or documents.
 
-The split exists to prevent repeated expensive reasoning, separate source construction from target-environment execution, and make PASS claims independently auditable.
+## Materiality rule
 
-## Artifact classes
+A protocol condition may block acceptance only when violating it could materially change the code executed, material inputs/configuration/environment, observable correctness, scientific or numerical interpretation, security or recovery behavior, performance/resource claims, installability/shipped artifacts, or whether the candidate introduced a regression.
 
-### Implementation Workplan
+Everything else is advisory recordkeeping. Administrative or evidence-format defects may be corrected without product requalification when they do not change those material dimensions or the interpretation of an observed result.
 
-Temporary design-to-implementation contract. It freezes diagnosis, design, invariants, change surface/non-goals, gate structure, qualification capabilities/barriers, acceptance semantics, evidence dependency/comparability rules, and design-revision triggers. It is not current product authority.
+## Proportional lifecycle
 
-### Qualification Handoff
+Use the lightest workflow that preserves the material authority boundaries.
 
-Source-bound implementation-to-qualification execution contract. It freezes the exact candidate identity, workplan identity, required capabilities/environment, checks/commands/inputs, expected evidence, dependencies, retries, allowed writes/side effects, and failure routing. A broad instruction such as "finish/run the workplan" is invalid.
-
-### Qualification Report
-
-Evidence that the exact handoff/candidate was exercised. It records handoff digest, candidate identity, environment/configuration, per-check execution provenance, results, artifacts/digests, pre/post source-immutability state, retries, and failure routing.
-
-### Verification Report
-
-Independent acceptance record binding candidate identity, workplan, qualification evidence, gate acceptance, findings, evidence reuse decisions, verifier independence metadata, and final `MERGE_READY | NOT_READY | DESIGN_REVISION_REQUIRED`.
-
-## Repository placement
-
-Prefer project-owned coordination/evidence locations, for example:
+### Small/local work
 
 ```text
-workplans/active/
-workplans/archive/
-qualification/handoffs/
-qualification/reports/
-verification/reports/
+inspect -> implement -> relevant checks -> review
 ```
 
-These are normally excluded from runtime/user distributions. A repository may use another established audit/evidence layout.
-
-## Candidate identity versus evidence commits
-
-Read `protocol-versioning-and-compatibility.md`.
-
-Protocol v3 distinguishes:
+### Substantial work
 
 ```text
-candidate_commit
-candidate_content_identity
-evidence/coordination commit(s)
+design/workplan -> implementation -> required checks -> verification
 ```
 
-Qualification accepts candidate content, not merely a branch name or whichever commit happens to be HEAD later.
+### Cross-environment work
 
-Evidence/coordination commits may follow qualification without invalidating it **only if** they preserve the declared `candidate_content_identity`. Any product-relevant change creates a new candidate identity and triggers dependency-based qualification invalidation.
+When qualification must move to a workstation, HPC system, production dataset, external service, or other distinct execution environment:
 
-## Workplan lifecycle
+```text
+design/workplan -> implementation -> qualification run card -> target execution/evidence -> verification
+```
 
-Use:
+A separate Qualification Handoff is therefore conditional, not universal.
 
-- `DRAFT`
-- `READY_FOR_IMPLEMENTATION`
-- `IN_PROGRESS`
-- `PREPARED_FOR_QUALIFICATION`
-- `QUALIFICATION_IN_PROGRESS`
-- `READY_FOR_VERIFICATION`
-- `BLOCKED`
-- `COMPLETE`
-- `SUPERSEDED`
-- `CANCELLED`
+## Implementation Workplan
 
-Only `software-design` promotes a workplan to `READY_FOR_IMPLEMENTATION` or changes frozen design semantics.
+Use a workplan when design reasoning, cross-module change, public/persisted/scientific semantics, performance/resource targets, security/recovery behavior, or expensive execution would otherwise be rediscovered.
 
-`software-implementation` may update implementation progress and issue a Qualification Handoff.
+A substantial workplan records:
 
-`software-qualification` records qualification evidence; it does not redesign or redefine the workplan.
+- objective and diagnosis;
+- frozen product/domain design decisions;
+- expected change surface and non-goals;
+- material execution constraints;
+- one authoritative **Acceptance-critical requirements** section;
+- ordered gates where staging is useful;
+- conditions that truly require `DESIGN_REVISION_REQUIRED`.
 
-`software-verification` makes final acceptance and may mark/archive a workplan `COMPLETE` after mandatory acceptance passes.
+Acceptance-critical requirements should be written in product/domain language, not protocol-artifact language.
 
-### Derived lifecycle rule
+Good: `restart after a corrupt checkpoint produces the uninterrupted result`.
 
-Where gate state is represented structurally, workplan-level execution status should be derived rather than chosen independently:
+Bad: `the report contains the checkpoint-policy SHA`.
 
-- `PREPARED_FOR_QUALIFICATION` only when every gate needed in the next qualification batch is implementation `PREPARED` and no blocking implementation state prevents the batch;
-- `READY_FOR_VERIFICATION` only when every check mandatory for current acceptance is `PASS` or the owning gate is `NOT_REQUIRED`;
-- `BLOCKED` when a mandatory blocking dependency cannot proceed;
-- `COMPLETE` only after verification returns `MERGE_READY` and final evidence/closeout identity is coherent.
+The workplan revision changes only when target design, acceptance semantics, important scope, or material qualification conditions change. Correcting a command, path, report field, log destination, or other administrative detail does not require a new revision.
 
-Do not allow contradictory combinations such as `READY_FOR_VERIFICATION` with a mandatory `NOT_RUN`, `FAIL`, `BLOCKED`, or blocking `DEFERRED` check.
+## Gate state
 
-## Gate state model
-
-### Implementation state
+Use the simple state set:
 
 ```text
 PENDING
-IN_PROGRESS
 PREPARED
-BLOCKED
-```
-
-`PREPARED` means source/test/harness construction and available local checks are complete enough for declared remaining qualification. It is not acceptance.
-
-### Qualification state
-
-```text
-NOT_REQUIRED
-NOT_RUN
-PASS
-FAIL
-BLOCKED
-DEFERRED
-```
-
-For `DEFERRED`, record explicitly:
-
-```yaml
-mandatory_for_current_acceptance: true|false
-deferred_to: <workplan/release/milestone>
-reason: <why>
-```
-
-A deferred mandatory-for-current-acceptance check blocks `MERGE_READY`.
-
-### Acceptance state
-
-```text
-PENDING
 PASS
 FAIL
 BLOCKED
 ```
 
-Only verification converts prepared implementation plus mandatory qualification evidence into final acceptance.
-
-## Qualification capability classes
-
-Use capability labels, not agent/product names:
-
-- `SOURCE`
-- `LOCAL_LIGHT`
-- `TARGET_RUNTIME`
-- `PRODUCTION_DATA`
-- `TARGET_HARDWARE`
-- `EXTERNAL_ACTION`
-
-A check may require multiple capabilities.
-
-## Qualification barriers
-
-Each gate declares whether pending qualification blocks later implementation:
-
-- `qualification_barrier: no` — later independent implementation may be prepared;
-- `qualification_barrier: yes` — dependent implementation must wait for mandatory qualification PASS.
-
-Do not weaken acceptance to batch expensive execution. Do not set barriers merely for conversational ceremony.
-
-## Default approval policy
-
-Sequential implementation gates default to `AUTO`. Human confirmation is required only for `MANUAL_APPROVAL_REQUIRED` gates involving consequential user choice, irreversible/external actions, or intentionally reserved policy decisions.
-
-Auto-advance applies only within role authority and barrier dependencies.
-
-## Versioned workplan contract
-
-A v3 workplan records at minimum:
-
-```yaml
-kind: implementation-workplan
-workplan_id: <stable ID>
-plan_revision: <integer>
-status: READY_FOR_IMPLEMENTATION
-protocol_version: <skill version>
-analysis_base_ref: <ref>
-analysis_base_commit: <SHA>
-```
-
-Also record as applicable:
-
-```yaml
-assumption_paths: []
-architecture_refs: []
-spec_refs: []
-expected_change_paths: []
-default_gate_approval: AUTO
-candidate_identity_policy: <repo policy or explicit include/exclude manifest rule>
-```
-
-Do not store a self-referential SHA-256 in the workplan. Downstream evidence records the exact digest consumed.
-
-## Required workplan content
-
-For substantial work:
-
-1. objective;
-2. diagnosis;
-3. current authority;
-4. frozen design;
-5. invariants/acceptance;
-6. change surface/non-goals;
-7. resource/security constraints;
-8. qualification capabilities/barriers;
-9. candidate identity policy;
-10. evidence dependency/comparability policy where expensive reuse matters;
-11. gates;
-12. design-revision triggers;
-13. candidate/final closeout.
-
-## Four-role authority matrix
-
-| Decision/domain | Design | Implementation | Qualification | Verification |
-|---|---|---|---|---|
-| Root cause | owns/finalizes | may refine from source evidence | failure-local diagnosis only | audits consistency |
-| Algorithm/architecture | owns | follows/escalates | must not redesign | verifies conformance |
-| Scientific/numerical semantics | owns target | implements/preserves | executes checks | accepts/rejects evidence |
-| Public/API/data/config target | owns | implements | exercises | verifies parity |
-| Persistence/schema/recovery | owns | implements | executes restart/corruption/migration checks | verifies contract/evidence |
-| Resource/performance threshold | owns | implements/instruments | measures | verifies comparability/claim |
-| Security/trust model | owns | implements | exercises declared boundary | verifies coverage/assumptions |
-| Gate structure/mandatory acceptance | owns | consumes | consumes | decides final acceptance |
-| Local helper/internal naming | advisory | owns in scope | none | reviews only if consequential |
-| Test/harness construction | specifies intent | owns | executes declared checks | verifies sufficiency |
-| Evidence dependency semantics | owns if acceptance-critical | instantiates proposed dependencies | records execution identity | audits reuse/invalidation |
-| Benchmark execution | specifies criteria | prepares harness | owns execution | verifies methodology/claim |
-| Product source mutation | no broad implementation | owns | forbidden by default | forbidden during review |
-| Candidate spec/docs/version/release edits | defines target ownership | stages candidate | no tracked candidate mutation | verifies parity |
-| Workplan completion/archive | may revise | updates progress | no design change | owns accepted lifecycle |
-| Redesign after contradiction | owns revision | escalates | escalates | escalates |
-
-## Stale-workplan detection
-
-Before substantial implementation:
-
-1. read repo/agent instructions;
-2. verify workplan state;
-3. record ID/revision/SHA-256;
-4. verify analyzed base relationship to HEAD;
-5. inspect only intersecting assumption/current-authority/target-interface changes;
-6. proceed when assumptions remain valid;
-7. otherwise `BLOCKED: STALE_WORKPLAN`.
-
-Do not repeat repository-wide design merely because HEAD advanced.
-
-## Qualification Handoff contract
-
-Required identity:
-
-```yaml
-kind: qualification-handoff
-handoff_id: <ID>
-protocol_version: <v3>
-workplan_id: <ID>
-plan_revision: <N>
-workplan_sha256: <digest>
-candidate_ref: <ref>
-candidate_commit: <SHA>
-candidate_content_identity: <digest/manifest identity>
-candidate_identity_policy: <policy identity>
-status: PREPARED_FOR_QUALIFICATION
-product_source_mutation: FORBIDDEN
-```
-
-Each check declares:
-
-- check ID and owning gate(s);
-- mandatory/current-acceptance semantics;
-- required capability;
-- command/cwd;
-- prerequisites/inputs;
-- expected result;
-- evidence/output paths;
-- evidence dependencies/comparability dimensions;
-- retry mode and attempt limit;
-- allowed side effects/write classes.
-
-## Qualification preflight/postflight
-
-Qualification must verify before running:
-
-- HEAD/candidate provenance matches the handoff where a checkout is used;
-- candidate content identity matches;
-- candidate tracked/staged state is clean;
-- no undeclared untracked/shadowing source can affect execution;
-- submodule/LFS/import/source origins are controlled when material;
-- required environment/input/hardware identities are available.
-
-After execution, verify candidate content identity is unchanged and only declared output paths/classes differ.
-
-## Qualification source immutability and outputs
-
-Product source is read-only during qualification.
-
-Allowed writes are declared `EPHEMERAL_QUALIFICATION_OUTPUT` such as logs, reports, build scratch, temporary packages, profiles and benchmark data.
-
-Qualification must not create/change `TRACKED_CANDIDATE_OUTPUT`. If target execution is needed to produce such an artifact, emit it as proposed evidence/output, return it to implementation, commit a new candidate, and requalify affected checks.
-
-If fixing candidate source/tests/spec/workplan is required: `RETURN_TO_IMPLEMENTATION`.
-
-## Qualification evidence, dependencies, and retries
-
-A mandatory check is exactly one of `PASS`, `FAIL`, `BLOCKED`, `NOT RUN`, `DEFERRED`. No inferred PASS.
-
-Evidence reuse requires declared compatible dependencies. Ambiguous dependency => invalidate/rerun.
-
-Retry modes:
-
-- `NONE`
-- `IDENTICAL_RETRY`
-- `CLEAN_RETRY`
-- `RESUME_RETRY`
-
-Any retry changing candidate/product content or undeclared scientific/config/resource/backend/dataset policy is not a retry under the same handoff.
-
-## Candidate closeout
-
-For release-significant changes, implementation stages the exact product candidate—source/tests/spec/architecture/version/release/package/tracked generated products as applicable—before qualification.
-
-Branch-local candidate docs do not become accepted current authority until verification returns `MERGE_READY` and the candidate is accepted/merged.
-
-## Verification contract
-
-Verification binds:
-
-- workplan identity/digest;
-- candidate commit provenance plus candidate content identity/policy;
-- qualification handoff/report digests;
-- relevant current/candidate architecture/spec/release surfaces;
-- any reused evidence and its dependency rationale;
-- independence metadata.
-
-Final decision is exactly:
+`PREPARED` means implementation is ready but a required execution check remains. Final acceptance belongs to verification and is one of:
 
 ```text
 MERGE_READY
@@ -349,37 +84,91 @@ NOT_READY
 DESIGN_REVISION_REQUIRED
 ```
 
-`MERGE_READY` requires no unresolved mandatory acceptance failure, blocker, not-run, or blocking deferred check.
+Future-release obligations belong in a separate section rather than being encoded as blocking/nonblocking deferred-state machinery.
 
-Verification does not repair substantial product source. Corrections return to implementation; affected qualification reruns against the new candidate identity.
+## Qualification run card
 
-## Verification independence metadata
+A run card is useful only when execution crosses a real boundary. It identifies:
 
-Record at least:
+- candidate Git commit or other materially sufficient source identity;
+- governing workplan/task;
+- checks to perform and their acceptance criteria;
+- material dataset/config/backend/hardware conditions;
+- product-defining things qualification must not change;
+- required external inputs or permissions.
 
-```yaml
-independence:
-  verifier_context: fresh | shared | unknown
-  implementation_actor_same: true|false|unknown
-  qualification_actor_same: true|false|unknown
-```
+It freezes intent and material conditions, not shell spelling. Equivalent environment activation, cwd, absolute paths, quoting, scratch directories, and log destinations are operational choices unless the workplan says they are material.
 
-Fresh context is preferred for substantial scientific/security/release-significant work; project policy may require it. Low-risk work may use shared context when appropriate, but independence must not be implied falsely.
+## Qualification correction authority
 
-## Trivial compressed path
+Qualification distinguishes three classes.
 
-Formal four-artifact lifecycle is unnecessary for isolated low-risk edits. A compressed path may be:
+### Product/material failure
 
-```text
-inspect -> implement -> focused executed checks -> source/diff review -> acceptance decision
-```
+Examples: wrong result, numerical mismatch, candidate-caused regression, invalid recovery, package failure, excessive memory, missed performance threshold, or needing changed dataset/config/scientific semantics to pass.
 
-The compressed path still obeys evidence honesty: no inferred PASS, relevant checks actually execute, and final review/acceptance is explicit. Use formal artifacts when public/persisted/scientific/concurrency/security/release/target-hardware/production-scale or expensive prior reasoning materially applies.
+Route to `RETURN_TO_IMPLEMENTATION`, or `DESIGN_REVISION_REQUIRED` if frozen target semantics must change.
 
-## Legacy v2 compatibility
+### Environment/input blocker
 
-Read `protocol-versioning-and-compatibility.md`. Completed v2 evidence remains readable history. Active substantial v2 work generally migrates before split qualification. A raw v2 workplan is not a v3 Qualification Handoff.
+A required GPU, dataset, service, compiler, credential, or target environment is unavailable. Record `BLOCKED`.
 
-## Major-version freeze/dogfood
+### Harness/record defect
 
-Before freezing a major version, exercise source/evidence identity, dirty-tree rejection, generated-output classes, retries, dependency-bound reuse, barriers, blocking deferred checks, failure routing, v2 migration, tampered identity, and at least one representative real workflow.
+Examples: wrong cwd, bad quoting, intended config path expressed incorrectly, unwritable evidence directory, report typo, stale administrative version label, missing advisory digest.
+
+Correct it locally, record what actually ran, and continue when candidate behavior and material test conditions remain unchanged.
+
+No administrative or evidence-format defect may by itself require product requalification.
+
+## Candidate source boundary
+
+In a normal Git repository, the candidate Git commit plus absence of unintended product-defining working-tree changes is the default source identity.
+
+Use additional hashes only at real content boundaries where Git does not sufficiently identify what is being accepted, such as external datasets, model weights, source archives, generated binaries, mutable production snapshots, or canonical-source/generated-artifact parity.
+
+Qualification should not modify product source or other candidate-defining files while claiming to test that candidate. Evidence, build, log, benchmark, profile, and scratch outputs are allowed unless a project says otherwise.
+
+## Evidence and reruns
+
+Record enough evidence to understand what was tested and what happened. Do not require provenance fields that cannot change interpretation of the result.
+
+Rerun a check when something changed that could plausibly alter that check's result or interpretation. Unrelated administrative edits do not invalidate execution evidence.
+
+For unusually expensive programs, a dependency map may help selective reuse, but it is optional optimization rather than default protocol ceremony.
+
+A repeated attempt remains part of the same qualification while candidate behavior and material test conditions remain unchanged. Record material changes between attempts. No formal retry taxonomy is required.
+
+## Role authority
+
+| Domain | Design | Implementation | Qualification | Verification |
+|---|---|---|---|---|
+| Root cause / target architecture | owns | follows or escalates | execution-local diagnosis | reviews |
+| Scientific/API/persistence/security semantics | owns target | implements | exercises | verifies |
+| Acceptance-critical requirements | owns | consumes | executes | decides sufficiency |
+| Local helpers/tests/harnesses | intent | owns | may repair non-material harness defects | reviews if consequential |
+| Product source | no broad implementation | owns | read-only during candidate qualification | review-only |
+| Final acceptance | no | no | no | owns |
+
+## Design revision boundary
+
+Use `DESIGN_REVISION_REQUIRED` only when proceeding requires materially changing frozen product/domain design, acceptance semantics, performance thresholds, public/persisted/scientific/security/recovery behavior, or a material scope boundary.
+
+Do not use design revision for operational commands, metadata, evidence layout, or report formatting.
+
+## Broad-suite policy
+
+A full-suite zero-failure requirement is mandatory only when the repository actually maintains that suite as a green gate or project/release policy explicitly requires it. Otherwise run broad tests when useful, attribute failures, and block the candidate only for failures plausibly introduced by it or for explicitly mandatory globally-green policy.
+
+Do not construct elaborate historical/counterfactual baselines solely to turn a repository with known unrelated failures into an artificial zero-failure oracle.
+
+## Protocol growth rule
+
+A proposed new blocking rule must state:
+
+1. the concrete software failure it prevents;
+2. why an existing simpler rule does not cover it;
+3. why advisory treatment is insufficient;
+4. why its burden is proportional to the risk.
+
+If the main benefit is provenance completeness, the rule is advisory by default.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cheap semantic invariants for the canonical Protocol v3 source."""
+"""Cheap semantic invariants for materiality-first Protocol v3 source."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ def require(path: Path, needles: list[str]) -> list[str]:
 
 def forbid(path: Path, needles: list[str]) -> list[str]:
     text = path.read_text(encoding="utf-8")
-    return [f"{path}: forbidden current-contract text {needle!r}" for needle in needles if needle in text]
+    return [f"{path}: forbidden blocking doctrine {needle!r}" for needle in needles if needle in text]
 
 
 def main() -> int:
@@ -36,27 +36,36 @@ def main() -> int:
     if actual_roles != expected_roles:
         errors.append(f"role registry mismatch: expected={sorted(expected_roles)} actual={sorted(actual_roles)}")
 
+    workplans = REFS / "workplans-and-agent-handoff.md"
     errors += require(
-        REFS / "protocol-versioning-and-compatibility.md",
+        workplans,
         [
-            "candidate_commit",
-            "candidate_content_identity",
-            "EPHEMERAL_QUALIFICATION_OUTPUT",
-            "TRACKED_CANDIDATE_OUTPUT",
-            "IDENTICAL_RETRY",
-            "CLEAN_RETRY",
-            "RESUME_RETRY",
-            "invalidate by default",
+            "Materiality rule",
+            "Acceptance-critical requirements",
+            "No administrative or evidence-format defect may by itself require product requalification",
+            "Harness/record defect",
+            "MERGE_READY",
         ],
     )
+
+    testing = REFS / "testing-and-qualification.md"
     errors += require(
-        REFS / "workplans-and-agent-handoff.md",
+        testing,
         [
-            "Only verification",
-            "candidate_content_identity",
-            "mandatory_for_current_acceptance",
-            "verifier_context",
-            "TRACKED_CANDIDATE_OUTPUT",
+            "mandatory check that did not execute cannot be called PASS",
+            "Broad regression policy",
+            "If no trustworthy baseline exists",
+            "Harness/record problem",
+        ],
+    )
+
+    versioning = REFS / "protocol-versioning-and-compatibility.md"
+    errors += require(
+        versioning,
+        [
+            "candidate_commit = <Git commit SHA>",
+            "real boundary",
+            "report typo or evidence-only wording change -> rerun nothing",
         ],
     )
 
@@ -64,41 +73,16 @@ def main() -> int:
     errors += require(
         qskill,
         [
-            "product_source_mutation: FORBIDDEN",
-            "candidate_content_identity",
-            "TRACKED_CANDIDATE_OUTPUT",
+            "Harness correction authority",
             "RETURN_TO_IMPLEMENTATION",
-        ],
-    )
-    errors += forbid(
-        qskill,
-        [
-            "final acceptance belongs to qualification",
-            "qualification may edit product source",
+            "DESIGN_REVISION_REQUIRED",
+            "BLOCKED",
+            "Do **not** silently change product code",
         ],
     )
 
     vskill = ROLES / "software-verification" / "SKILL.md"
-    errors += require(
-        vskill,
-        [
-            "MERGE_READY",
-            "candidate_content_identity",
-            "verifier_context",
-            "does not repair substantial product source",
-        ],
-    )
-
-    iskill = ROLES / "software-implementation" / "SKILL.md"
-    errors += require(
-        iskill,
-        [
-            "candidate_content_identity",
-            "Qualification Handoff",
-            "ambiguous",
-            "Do not mark the workplan `COMPLETE`",
-        ],
-    )
+    errors += require(vskill, ["MERGE_READY", "NOT_READY", "DESIGN_REVISION_REQUIRED"])
 
     for template_name in (
         "implementation_workplan_template.md",
@@ -108,37 +92,25 @@ def main() -> int:
     ):
         errors += require(TEMPLATES / template_name, ["REPLACE_WITH_SKILL_PROTOCOL_VERSION"])
 
-    errors += require(
+    # The default templates/roles must not reinstate the discarded mandatory machinery.
+    for path in [
+        ROLES / "software-implementation" / "SKILL.md",
+        ROLES / "software-qualification" / "SKILL.md",
+        ROLES / "software-verification" / "SKILL.md",
         TEMPLATES / "qualification_handoff_template.md",
-        [
-            "candidate_commit",
-            "candidate_content_identity",
-            "candidate_identity_policy",
-            "Evidence dependencies",
-            "Retry policy",
-            "EPHEMERAL_QUALIFICATION_OUTPUT",
-        ],
-    )
-    errors += require(
         TEMPLATES / "qualification_report_template.md",
-        [
-            "candidate_content_identity",
-            "Candidate preflight",
-            "Per-check execution provenance",
-            "Retry history",
-            "Evidence reuse",
-            "Candidate postflight",
-        ],
-    )
-    errors += require(
-        TEMPLATES / "verification_report_template.md",
-        [
-            "candidate_content_identity",
-            "independence:",
-            "Evidence reuse audit",
-            "MERGE_READY",
-        ],
-    )
+    ]:
+        errors += forbid(
+            path,
+            [
+                "candidate_content_identity:",
+                "candidate_identity_policy:",
+                "workplan_sha256:",
+                "qualification_handoff_sha256:",
+                "Evidence dependencies:",
+                "Retry policy:",
+            ],
+        )
 
     if errors:
         print("FAIL: protocol semantic invariant check")
@@ -146,7 +118,7 @@ def main() -> int:
             print(f"  {error}")
         return 2
 
-    print("PASS: Protocol v3 semantic invariants")
+    print("PASS: Protocol v3 materiality semantic invariants")
     return 0
 
 
