@@ -29,7 +29,9 @@ Define only what downstream users/implementers need to rely on:
 11. examples and acceptance criteria;
 12. owning source modules and related specs when the repository uses ownership maps.
 
-Keep implementation details out of the public contract unless consumers must depend on them. The specification describes **accepted current implemented behavior only**. Proposed/future behavior belongs in an Implementation Workplan or explicitly non-normative proposal until implementation is accepted; do not mix `PLANNED`/`PROPOSED` clauses into the current normative contract by default.
+Keep implementation details out of the public contract unless consumers must depend on them. The specification describes **accepted current implemented behavior only** on accepted branches/releases. Proposed/future behavior belongs in an Implementation Workplan or explicitly non-normative proposal until implementation is accepted; do not mix `PLANNED`/`PROPOSED` clauses into the current normative contract by default.
+
+For Protocol v3 release-significant work, implementation may stage the **candidate final specification** on the feature branch before qualification so the exact candidate can be tested and independently verified. Candidate branch state is not accepted current authority until verification returns `MERGE_READY` and the candidate is accepted/merged.
 
 ## Persisted schema compatibility and migration
 
@@ -92,7 +94,7 @@ When supporting multiple formats:
 
 ## Implementation/spec alignment review
 
-Before closing the gate:
+Before preparing a release-significant candidate for qualification, and again during final verification:
 
 1. Compare actual signatures/defaults/types/units/shapes against the specification.
 2. Compare edge/error/fallback/persistence/resource behavior.

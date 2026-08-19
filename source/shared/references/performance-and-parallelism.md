@@ -128,6 +128,8 @@ Before calling an optimization successful, provide:
 
 Do not accept speedup obtained by lowering scientific resolution, changing estimator semantics, weakening validation, changing precision policy without approval, omitting output, or moving work outside the timed region.
 
+Existing expensive baseline evidence may be reused instead of rerun when its source/input/benchmark-method/environment identity remains compatible with the current workplan's comparability contract. Record the reused evidence identity explicitly. A new agent session or later date is not by itself a reason to repeat a valid expensive baseline, and a convenient but non-comparable old measurement is not a valid substitute.
+
 ## Longitudinal performance regression tracking
 
 For mature hot paths or workflows whose performance materially matters, keep stable benchmark scenarios in addition to one-change before/after measurements.

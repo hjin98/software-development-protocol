@@ -3,7 +3,7 @@ kind: implementation-workplan
 workplan_id: REPLACE_ME
 plan_revision: 1
 status: DRAFT
-protocol_version: 2.0.1
+protocol_version: REPLACE_WITH_SKILL_PROTOCOL_VERSION
 analysis_base_ref: REPLACE_ME
 analysis_base_commit: REPLACE_ME
 assumption_paths: []
@@ -41,7 +41,7 @@ default_gate_approval: AUTO
 
 - Source: ...
 - Tests: ...
-- Specs/docs: ...
+- Candidate specs/docs/release: ...
 - Benchmarks/audits: ...
 
 ## Non-goals
@@ -52,15 +52,27 @@ default_gate_approval: AUTO
 
 - ...
 
+## Qualification capabilities
+
+Use only capabilities actually required by this workplan:
+
+- `SOURCE`
+- `LOCAL_LIGHT`
+- `TARGET_RUNTIME`
+- `PRODUCTION_DATA`
+- `TARGET_HARDWARE`
+- `EXTERNAL_ACTION`
+
 ## Gate summary
 
-| Gate | Approval | Status | Purpose | Evidence |
-|---|---|---|---|---|
-| G0 | AUTO | PENDING | ... | - |
+| Gate | Approval | Implementation | Qualification | Acceptance | Barrier | Purpose |
+|---|---|---|---|---|---|---|
+| G0 | AUTO | PENDING | NOT_RUN | PENDING | no | ... |
 
 ## G0 — <name>
 
-**Approval:** AUTO
+**Approval:** AUTO  
+**Qualification barrier:** no
 
 **Goal:** ...
 
@@ -71,6 +83,10 @@ default_gate_approval: AUTO
 
 **Acceptance:**
 - ...
+
+**Qualification:**
+- Capability: `LOCAL_LIGHT`
+- Required check/evidence: ...
 
 **Evidence:**
 - ...
@@ -85,11 +101,18 @@ Stop and report `DESIGN_REVISION_REQUIRED` if implementation would require chang
 
 - ...
 
-## Final closeout
+## Final candidate closeout
 
-- [ ] Current specifications match accepted code.
-- [ ] Architecture updated only for actual accepted architectural changes.
-- [ ] History/changelog/version updated according to repository policy.
-- [ ] Permanent Markdown docs regenerated/verified as PDF where required.
-- [ ] Broad/release qualification completed or explicitly blocked/deferred.
-- [ ] Final evidence records `workplan_id`, `plan_revision`, and `workplan_sha256`.
+Before qualification of a release-significant final candidate:
+
+- [ ] Candidate current specifications match the candidate code.
+- [ ] Candidate architecture is updated only for actual target architectural changes.
+- [ ] Candidate history/changelog/version/release metadata is staged according to repository policy.
+- [ ] Required generated permanent docs/artifacts are staged or their target-environment build is declared in the Qualification Handoff.
+
+## Final acceptance closeout
+
+- [ ] All mandatory qualification checks PASS.
+- [ ] Verification report is `MERGE_READY`.
+- [ ] Final evidence records `workplan_id`, `plan_revision`, `workplan_sha256`, source commit, and protocol version.
+- [ ] Workplan is marked/archived only after acceptance.

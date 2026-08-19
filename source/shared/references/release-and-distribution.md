@@ -4,6 +4,14 @@ Source-tree correctness is not distribution correctness. A package can pass repo
 
 Use this protocol for releases, package-format changes, build-system changes, entry-point changes, generated-artifact packaging, or any gate intended to produce a user-installable artifact.
 
+## Protocol v3 release-candidate boundary
+
+For release-significant work, `software-implementation` should stage the exact candidate source, version metadata, specifications/architecture/history, generated permanent documents, and packaging changes before target qualification whenever practical. `software-qualification` then builds/tests that exact source-bound candidate; `software-verification` decides whether the evidence is sufficient for acceptance.
+
+If a required generated artifact can only be produced in the target environment, the Qualification Handoff must explicitly authorize that generated output path/command. Product source and hand-authored normative files otherwise remain read-only during qualification.
+
+Any post-qualification source mutation invalidates release evidence for the new source unless the affected checks are rerun under a new handoff.
+
 ## Release inputs and identity
 
 Identify before building:
@@ -92,6 +100,7 @@ Record enough build evidence to reproduce or diagnose the artifact:
 
 - source revision;
 - governing workplan ID/revision/SHA-256 when implementation was workplan-driven;
+- Qualification Handoff/report identity when target-environment qualification was split from implementation;
 - resolved build configuration;
 - build tool/runtime versions where material;
 - artifact filename/type/version;

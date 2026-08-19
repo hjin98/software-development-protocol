@@ -1,4 +1,15 @@
-# Testing, Verification, and Qualification
+# Testing, Qualification, and Verification
+
+## Terminology and role boundary
+
+Protocol v3 distinguishes the mechanism from the authority decision:
+
+- **test/check** — an executable or inspectable mechanism that produces evidence;
+- **qualification** — source-bound execution of required checks in a declared environment, with PASS/FAIL/BLOCKED/NOT RUN/DEFERRED evidence;
+- **verification** — independent review that the exact candidate plus qualification evidence satisfies the frozen workplan/current contracts and deserves acceptance.
+
+Implementation normally authors tests/harnesses and may run cheap available checks. `software-qualification` owns target-environment execution/evidence. `software-verification` decides final acceptance. Do not let the same word `verification` ambiguously mean both a unit test and the final acceptance role.
+
 
 ## Evidence ladder
 
@@ -37,7 +48,9 @@ Test final observable behavior through affected consumers, not only low-level ke
 
 ### Level 5 - Broad regression and distribution
 
-Run subsystem/full tests when the change surface warrants it. For distributable changes, read `release-and-distribution.md`: build from a controlled/clean source state, inspect produced artifact contents, install into an isolated environment, and exercise the installed artifact outside the checkout. Complete documentation/version closeout: reconcile specification with code, update architecture only for actual accepted architectural changes, update history/version metadata, regenerate changed permanent Markdown PDFs/provenance manifests, run content-provenance checks, and verify representative rendered pages. Bind release evidence to the governing workplan identity when applicable.
+Run subsystem/full tests when the change surface warrants it. For distributable changes, read `release-and-distribution.md`: build from a controlled/clean source state, inspect produced artifact contents, install into an isolated environment, and exercise the installed artifact outside the checkout.
+
+For release-significant candidates, qualification should exercise the **staged candidate closeout** rather than inventing it: specification/code parity, architecture only where the target architecture changed, history/version metadata, required generated Markdown/PDF/provenance artifacts, and package contents should already be present in the exact candidate or explicitly declared as generated outputs in the Qualification Handoff. Bind release evidence to the governing workplan and source identity.
 
 ### Level 6 - Production-like/environment-specific qualification
 
@@ -53,7 +66,34 @@ Classify each required check as:
 - **NOT RUN** - intentionally omitted with rationale;
 - **DEFERRED** - explicitly outside the current gate/release.
 
-A blocked or not-run check is not a pass. Do not advance a mandatory workplan gate unless its acceptance criteria pass or the design/review role explicitly revises the workplan.
+A blocked or not-run check is not a pass. It cannot satisfy final gate acceptance.
+
+Implementation may still prepare later independent gates while qualification is pending when the workplan declares `qualification_barrier: no`. A gate with `qualification_barrier: yes` blocks dependent implementation until mandatory qualification passes. Verification never converts missing mandatory evidence into PASS.
+
+## Qualification handoff and source identity
+
+Target-environment qualification should consume a v3 Qualification Handoff rather than a broad workplan instruction. The handoff binds the exact source commit, workplan identity/digest, required capability, command/cwd, inputs, expected result, evidence path, retry policy, and allowed side effects.
+
+Before executing a check:
+
+- verify the candidate source equals the handoff `source_commit`;
+- verify required inputs/environment/hardware are available;
+- keep product source read-only unless the handoff explicitly declares a generated-output action;
+- record exact environment/backend/device/precision when material.
+
+If product source changes, old evidence remains evidence for the old source. Issue a new handoff/report for the new source and rerun checks affected by the delta.
+
+## Expensive qualification batching and evidence reuse
+
+When target-environment execution is expensive:
+
+- batch independent mandatory checks into the smallest number of sessions consistent with fault isolation;
+- prepare deterministic commands, fixtures, expected outputs, evidence paths, and failure-capture instructions before handoff;
+- reuse authenticated baselines/evidence when the governing comparability identity (source/input/method/environment as applicable) remains compatible;
+- after a source correction, rerun the affected dependency set rather than blindly repeating unrelated expensive production checks;
+- never reuse evidence merely because a filename, branch name, or agent session is the same.
+
+Cost optimization never authorizes reduced scientific fidelity, smaller substitutes for required production scale, or backend inference unless the workplan explicitly defines those checks as sufficient.
 
 ## Regression design
 
@@ -120,3 +160,17 @@ When configuration or concurrent orchestration changes, add evidence proportiona
 - reader/artifact schema READ/MIGRATE/REJECT compatibility where durable state evolves.
 
 Read `configuration-and-policy.md` and `concurrency-and-orchestration.md` for the owning contracts.
+
+
+## Verification acceptance review
+
+After qualification, `software-verification` should independently check that:
+
+- each mandatory acceptance clause maps to executed evidence at the required capability;
+- evidence is bound to the candidate source and governing workplan/handoff;
+- new/optimized behavior is compared against an independent oracle/observable where required;
+- blocked/not-run/deferred checks are represented honestly;
+- performance claims use comparable methodology and do not hide setup/I/O/recovery costs that matter;
+- release/install/documentation evidence applies to the exact merge candidate.
+
+A Qualification Report is evidence, not self-validating authority.

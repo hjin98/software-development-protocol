@@ -1,14 +1,29 @@
 # Software Development Protocol
 
-**Software Development Protocol** is a role-separated Agent Skills framework for disciplined, evidence-driven software engineering with AI coding agents. It is designed to divide development work between a **design/review role** and an **implementation/qualification role**, allowing expensive repository analysis, debugging, algorithmic redesign, and architectural reasoning to be completed once and handed off cleanly for execution.
+**Software Development Protocol** is a role-separated Agent Skills framework for disciplined, evidence-driven software engineering with AI agents and target execution environments.
 
-The protocol provides two generated Agent Skills:
+Protocol v3 separates four kinds of authority:
 
-- **`software-design-review`** — inspects repositories, diagnoses root causes, evaluates algorithms and architecture, defines scientific and engineering invariants, creates Implementation Workplans, and reviews completed changes for conformance.
-- **`software-implementation`** — consumes an approved workplan, performs bounded revalidation, implements changes gate by gate, runs focused and broad tests, benchmarks performance, records evidence, and completes specification, documentation, version, and release closeout.
+- **`software-design`** — understands the repository/problem, diagnoses root causes, selects algorithms/architecture, freezes invariants and acceptance criteria, and produces/revises Implementation Workplans.
+- **`software-implementation`** — consumes a frozen workplan, performs bounded stale-plan revalidation, implements the change, authors tests/benchmark harnesses, performs available light checks, stages candidate closeout, and produces a Qualification Handoff.
+- **`software-qualification`** — consumes an exact source-bound Qualification Handoff and executes the required tests, benchmarks, production-data, hardware, recovery, packaging, and environment checks. Product source is read-only by default; the role returns evidence rather than redesigning.
+- **`software-verification`** — independently reviews the final candidate, governing workplan, and qualification evidence; checks semantic/contract/resource/security/release conformance; and returns `MERGE_READY`, `NOT_READY`, or `DESIGN_REVISION_REQUIRED`.
 
-The formal interface between the two roles is an **Implementation Workplan**: a versioned, auditable handoff that freezes design decisions, scope, invariants, acceptance criteria, and implementation gates so the implementation agent does not need to repeat the original investigation.
+The normal substantial-change flow is:
 
-The shared protocol also defines engineering practices for correctness and testing, scientific/numerical fidelity, CPU/GPU/RAM/VRAM optimization, disk I/O and storage, persistence and recovery, concurrency, configuration, security and trust boundaries, Git safety, documentation governance, versioning, and release qualification.
+```text
+software-design
+  -> Implementation Workplan
+software-implementation
+  -> Qualification Handoff
+software-qualification
+  -> Qualification Report / evidence
+software-verification
+  -> MERGE_READY or corrective routing
+```
 
-`source/` contains the canonical shared protocol and role definitions. `dist/` contains the generated, self-contained Agent Skills intended for installation. Generated skills should not be edited independently; changes should be made to the canonical source and rebuilt so both roles remain consistent.
+These are authority roles, not product names. Chat, Codex, CI, a workstation/HPC session, a human, or another agent may occupy a role. Role boundaries remain useful even when one system performs multiple roles sequentially.
+
+`source/` is the canonical protocol library. `dist/` contains generated self-contained Agent Skill ZIPs. Generated packages must never be hand-edited; change canonical source and rebuild/check distributions with `source/build_skills.py`.
+
+Protocol compatibility and the v2-to-v3 transition are defined in `source/shared/references/protocol-versioning-and-compatibility.md`.

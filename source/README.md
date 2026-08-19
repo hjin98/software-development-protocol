@@ -1,18 +1,39 @@
-# Software Development Protocol v2
+# Software Development Protocol v3
 
 This directory is the **canonical source library**, not an installable Agent Skill.
 
-Protocol v2 separates software-development responsibilities into two generated, self-contained role skills while keeping engineering doctrine in one shared source:
+Protocol v3 separates software-development authority into four generated role skills while keeping cross-cutting engineering doctrine in one shared source:
 
-- `software-design-review`: repository inspection, diagnosis, algorithm/architecture design, workplan creation/revision, and post-implementation conformance review.
-- `software-implementation`: bounded workplan revalidation, implementation, focused-to-broad testing, benchmarking/evidence, and normative documentation/version/release closeout.
+- `software-design`: diagnosis, algorithm/architecture selection, invariant/acceptance design, and Implementation Workplan ownership.
+- `software-implementation`: bounded workplan execution, code/test/harness construction, available light validation, candidate closeout, and Qualification Handoff creation.
+- `software-qualification`: source-bound target-environment execution and evidence capture; product source is read-only by default.
+- `software-verification`: independent final conformance/evidence review and merge-readiness decision.
 
-The formal interface between the roles is an **Implementation Workplan**. See `shared/references/workplans-and-agent-handoff.md` and `shared/templates/implementation_workplan_template.md`.
+Formal lifecycle artifacts:
+
+```text
+Implementation Workplan
+  -> Qualification Handoff
+  -> Qualification Report
+  -> Verification Report
+```
+
+See:
+
+- `shared/references/workplans-and-agent-handoff.md`
+- `shared/references/testing-and-qualification.md`
+- `shared/references/protocol-versioning-and-compatibility.md`
 
 Do not hand-edit generated role packages. Edit this canonical source and run:
 
 ```bash
-python build_skills.py --output dist
+python build_skills.py --output ../dist
 ```
 
-The builder copies only the role-relevant shared references/scripts/templates and emits a content-hash manifest in each skill so generated packages can be checked for source drift.
+Before committing/freeze, verify the committed generated distributions are exact:
+
+```bash
+python build_skills.py --output ../dist --check
+```
+
+The builder packages only role-relevant shared references/scripts/templates, emits content-hash manifests, builds deterministic ZIPs, and checks role/template/source drift.
