@@ -1,6 +1,7 @@
 name: Temporary build protocol dist
 
 on:
+  pull_request:
   push:
     branches:
       - feat/protocol-3.1-resource-bounded-qualification
