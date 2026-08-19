@@ -11,6 +11,7 @@ architecture_refs: []
 spec_refs: []
 expected_change_paths: []
 default_gate_approval: AUTO
+candidate_identity_policy: REPLACE_ME
 ---
 
 # <Task> Implementation Workplan
@@ -37,6 +38,16 @@ default_gate_approval: AUTO
 
 - ...
 
+## Candidate identity policy
+
+Define the repository policy/helper or explicit include/exclude classes used to compute `candidate_content_identity`.
+
+- Included product/test/spec/package/generated surfaces: ...
+- Excluded coordination/evidence-only surfaces: ...
+- Dirty/untracked/import-origin controls required for qualification: ...
+
+Do not exclude any path capable of changing build/runtime/scientific/release behavior merely to avoid requalification.
+
 ## Expected change surface
 
 - Source: ...
@@ -54,7 +65,7 @@ default_gate_approval: AUTO
 
 ## Qualification capabilities
 
-Use only capabilities actually required by this workplan:
+Use only capabilities actually required:
 
 - `SOURCE`
 - `LOCAL_LIGHT`
@@ -62,6 +73,16 @@ Use only capabilities actually required by this workplan:
 - `PRODUCTION_DATA`
 - `TARGET_HARDWARE`
 - `EXTERNAL_ACTION`
+
+## Evidence dependency/comparability policy
+
+For expensive evidence that may be reused after a correction, freeze consequential dependency dimensions or require each check to declare them. Ambiguous dependency defaults to rerun.
+
+- Source/candidate components: ...
+- Configuration identity: ...
+- Input identities: ...
+- Environment/backend/device dimensions: ...
+- Upstream check dependencies: ...
 
 ## Gate summary
 
@@ -86,7 +107,11 @@ Use only capabilities actually required by this workplan:
 
 **Qualification:**
 - Capability: `LOCAL_LIGHT`
+- Mandatory for current acceptance: yes
 - Required check/evidence: ...
+- Evidence dependencies: ...
+- Retry mode: `NONE | IDENTICAL_RETRY | CLEAN_RETRY | RESUME_RETRY`
+- Allowed ephemeral output paths/classes: ...
 
 **Evidence:**
 - ...
@@ -94,6 +119,14 @@ Use only capabilities actually required by this workplan:
 **Fallback/rollback:** ...
 
 **Excluded/deferred:** ...
+
+If a check is deferred, record:
+
+```yaml
+mandatory_for_current_acceptance: true|false
+deferred_to: <workplan/release/milestone>
+reason: <why>
+```
 
 ## Design-revision triggers
 
@@ -105,14 +138,17 @@ Stop and report `DESIGN_REVISION_REQUIRED` if implementation would require chang
 
 Before qualification of a release-significant final candidate:
 
-- [ ] Candidate current specifications match the candidate code.
-- [ ] Candidate architecture is updated only for actual target architectural changes.
-- [ ] Candidate history/changelog/version/release metadata is staged according to repository policy.
-- [ ] Required generated permanent docs/artifacts are staged or their target-environment build is declared in the Qualification Handoff.
+- [ ] Candidate current specifications match candidate code.
+- [ ] Candidate architecture updated only for actual target architectural changes.
+- [ ] Candidate history/changelog/version/release metadata staged according to repository policy.
+- [ ] Required tracked generated product artifacts staged before qualification.
+- [ ] Candidate content identity computed and recorded.
+- [ ] Qualification Handoff declares only ephemeral qualification output writes.
 
 ## Final acceptance closeout
 
-- [ ] All mandatory qualification checks PASS.
+- [ ] All checks mandatory for current acceptance PASS.
+- [ ] Any reused evidence has explicit dependency/comparability justification.
 - [ ] Verification report is `MERGE_READY`.
-- [ ] Final evidence records `workplan_id`, `plan_revision`, `workplan_sha256`, source commit, and protocol version.
-- [ ] Workplan is marked/archived only after acceptance.
+- [ ] Final evidence records workplan ID/revision/SHA-256, candidate commit/content identity/policy, and protocol version.
+- [ ] Workplan marked/archived only after acceptance.
