@@ -1,53 +1,27 @@
 ---
 name: software-implementation
-description: Implement a specified software change, especially from an approved Protocol v3 Implementation Workplan. Use for code edits, bounded refactoring within frozen design, test/oracle/property construction, benchmark/instrumentation harnesses, persistence/storage/recovery implementation, concurrency/resource/security hardening, candidate specification/documentation/version/release closeout, and preparation of a source-bound Qualification Handoff. Run cheap/available checks, but do not claim target-environment qualification that was not executed. Escalate frozen-design contradictions rather than redesigning.
+description: Implement a specified software change, especially from an approved Protocol v3 Implementation Workplan. Use for code edits, bounded refactoring within frozen design, test/oracle/property construction, benchmark/instrumentation harnesses, persistence/storage/recovery implementation, concurrency/resource/security hardening, candidate specification/documentation/version/release closeout, candidate-content identity preparation, and creation of a source-bound Qualification Handoff. Run cheap/available checks, but do not claim target-environment qualification that was not executed. Escalate frozen-design contradictions rather than redesigning.
 ---
 
 # Software Implementation
 
 Use this skill as the **implementation authority** of Software Development Protocol v3.
 
-The normal output for substantial work is a candidate source revision plus a **Qualification Handoff**, not a self-declared final acceptance.
+The normal output for substantial work is a prepared candidate plus a **Qualification Handoff**, not a self-declared final acceptance.
 
 ## 1. Bounded workplan preflight
 
-Read:
-
-- the complete governing workplan;
-- `references/workplans-and-agent-handoff.md`;
-- `references/protocol-versioning-and-compatibility.md`;
-- repository/project/Git instructions.
+Read the complete governing workplan, `references/workplans-and-agent-handoff.md`, `references/protocol-versioning-and-compatibility.md`, and repository/project/Git instructions.
 
 Require `READY_FOR_IMPLEMENTATION` or explicitly resumable `IN_PROGRESS`.
 
-Record:
-
-```text
-workplan_id
-plan_revision
-workplan_sha256
-protocol_version
-analysis_base_commit
-current HEAD
-```
-
-Perform bounded stale-plan revalidation only across assumption paths/current authority/target interfaces. Do not repeat repository-wide design merely because HEAD advanced.
-
-If assumptions materially changed, return `BLOCKED: STALE_WORKPLAN`.
+Record workplan ID/revision/SHA-256, protocol version, analyzed base, and current HEAD. Perform bounded stale-plan revalidation only across assumption paths/current authority/target interfaces. If assumptions materially changed, return `BLOCKED: STALE_WORKPLAN`.
 
 ## 2. Respect frozen design
 
 You own local implementation details such as helpers, internal naming, bounded refactors, test fixtures, vectorization mechanics, instrumentation, and equivalent implementation techniques.
 
-Return `DESIGN_REVISION_REQUIRED` rather than changing:
-
-- scientific/numerical semantics;
-- chosen algorithm/architectural ownership;
-- public/API/data/configuration target semantics;
-- persistence/schema/recovery architecture;
-- trust/security model;
-- mandatory resource/acceptance thresholds;
-- material non-goals.
+Return `DESIGN_REVISION_REQUIRED` rather than changing scientific/numerical semantics, chosen architecture, public/API/data/config target semantics, persistence/schema/recovery architecture, trust model, mandatory thresholds, or material non-goals.
 
 ## 3. Implement efficiently across gates
 
@@ -58,19 +32,19 @@ For each gate:
 1. implement the smallest coherent capability;
 2. preserve required compatibility/fallback/oracle paths;
 3. author focused regression/boundary/property tests;
-4. run structural and light checks available in the current environment;
+4. run structural/light checks available in the current environment;
 5. record check status honestly;
-6. prepare later independent gates when the workplan permits batching.
+6. prepare later independent gates when barriers allow.
 
-A mandatory target-environment check being `NOT RUN` does **not** make the gate PASS. It may leave the gate implementation `PREPARED` while qualification remains pending.
+A mandatory target-environment check being `NOT RUN` does not make the gate PASS. It may leave implementation `PREPARED` while qualification remains pending.
 
-Do not cross a gate with `qualification_barrier: yes` until its mandatory qualification has passed.
+Do not cross `qualification_barrier: yes` until mandatory qualification for that barrier passes.
 
 ## 4. Validation available to implementation
 
 Read `references/testing-and-qualification.md`.
 
-Implementation should normally execute what is cheap and available:
+Normally execute what is cheap/available:
 
 ```text
 structural sanity
@@ -79,72 +53,94 @@ structural sanity
 -> local consumer/integration checks
 ```
 
-Author but do not fabricate results for:
+Author but do not fabricate results for unavailable `TARGET_RUNTIME`, `PRODUCTION_DATA`, `TARGET_HARDWARE`, or `EXTERNAL_ACTION` checks.
+
+## 5. Freeze the candidate identity before handoff
+
+Read `references/protocol-versioning-and-compatibility.md`.
+
+Before qualification, establish:
 
 ```text
-TARGET_RUNTIME
-PRODUCTION_DATA
-TARGET_HARDWARE
-EXTERNAL_ACTION
+candidate_ref
+candidate_commit
+candidate_content_identity
+candidate_identity_policy
 ```
 
-when unavailable.
+The policy must include all product-relevant source/tests/spec/package/build/config/schema/tracked generated product surfaces and exclude only declared evidence/coordination-only paths.
 
-Reuse authenticated baselines where the workplan permits and their identity remains applicable.
+Do not exclude a file that can affect build, runtime, scientific result, packaging, policy, or shipped product merely to avoid requalification.
 
-## 5. Candidate closeout before target qualification
+Ensure the qualification starting state can be proven clean: no staged/tracked candidate changes and no undeclared untracked/shadowing source expected to affect execution.
 
-For release-significant final candidates, stage the exact source state that qualification should test:
+## 6. Candidate closeout before target qualification
+
+For release-significant final candidates, stage the exact source state qualification should test:
 
 - candidate specification-code parity;
-- candidate architecture changes only where target architecture changed;
-- candidate history/changelog/version/release metadata;
-- required generated permanent docs/artifacts when buildable locally;
-- packaging/build changes and tests.
+- architecture changes only where target architecture changed;
+- history/changelog/version/release metadata;
+- package/build state;
+- tracked generated product artifacts.
 
-These candidate documents are not accepted current authority merely because they exist on the feature branch. Verification decides whether the candidate may be accepted/merged.
+Tracked candidate outputs must be created/committed **before** qualification. If target environment is required to generate one, qualification may produce only a proposed ephemeral artifact; adopt it here, commit a new candidate, and requalify affected checks.
 
-Avoid post-qualification candidate mutations that would invalidate evidence.
-
-## 6. Prepare the Qualification Handoff
+## 7. Prepare the Qualification Handoff
 
 Use `templates/qualification_handoff_template.md`.
 
-Bind:
+Bind protocol/workplan identity, candidate ref/commit/content identity/policy, prepared gates, capabilities, exact command/cwd, environment/input prerequisites, expected result, evidence paths, output class/write paths, evidence dependencies, and retry policy.
+
+Default:
 
 ```text
-protocol_version
-workplan_id/revision/SHA-256
-source ref/commit
-implemented/prepared gates
-required capability per check
-exact command and working directory
-environment/data/hardware prerequisites
-expected result
-evidence/output paths
-allowed retries/side effects
-allowed write paths
+product_source_mutation: FORBIDDEN
 ```
-
-Default `product_source_mutation: FORBIDDEN`.
 
 Batch independent expensive checks into the smallest target-environment session consistent with fault isolation.
 
-Do not hand the qualification role a broad instruction such as “finish the workplan.” Give it the exact remaining execution contract.
+Do not give qualification a broad instruction such as "finish the workplan".
 
-## 7. Qualification failures returning to implementation
+## 8. Evidence dependencies and invalidation
+
+For each expensive check, declare source/config/input/environment/upstream dependencies sufficiently to evaluate reuse after a correction.
+
+When candidate content changes:
+
+1. preserve old evidence as historical evidence for the old candidate;
+2. compute the changed candidate/config/input/environment dimensions;
+3. invalidate every check whose dependency set intersects the change;
+4. if dependency is ambiguous, invalidate by default;
+5. issue a new candidate-bound handoff for required reruns.
+
+Verification audits nontrivial reuse decisions.
+
+## 9. Qualification failures returning to implementation
 
 When qualification returns `RETURN_TO_IMPLEMENTATION`:
 
-- consume the exact failing command/log/environment/source identity;
+- consume the exact failing command/log/environment/candidate identity;
 - diagnose the smallest implementation defect;
-- patch source/tests/handoff;
-- invalidate only evidence affected by the source delta;
-- issue a new source-bound Qualification Handoff.
+- patch candidate/tests/handoff;
+- recompute candidate content identity;
+- invalidate affected evidence only when dependencies justify reuse of the rest;
+- issue a new Qualification Handoff.
 
-If resolution requires changing frozen design, route to `software-design`.
+If resolution changes frozen design, route to `software-design`.
 
-## 8. Workplan status
+## 10. Retry policy ownership
+
+Implementation may select among workplan-permitted retry mechanics when they do not change frozen semantics:
+
+- `NONE`
+- `IDENTICAL_RETRY`
+- `CLEAN_RETRY`
+- `RESUME_RETRY`
+
+Specify allowed cleanup/resume state. A change to scientific/config/resource/backend/dataset policy or candidate content is a new handoff/design decision, not a retry.
+
+## 11. Workplan status
 
 Typical substantial lifecycle:
 
@@ -154,17 +150,10 @@ READY_FOR_IMPLEMENTATION
 -> PREPARED_FOR_QUALIFICATION
 ```
 
-Do not mark the workplan `COMPLETE`; final acceptance belongs to verification after mandatory qualification.
+Treat workplan-level status as derived from actual gate states where structured. Do not mark `READY_FOR_VERIFICATION` while any current mandatory qualification is `NOT RUN`, `FAIL`, `BLOCKED`, or blocking `DEFERRED`.
+
+Do not mark the workplan `COMPLETE`; final acceptance belongs to verification.
 
 ## Completion report
 
-Report:
-
-- workplan identity/digest consumed;
-- source commit produced;
-- gates implementation-prepared vs blocked;
-- local checks actually run;
-- mandatory qualification still pending;
-- candidate docs/release surfaces staged;
-- Qualification Handoff path/digest;
-- repository branch/worktree state.
+Report workplan identity/digest, candidate commit/content identity/policy, gates prepared vs blocked, local checks actually run, mandatory qualification pending, candidate closeout surfaces staged, evidence dependency/retry declarations, Qualification Handoff path/digest, and repository branch/worktree state.
