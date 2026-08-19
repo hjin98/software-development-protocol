@@ -8,7 +8,10 @@ Keep artifact types distinct:
 
 - **Architecture manual** - accepted current architecture: theory/context, ownership, dependency direction, components, invariants, current data/control flow, persistence/resource/security boundaries, and accepted design rationale.
 - **Specification** - normative description of behavior the current accepted code base actually implements: data/API/file/CLI contracts, errors, compatibility, persistence, numerical conventions, and acceptance semantics.
-- **Implementation Workplan** - temporary execution contract for a proposed transition: diagnosis, frozen design, non-goals, implementation gates, acceptance criteria, handoff revision/base commit, and execution status. Workplans are not product documentation and are normally Markdown-only.
+- **Implementation Workplan** - temporary design-to-implementation contract for a proposed transition: diagnosis, frozen design, non-goals, implementation/qualification gates, acceptance criteria, handoff revision/base commit, and execution status. Workplans are not product documentation and are normally Markdown-only.
+- **Qualification Handoff** - temporary source-bound execution contract containing the exact candidate SHA, workplan identity, required capabilities, commands, inputs, expected evidence, allowed writes/side effects, and failure routing. It is not acceptance evidence.
+- **Qualification Report** - correctness/performance/environment evidence produced by executing a Qualification Handoff against an exact source candidate. It records commands, environment, result states, artifacts, measurements, and source immutability.
+- **Verification Report** - independent acceptance record binding the exact candidate, governing workplan, qualification evidence, gate decisions, findings, and final `MERGE_READY | NOT_READY | DESIGN_REVISION_REQUIRED` outcome.
 - **User/API guide/runbook** - how to use or operate stable implemented behavior.
 - **Benchmark report** - reproducible performance/resource measurements and environment.
 - **Audit/qualification report** - evidence that a specific requirement/gate/release passed, failed, or was blocked.
@@ -24,12 +27,21 @@ Use this separation consistently:
 ```text
 accepted current structure -> architecture manual
 accepted current behavior -> specification
-proposed transition + execution gates -> implementation workplan
-correctness/performance evidence -> audit/benchmark/evidence artifacts
+proposed transition + implementation/qualification gates -> implementation workplan
+source-bound execution contract -> qualification handoff
+executed correctness/performance/environment evidence -> qualification report + audit/benchmark artifacts
+independent acceptance decision -> verification report
 completed chronology -> history/changelog/release notes
 ```
 
 Do not put task-local gate tables, "next stage" statements, implementation status, or version-by-version chronology in architecture manuals. Do not put unimplemented future contracts in current normative specifications. Future target behavior belongs in the active workplan until it is implemented and accepted.
+
+
+### Candidate branch closeout versus accepted authority
+
+Protocol v3 permits `software-implementation` to stage the exact candidate specification/architecture/version/release/generated-document state **on the feature branch before target qualification** so qualification can exercise the same source that verification may later accept.
+
+This does not make the branch-local documents accepted current authority. Until verification returns `MERGE_READY` and the candidate is accepted/merged, they remain candidate closeout surfaces governed by the workplan. Do not mutate the candidate after qualification merely to perform documentation/version closeout; such a mutation changes source identity and may invalidate evidence.
 
 ## Specification-code parity is mandatory
 
@@ -43,7 +55,7 @@ When implementation changes a specified API, schema, default, algorithmic contra
 4. update compatibility/deprecation/migration text where needed;
 5. do not mark the workplan complete while code and specification disagree.
 
-If an implementation legitimately diverges from the target described in the workplan, the design/review role must first accept a revised workplan or explicitly approve the changed target. Do not mutate the normative specification early to make an unfinished implementation appear accepted.
+If an implementation legitimately diverges from the target described in the workplan, `software-design` must first accept a revised workplan or explicitly approve the changed target. Do not mutate the normative specification early to make an unfinished implementation appear accepted.
 
 Historical documents never excuse a stale current specification.
 
@@ -224,6 +236,8 @@ A useful gate/audit record contains:
 Context/version
 Requirement or workplan/gate ID
 Workplan ID/revision/SHA-256 when applicable
+Qualification Handoff ID/SHA-256 when applicable
+Exact source commit
 Changed surfaces
 Commands/tests executed
 Inputs/fixtures/seeds
@@ -255,7 +269,7 @@ For expensive, resumable, scientifically important, release-significant, or othe
 Keep the manifest machine-readable when automation consumes it. Do not place credentials or secrets in it. A useful provenance relation is:
 
 ```text
-source + workplan + inputs + resolved configuration + environment -> outputs/evidence
+source + workplan + qualification handoff + inputs + resolved configuration + environment -> outputs/evidence -> verification decision
 ```
 
 Do not require heavyweight manifests for trivial unit-test-only edits.
@@ -285,3 +299,15 @@ For installation/engine details, use current official documentation:
 - Pandoc installation: https://pandoc.org/installing.html
 - Pandoc PDF engine documentation: https://pandoc.org/MANUAL.html
 - Typst compiler installation: https://typst.app/open-source/
+
+
+## Protocol v3 evidence ownership
+
+For substantial work:
+
+- `software-design` owns the target workplan and may revise frozen semantics;
+- `software-implementation` owns candidate source and stages candidate closeout, tests, harnesses, and the Qualification Handoff;
+- `software-qualification` owns execution evidence and must keep product source read-only by default;
+- `software-verification` owns final acceptance and may update coordination/evidence lifecycle state, but should not repair substantial product source while reviewing.
+
+A source mutation after qualification creates a new candidate identity. Preserve old reports as historical evidence for the old source; do not relabel them as qualification of the new source.
