@@ -1,0 +1,40 @@
+name: Rebuild Protocol dist once
+
+on:
+  push:
+    branches:
+      - agent/protocol-v3-role-split
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/protocol-v3-role-split
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate canonical protocol
+        run: |
+          python source/check_protocol_semantics.py
+          python source/check_protocol_lifecycle_cases.py
+      - name: Rebuild and verify generated distributions
+        run: |
+          python source/build_skills.py --output dist
+          python source/build_skills.py --output dist --check
+      - name: Publish generated distributions and remove one-shot workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dist
+          git rm .github/workflows/rebuild-dist-once.yml
+          if git diff --cached --quiet; then
+            echo "No generated distribution changes"
+            exit 0
+          fi
+          git commit -m "Protocol v3: rebuild generated skill distributions"
+          git push origin HEAD:agent/protocol-v3-role-split
