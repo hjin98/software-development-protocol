@@ -2,175 +2,193 @@
 
 ## Terminology and role boundary
 
-Protocol v3 distinguishes the mechanism from the authority decision:
+Protocol v3 distinguishes:
 
-- **test/check** — an executable or inspectable mechanism that produces evidence;
-- **qualification** — source-bound execution of required checks in a declared environment, with PASS/FAIL/BLOCKED/NOT RUN/DEFERRED evidence;
-- **verification** — independent review that the exact candidate plus qualification evidence satisfies the frozen workplan/current contracts and deserves acceptance.
+- **test/check** — executable or inspectable mechanism producing evidence;
+- **qualification** — source-bound execution of required checks in a declared environment;
+- **verification** — independent review that exact candidate content plus evidence satisfies the frozen workplan/current contracts and deserves acceptance.
 
-Implementation normally authors tests/harnesses and may run cheap available checks. `software-qualification` owns target-environment execution/evidence. `software-verification` decides final acceptance. Do not let the same word `verification` ambiguously mean both a unit test and the final acceptance role.
-
+Implementation authors tests/harnesses and may run cheap available checks. `software-qualification` owns declared target-environment execution/evidence. `software-verification` decides final acceptance.
 
 ## Evidence ladder
 
-Choose checks proportional to the change, then run from local to broad so failures are cheap to diagnose.
+Run proportional checks from cheap/local to broad:
 
-### Level 1 - Structural sanity
+1. **Structural sanity** — syntax/import/compile, formatter/linter/type, schema/config, generated-file/document parity.
+2. **Focused behavior** — unit/regression/boundary/malformed-input/deterministic-error tests.
+3. **Contract/oracle/property** — trusted oracle, randomized/property, metamorphic/invariance, tolerance-qualified numerical equivalence.
+4. **Consumer/integration** — final observable behavior through affected consumers, including persistence/state sequences.
+5. **Broad regression/distribution** — subsystem/full suite, controlled build, artifact inspection, isolated install, installed behavior.
+6. **Production/environment qualification** — real data, realistic scale, target accelerators/HPC/services/user workflows.
 
-- syntax/import/compile checks;
-- formatter/linter/type checks used by the repository;
-- schema/config validation;
-- generated-file consistency checks;
-- documentation parity checks: current specification vs accepted implemented signatures/defaults where automatable, current architecture parity where architecture changed, and Markdown/PDF content-provenance manifest verification.
+Do not compare only digests/state when two wrong implementations could agree.
 
-### Level 2 - Focused behavior
+## Evidence states
 
-- unit tests for changed functions/classes;
-- regression test reproducing each bug;
-- boundary and malformed-input cases;
-- deterministic error/warning behavior.
+Each required check is exactly one of:
 
-### Level 3 - Contract/oracle/property verification
+- `PASS`
+- `FAIL`
+- `BLOCKED`
+- `NOT RUN`
+- `DEFERRED`
 
-Use when correctness is broader than example fixtures:
+A blocked/not-run check is not a pass.
 
-- compare optimized/new backend against a trusted reference/oracle;
-- randomized/property tests over valid input spaces;
-- metamorphic/invariance tests (permutation, basis, coordinate, serialization round-trip, etc.);
-- tolerance-qualified numerical equivalence with justified tolerances;
-- fixed seeds plus reproduction payloads for randomized failures.
+For `DEFERRED`, record:
 
-Do not compare only digests/state if two wrong implementations could agree.
+```yaml
+mandatory_for_current_acceptance: true|false
+deferred_to: <workplan/release/milestone>
+reason: <why>
+```
 
-### Level 4 - Consumer/integration verification
+A deferred check mandatory for current acceptance blocks final acceptance.
 
-Test final observable behavior through affected consumers, not only low-level kernels. Include multi-step state/caching/persistence sequences when applicable.
+Implementation may prepare later independent gates while qualification is pending only when `qualification_barrier: no`. Verification never converts missing mandatory evidence into PASS.
 
-### Level 5 - Broad regression and distribution
+## Qualification candidate identity
 
-Run subsystem/full tests when the change surface warrants it. For distributable changes, read `release-and-distribution.md`: build from a controlled/clean source state, inspect produced artifact contents, install into an isolated environment, and exercise the installed artifact outside the checkout.
+Read `protocol-versioning-and-compatibility.md`.
 
-For release-significant candidates, qualification should exercise the **staged candidate closeout** rather than inventing it: specification/code parity, architecture only where the target architecture changed, history/version metadata, required generated Markdown/PDF/provenance artifacts, and package contents should already be present in the exact candidate or explicitly declared as generated outputs in the Qualification Handoff. Bind release evidence to the governing workplan and source identity.
+A Qualification Handoff binds:
 
-### Level 6 - Production-like/environment-specific qualification
+```text
+candidate_commit
+candidate_content_identity
+candidate_identity_policy
+workplan identity/digest
+```
 
-Use real data, realistic sizes, target accelerators/HPC runtime, external services, or user workflows only after internal gates pass. Record exact environment and artifact versions.
+Before executing:
 
-## Blocking semantics
+- verify checkout provenance and candidate content identity;
+- verify no staged/tracked modifications on candidate surfaces;
+- reject undeclared untracked files capable of affecting import/build/runtime;
+- verify submodule/LFS state when applicable;
+- control/record cwd and import/source origin where material;
+- verify required inputs/environment/hardware.
 
-Classify each required check as:
+After execution, recompute candidate identity and verify only declared ephemeral/write paths changed.
 
-- **PASS** - executed and met acceptance criteria;
-- **FAIL** - executed and violated criteria;
-- **BLOCKED** - required but environment/dependency/data prevents execution;
-- **NOT RUN** - intentionally omitted with rationale;
-- **DEFERRED** - explicitly outside the current gate/release.
+`HEAD == candidate_commit` alone is not sufficient source identity.
 
-A blocked or not-run check is not a pass. It cannot satisfy final gate acceptance.
+## Qualification output classes
 
-Implementation may still prepare later independent gates while qualification is pending when the workplan declares `qualification_barrier: no`. A gate with `qualification_barrier: yes` blocks dependent implementation until mandatory qualification passes. Verification never converts missing mandatory evidence into PASS.
+- `EPHEMERAL_QUALIFICATION_OUTPUT` — logs, reports, build scratch, temporary packages, profiles, benchmark outputs and similar non-product evidence. May be written only in declared paths.
+- `TRACKED_CANDIDATE_OUTPUT` — tracked generated product/release artifacts included in candidate identity. Qualification must not create/change them.
 
-## Qualification handoff and source identity
-
-Target-environment qualification should consume a v3 Qualification Handoff rather than a broad workplan instruction. The handoff binds the exact source commit, workplan identity/digest, required capability, command/cwd, inputs, expected result, evidence path, retry policy, and allowed side effects.
-
-Before executing a check:
-
-- verify the candidate source equals the handoff `source_commit`;
-- verify required inputs/environment/hardware are available;
-- keep product source read-only unless the handoff explicitly declares a generated-output action;
-- record exact environment/backend/device/precision when material.
-
-If product source changes, old evidence remains evidence for the old source. Issue a new handoff/report for the new source and rerun checks affected by the delta.
-
-## Expensive qualification batching and evidence reuse
-
-When target-environment execution is expensive:
-
-- batch independent mandatory checks into the smallest number of sessions consistent with fault isolation;
-- prepare deterministic commands, fixtures, expected outputs, evidence paths, and failure-capture instructions before handoff;
-- reuse authenticated baselines/evidence when the governing comparability identity (source/input/method/environment as applicable) remains compatible;
-- after a source correction, rerun the affected dependency set rather than blindly repeating unrelated expensive production checks;
-- never reuse evidence merely because a filename, branch name, or agent session is the same.
-
-Cost optimization never authorizes reduced scientific fidelity, smaller substitutes for required production scale, or backend inference unless the workplan explicitly defines those checks as sufficient.
+If target execution is needed to generate a tracked product artifact, produce it only as proposed ephemeral output, return to implementation, commit a new candidate and rerun affected qualification.
 
 ## Regression design
 
-- Test the failure mechanism, not merely the reported example when a broader invariant caused the bug.
-- Keep tests deterministic and small by default; mark slow/external tests distinctly.
-- Avoid asserting incidental implementation details unless they are intentional contracts.
-- For caches/schedulers/concurrency, test state transitions, identity/invalidation, retries/backoff, deterministic output ordering, interrupted/partial state, and restart/resume behavior.
-- For parsers, include malformed, ambiguous, empty/minimal, boundary, and representative real-format fixtures.
-- For compatibility, test legacy forms as long as they are supported.
+- Test the failure mechanism, not only the reported example.
+- Keep tests deterministic/small by default; mark slow/external tests distinctly.
+- Avoid incidental implementation-detail assertions unless contractual.
+- For caches/schedulers/concurrency, test state transitions, invalidation, retries/backoff, deterministic ordering, interrupted/partial state and restart/resume.
+- For parsers, include malformed, ambiguous, empty/minimal, boundary and representative real fixtures.
+- For compatibility, retain historical supported forms.
 
 ## Numerical/scientific verification
 
-- Define exact equality vs absolute/relative tolerance per quantity.
-- Compare scientifically meaningful final observables as well as intermediate kernels when both matter.
-- Test invariants (conservation, symmetry, periodicity, positive-definiteness, normalization, monotonicity) where they are stronger than fixtures.
-- Record precision/dtype/backend in evidence when it affects results.
+- Define exact equality versus justified absolute/relative tolerance per quantity.
+- Compare meaningful final observables as well as intermediate kernels when both matter.
+- Test invariants such as conservation, symmetry, periodicity, positive-definiteness, normalization and monotonicity.
+- Record precision/dtype/backend when material.
 
 ## Performance qualification
 
-A performance test is not a correctness test. Require correctness first, then benchmark.
+Correctness precedes performance.
 
-- Warm up JIT/GPU/cache paths when relevant.
-- Use repeated measurements and robust summaries such as median; include dispersion when decisions are close.
-- Record input size/distribution, environment, versions, threads/workers, backend, precision, and memory metric.
-- Compare runtime, peak/transient memory, and I/O/on-disk footprint if optimization may trade among them.
-- Benchmark representative and adversarial workloads; do not tune only to one convenient fixture. Include cold-load/warm-cache and restart/recovery paths when they materially affect production cost.
-- Set automatic crossover/default policy conservatively and keep explicit override/fallback.
+- Warm JIT/GPU/cache paths where relevant.
+- Use repeated measurements and robust summaries; include dispersion when decisions are close.
+- Record input size/distribution, environment, versions, threads/workers, backend, precision and memory metric.
+- Compare runtime, peak/transient memory and I/O/disk footprint when tradeoffs matter.
+- Benchmark representative and adversarial workloads; include cold/warm/restart paths when production-relevant.
+- Keep conservative crossover/default policy and explicit fallback.
 
+Authenticated baseline evidence may be reused only when the governing source/input/method/environment comparability dimensions remain compatible.
 
-## Persistence and recovery verification
+## Evidence dependencies and reuse
 
-When a change creates or reuses material persisted state, add failure/recovery coverage proportional to risk:
+Expensive check reuse must be dependency-bound.
 
-- stale identity or incompatible schema/version;
+Declare as applicable:
+
+```yaml
+evidence_dependencies:
+  source_paths: []
+  candidate_identity_components: []
+  config_identity: []
+  inputs: []
+  environment_dimensions: []
+  upstream_checks: []
+```
+
+After candidate/config/input/environment change:
+
+- invalidate checks whose dependencies intersect the change;
+- preserve unrelated evidence only when dependency compatibility is explicit;
+- if dependency is ambiguous, rerun by default;
+- record reuse rationale in the Qualification Report;
+- let verification audit nontrivial reuse.
+
+Do not reuse evidence because branch/file/session names happen to match.
+
+## Retry semantics
+
+Each check declares one retry mode:
+
+- `NONE`
+- `IDENTICAL_RETRY`
+- `CLEAN_RETRY`
+- `RESUME_RETRY`
+
+Record every attempt, cleanup/resume state, command/config identity and result.
+
+A retry that changes candidate content or undeclared scientific/config/resource/backend/dataset policy is not a retry under the same handoff. Issue a new handoff or request design revision.
+
+Deleting caches/checkpoints before retry is allowed only when the handoff's `CLEAN_RETRY` policy explicitly authorizes that state cleanup. Resuming is allowed only under declared `RESUME_RETRY` state semantics.
+
+## Persistence and recovery qualification
+
+When material persisted state changes, test proportional risks:
+
+- stale identity/incompatible schema;
 - truncated/partial/corrupt artifact;
-- interrupted checkpoint/cache publication;
-- restart from the latest valid state and equivalence with uninterrupted execution;
+- interrupted publication;
+- restart from latest valid state and equivalence with uninterrupted execution;
 - cache hit/miss/invalidation reason;
-- storage admission/low-space failure where feasible;
-- concurrent writer/cache-creation collision;
-- cleanup that preserves authoritative/external inputs.
+- storage admission/low-space where feasible;
+- concurrent writer/cache collision;
+- cleanup preserving authoritative/external inputs.
 
-Do not treat a clean-start test as evidence that a resumable workflow is correct.
+A clean-start test is not evidence for resumability.
 
-## Production/user acceptance
+## Security/trust-boundary qualification
 
-After all internal gates pass, invite or run a production-like test on real data when it can expose integration, deployment, scale, or domain issues unavailable locally. Treat findings as new evidence: reproduce, fix, add regression coverage, and re-run affected gates.
+When material trust boundaries change, test archive path/symlink escape, unsafe-deserialization rejection, subprocess argv handling, secret redaction, output-root enforcement, malformed-resource admission, stale/tampered persistence and renderer/plugin restrictions as applicable.
 
-## Security/trust-boundary verification
+Do not claim absolute security; state exercised boundaries/failure modes.
 
-When a change crosses a material trust boundary, read `references/security-and-trust-boundaries.md` and add focused tests proportional to the capability exposed. Examples include archive path/symlink escape, unsafe-deserialization rejection, subprocess argv handling, secret redaction, output-root enforcement, malformed-resource admission, stale/tampered persistence, and renderer/plugin restrictions. Do not claim absolute security; report what boundary and failure modes were actually exercised.
+## Configuration and orchestration qualification
 
+When configuration/concurrency changes, test canonical precedence/default/override resolution, stable resolved-config identity, semantic cache invalidation, serial-vs-concurrent equivalence/order, failure propagation, bounded retry/backoff, cancellation/preemption/cleanup, backpressure/resource ownership and READ/MIGRATE/REJECT compatibility.
 
-## Configuration and orchestration verification
+## Release/distribution qualification
 
-When configuration or concurrent orchestration changes, add evidence proportional to risk:
-
-- canonical precedence/default/override resolution and redaction;
-- stable resolved-configuration serialization/digest;
-- semantic cache invalidation when configuration changes;
-- serial-vs-concurrent equivalence and deterministic ordering;
-- worker failure propagation, bounded retry/backoff, cancellation/preemption, and cleanup;
-- queue/backpressure/resource-ownership behavior;
-- reader/artifact schema READ/MIGRATE/REJECT compatibility where durable state evolves.
-
-Read `configuration-and-policy.md` and `concurrency-and-orchestration.md` for the owning contracts.
-
+For distributable candidates, build from controlled candidate content, inspect artifact contents, install into an isolated environment and exercise installed behavior outside the checkout. Candidate specification/architecture/history/version/package/tracked generated product artifacts should already belong to the candidate identity or be returned to implementation before acceptance.
 
 ## Verification acceptance review
 
-After qualification, `software-verification` should independently check that:
+After qualification, `software-verification` independently checks:
 
-- each mandatory acceptance clause maps to executed evidence at the required capability;
-- evidence is bound to the candidate source and governing workplan/handoff;
-- new/optimized behavior is compared against an independent oracle/observable where required;
-- blocked/not-run/deferred checks are represented honestly;
-- performance claims use comparable methodology and do not hide setup/I/O/recovery costs that matter;
-- release/install/documentation evidence applies to the exact merge candidate.
+- every mandatory acceptance clause maps to executed evidence at the required capability;
+- candidate content identity and dirty-tree/source-origin evidence are coherent;
+- evidence reuse dependencies justify any retained old result;
+- retries stayed within declared policy;
+- blocked/not-run/blocking-deferred checks are represented honestly;
+- performance claims are comparable and include material setup/I/O/recovery costs;
+- release/install/documentation evidence applies to the exact candidate content identity.
 
 A Qualification Report is evidence, not self-validating authority.
