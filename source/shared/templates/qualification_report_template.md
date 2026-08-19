@@ -7,7 +7,9 @@ qualification_handoff_sha256: REPLACE_ME
 workplan_id: REPLACE_ME
 plan_revision: REPLACE_ME
 workplan_sha256: REPLACE_ME
-source_commit: REPLACE_ME
+candidate_commit: REPLACE_ME
+candidate_content_identity: REPLACE_ME
+candidate_identity_policy: REPLACE_ME
 overall_status: NOT_RUN
 ---
 
@@ -19,13 +21,24 @@ overall_status: NOT_RUN
 - Dependencies:
 - CPU/GPU/HPC/backend:
 - Precision/device:
-- Relevant environment/configuration identity:
+- Relevant configuration/environment identity:
+- Working directory:
+- Import/source origins where material:
+
+## Candidate preflight
+
+- `HEAD == candidate_commit`: ...
+- Candidate content identity recomputed/matched: ...
+- Candidate tracked/staged state clean: ...
+- Undeclared untracked execution-affecting files absent: ...
+- Submodule/LFS identity checked if applicable: ...
+- Notes/exceptions: ...
 
 ## Check results
 
-| Check | Gate(s) | Capability | Status | Command/evidence |
-|---|---|---|---|---|
-| Q1 | ... | TARGET_RUNTIME | NOT_RUN | ... |
+| Check | Gate(s) | Capability | Mandatory now | Status | Exit | Attempts | Command/evidence |
+|---|---|---|---|---|---|---|---|
+| Q1 | ... | TARGET_RUNTIME | yes | NOT_RUN | - | 0 | ... |
 
 Allowed check states:
 
@@ -37,7 +50,45 @@ NOT RUN
 DEFERRED
 ```
 
-`overall_status: PASS` is permitted only when every mandatory check executed and passed.
+For `DEFERRED`, record whether it is mandatory for current acceptance and the explicit target milestone/workplan.
+
+`overall_status: PASS` is permitted only when every check mandatory for current acceptance executed and passed.
+
+## Per-check execution provenance
+
+For every executed check record:
+
+- check ID;
+- exact command and cwd;
+- start/end timestamp;
+- exit code;
+- attempt number and retry mode;
+- input/fixture identities;
+- source/config/environment/backend/device identity;
+- stdout/stderr/log locations and digests when retained;
+- measurements/artifacts and digests;
+- result state and rationale.
+
+## Retry history
+
+- Mode used: `NONE | IDENTICAL_RETRY | CLEAN_RETRY | RESUME_RETRY`
+- Attempts:
+- Cleanup/resume state used:
+- Confirm no undeclared policy/candidate change occurred: ...
+
+Any retry that changed candidate product content or undeclared scientific/configuration/resource/backend/dataset policy invalidates execution under this handoff.
+
+## Evidence reuse
+
+For reused prior evidence record:
+
+- prior report/evidence identity;
+- declared dependency set;
+- changed candidate/config/input/environment dimensions;
+- why dependencies remain compatible;
+- verification-required note when reuse is nontrivial.
+
+Ambiguous dependency is not reusable evidence.
 
 ## Failures/blockers
 
@@ -49,6 +100,12 @@ DEFERRED
 
 - ...
 
-## Source immutability
+## Candidate postflight / source immutability
 
-Record whether product source remained unchanged during qualification. If it changed, this report cannot qualify the new source revision; issue a new handoff/report for that source.
+- Candidate content identity unchanged: ...
+- Tracked candidate source/output unchanged: ...
+- Only declared ephemeral/write paths changed: ...
+- Undeclared untracked execution-affecting files absent: ...
+- Post-run import/source origin state if material: ...
+
+If candidate product content changed, this report cannot qualify the new candidate; issue a new candidate/handoff/report after implementation adopts the change.
