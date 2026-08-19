@@ -22,6 +22,7 @@ CORE = [
     "workplans-and-agent-handoff.md",
     "protocol-versioning-and-compatibility.md",
     "testing-and-qualification.md",
+    "resource-bounded-execution.md",
 ]
 
 ROLE_SPECS = {

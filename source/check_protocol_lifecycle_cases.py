@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Synthetic lifecycle cases for the materiality-first Protocol v3."""
+"""Synthetic lifecycle cases for materiality-first Protocol v3.1."""
 
 from __future__ import annotations
 
@@ -48,6 +48,38 @@ def qualification_may_change(*, product_semantics: bool, harness_only: bool) -> 
     return harness_only and not product_semantics
 
 
+def resource_outcome(
+    *,
+    hard_limit_hit: bool = False,
+    material_product_measurement: bool = False,
+    product_requirement_violated: bool = False,
+    minimum_material_workload_fits: bool = True,
+) -> str:
+    if material_product_measurement and product_requirement_violated:
+        return "PRODUCT_FAIL"
+    if not minimum_material_workload_fits:
+        return "BLOCKED"
+    if hard_limit_hit:
+        return "HARNESS_ADAPT"
+    return "CONTINUE"
+
+
+def optional_defect_blocks(*, needed_for_safety_or_interpretation: bool) -> bool:
+    return needed_for_safety_or_interpretation
+
+
+def production_scale_required(*, bounded_representative_evidence_sufficient: bool) -> bool:
+    return not bounded_representative_evidence_sufficient
+
+
+def cleanup_policy(*, owned_transient: bool, compact_failure_evidence_saved: bool) -> str:
+    if owned_transient and compact_failure_evidence_saved:
+        return "CLEAN"
+    if not owned_transient:
+        return "DO_NOT_DELETE"
+    return "PRESERVE_UNTIL_COMPACTED"
+
+
 def main() -> int:
     # Mandatory missing execution never passes.
     assert not check_passes(Check(required=True, executed=False, passed=True))
@@ -75,7 +107,32 @@ def main() -> int:
     assert broad_failure_blocks(candidate_caused=False, globally_green_policy=True)
     assert not broad_failure_blocks(candidate_caused=False, globally_green_policy=False)
 
-    print("PASS: Protocol v3 materiality lifecycle cases")
+    # Oversized qualification adapts; it is not automatically a product failure.
+    assert resource_outcome(hard_limit_hit=True) == "HARNESS_ADAPT"
+
+    # Minimum material workload that cannot safely fit is an environment blocker.
+    assert resource_outcome(minimum_material_workload_fits=False) == "BLOCKED"
+
+    # A genuine frozen product resource requirement remains enforceable.
+    assert resource_outcome(
+        material_product_measurement=True,
+        product_requirement_violated=True,
+    ) == "PRODUCT_FAIL"
+
+    # Secondary/advisory observability does not block unless materially needed.
+    assert not optional_defect_blocks(needed_for_safety_or_interpretation=False)
+    assert optional_defect_blocks(needed_for_safety_or_interpretation=True)
+
+    # Do not demand production replay when bounded representative evidence suffices.
+    assert not production_scale_required(bounded_representative_evidence_sufficient=True)
+    assert production_scale_required(bounded_representative_evidence_sufficient=False)
+
+    # Preserve compact failure evidence, then clean only clearly owned transient data.
+    assert cleanup_policy(owned_transient=True, compact_failure_evidence_saved=True) == "CLEAN"
+    assert cleanup_policy(owned_transient=True, compact_failure_evidence_saved=False) == "PRESERVE_UNTIL_COMPACTED"
+    assert cleanup_policy(owned_transient=False, compact_failure_evidence_saved=True) == "DO_NOT_DELETE"
+
+    print("PASS: Protocol v3.1 materiality/resource lifecycle cases")
     return 0
 
 
