@@ -1,18 +1,23 @@
-# Software Development Protocol v2
+# Software Development Protocol v3
 
-This directory is the **canonical source library**, not an installable Agent Skill.
+This directory is the canonical source library for Protocol v3.
 
-Protocol v2 separates software-development responsibilities into two generated, self-contained role skills while keeping engineering doctrine in one shared source:
+Protocol v3 separates four software-development authorities:
 
-- `software-design-review`: repository inspection, diagnosis, algorithm/architecture design, workplan creation/revision, and post-implementation conformance review.
-- `software-implementation`: bounded workplan revalidation, implementation, focused-to-broad testing, benchmarking/evidence, and normative documentation/version/release closeout.
+- `software-design` — diagnosis, target design, invariants, and acceptance-critical requirements;
+- `software-implementation` — product/test/harness construction under the frozen target;
+- `software-qualification` — execution of required checks in the needed environment, with harmless harness corrections allowed;
+- `software-verification` — final material conformance/evidence review and merge-readiness decision.
 
-The formal interface between the roles is an **Implementation Workplan**. See `shared/references/workplans-and-agent-handoff.md` and `shared/templates/implementation_workplan_template.md`.
+The protocol is **materiality-first**: a process condition blocks acceptance only when it can materially affect the code executed, relevant inputs/configuration/environment, correctness/scientific interpretation, recovery/security behavior, installability, performance/resource claim, or regression attribution. Administrative provenance and report-format issues are advisory unless the current task makes them materially important.
 
-Do not hand-edit generated role packages. Edit this canonical source and run:
+A workplan is used for substantial design. A separate qualification run card is used when execution genuinely crosses an environment boundary. Neither is ceremony for its own sake.
+
+`source/` is canonical. `dist/` contains generated self-contained role skills. Do not hand-edit generated packages; rebuild/check them with:
 
 ```bash
-python build_skills.py --output dist
+python build_skills.py --output ../dist
+python check_protocol_semantics.py
+python check_protocol_lifecycle_cases.py
+python build_skills.py --output ../dist --check
 ```
-
-The builder copies only the role-relevant shared references/scripts/templates and emits a content-hash manifest in each skill so generated packages can be checked for source drift.

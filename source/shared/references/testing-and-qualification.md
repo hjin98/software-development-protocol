@@ -1,122 +1,157 @@
-# Testing, Verification, and Qualification
+# Testing, Qualification, and Verification
+
+## Purpose
+
+Testing produces evidence. Qualification executes the checks that materially matter in the required environment. Verification decides whether the candidate plus evidence satisfies the workplan.
+
+The protocol prioritizes confidence in software correctness over completeness of qualification paperwork.
 
 ## Evidence ladder
 
-Choose checks proportional to the change, then run from local to broad so failures are cheap to diagnose.
+Use checks proportionally:
 
-### Level 1 - Structural sanity
+1. structural sanity: syntax/import/compile/schema where useful;
+2. focused behavior: unit/regression/boundary/error tests;
+3. oracle/property/numerical invariants;
+4. consumer/integration/persistence sequences;
+5. broad regression and distribution checks;
+6. production data, scale, target hardware, services, and user workflows.
 
-- syntax/import/compile checks;
-- formatter/linter/type checks used by the repository;
-- schema/config validation;
-- generated-file consistency checks;
-- documentation parity checks: current specification vs accepted implemented signatures/defaults where automatable, current architecture parity where architecture changed, and Markdown/PDF content-provenance manifest verification.
+Not every task requires every level.
 
-### Level 2 - Focused behavior
+## Check states
 
-- unit tests for changed functions/classes;
-- regression test reproducing each bug;
-- boundary and malformed-input cases;
-- deterministic error/warning behavior.
+A required check is one of:
 
-### Level 3 - Contract/oracle/property verification
+```text
+PENDING
+PREPARED
+PASS
+FAIL
+BLOCKED
+```
 
-Use when correctness is broader than example fixtures:
+A mandatory check that did not execute cannot be called PASS.
 
-- compare optimized/new backend against a trusted reference/oracle;
-- randomized/property tests over valid input spaces;
-- metamorphic/invariance tests (permutation, basis, coordinate, serialization round-trip, etc.);
-- tolerance-qualified numerical equivalence with justified tolerances;
-- fixed seeds plus reproduction payloads for randomized failures.
+Future-release checks that are not required for current acceptance should be listed separately rather than encoded as deferred acceptance states.
 
-Do not compare only digests/state if two wrong implementations could agree.
+## Materiality and failure routing
 
-### Level 4 - Consumer/integration verification
+### Product/material failure
 
-Test final observable behavior through affected consumers, not only low-level kernels. Include multi-step state/caching/persistence sequences when applicable.
+A check demonstrates incorrect behavior, candidate-caused regression, scientific/numerical mismatch, broken persistence/recovery, security failure, install/package failure, unacceptable resources, or missed performance threshold.
 
-### Level 5 - Broad regression and distribution
+Return to implementation, or to design when the accepted target itself must change.
 
-Run subsystem/full tests when the change surface warrants it. For distributable changes, read `release-and-distribution.md`: build from a controlled/clean source state, inspect produced artifact contents, install into an isolated environment, and exercise the installed artifact outside the checkout. Complete documentation/version closeout: reconcile specification with code, update architecture only for actual accepted architectural changes, update history/version metadata, regenerate changed permanent Markdown PDFs/provenance manifests, run content-provenance checks, and verify representative rendered pages. Bind release evidence to the governing workplan identity when applicable.
+### Environment blocker
 
-### Level 6 - Production-like/environment-specific qualification
+A required dataset, service, compiler, credential, accelerator, machine, or other execution prerequisite is unavailable. Mark `BLOCKED`.
 
-Use real data, realistic sizes, target accelerators/HPC runtime, external services, or user workflows only after internal gates pass. Record exact environment and artifact versions.
+### Harness/record problem
 
-## Blocking semantics
+A command has the wrong cwd, quoting, scratch path, log destination, environment activation syntax, or unambiguous intended config path; or an evidence report has a non-material metadata error.
 
-Classify each required check as:
+Qualification may correct these locally and continue when candidate behavior, material inputs/configuration/environment, and acceptance semantics stay unchanged. Record the actual conditions used.
 
-- **PASS** - executed and met acceptance criteria;
-- **FAIL** - executed and violated criteria;
-- **BLOCKED** - required but environment/dependency/data prevents execution;
-- **NOT RUN** - intentionally omitted with rationale;
-- **DEFERRED** - explicitly outside the current gate/release.
+## Candidate execution boundary
 
-A blocked or not-run check is not a pass. Do not advance a mandatory workplan gate unless its acceptance criteria pass or the design/review role explicitly revises the workplan.
+For Git projects, identify the candidate by commit and ensure execution is not unintentionally shadowed by modified/untracked product source. Control cwd/import origin when it materially affects what code is tested.
 
-## Regression design
+Qualification may create logs, build outputs, wheels, reports, profiles, benchmark data, cloned scratch databases, and temporary files. It must not silently modify product-defining source/config/test/spec files and still claim to have qualified the original candidate.
 
-- Test the failure mechanism, not merely the reported example when a broader invariant caused the bug.
-- Keep tests deterministic and small by default; mark slow/external tests distinctly.
-- Avoid asserting incidental implementation details unless they are intentional contracts.
-- For caches/schedulers/concurrency, test state transitions, identity/invalidation, retries/backoff, deterministic output ordering, interrupted/partial state, and restart/resume behavior.
-- For parsers, include malformed, ambiguous, empty/minimal, boundary, and representative real-format fixtures.
-- For compatibility, test legacy forms as long as they are supported.
+Additional hashes are used only for material external/generated content boundaries.
 
-## Numerical/scientific verification
+## Broad regression policy
 
-- Define exact equality vs absolute/relative tolerance per quantity.
-- Compare scientifically meaningful final observables as well as intermediate kernels when both matter.
-- Test invariants (conservation, symmetry, periodicity, positive-definiteness, normalization, monotonicity) where they are stronger than fixtures.
-- Record precision/dtype/backend in evidence when it affects results.
+A zero-failure full suite is a hard gate only when:
+
+- the repository maintains it as a green gate; or
+- the workplan/release policy explicitly makes global green status mandatory.
+
+Otherwise run broad tests when useful and attribute failures:
+
+- candidate-caused or plausibly candidate-caused failure -> blocking;
+- clearly pre-existing unrelated failure -> repository-health finding, not automatic candidate failure;
+- uncertain failure affecting the changed surface -> investigate or rerun until attribution is adequate.
+
+Do not create elaborate historical test trees solely to compensate for an already-red repository.
+
+## Scientific and numerical qualification
+
+When material:
+
+- define exact equality or justified tolerances;
+- compare meaningful final observables as well as kernels where needed;
+- test invariants such as conservation, symmetry, periodicity, normalization, positivity, or monotonicity;
+- record precision/backend only when it affects interpretation;
+- use representative real data when small fixtures cannot establish validity.
+
+Do not weaken fidelity merely to make qualification cheaper.
+
+## Persistence and recovery
+
+When persisted state changes materially, test proportional risks:
+
+- stale/incompatible state;
+- truncated/corrupt state;
+- interrupted publication;
+- restart from latest valid state;
+- equivalence with uninterrupted execution;
+- migration/read/reject behavior;
+- storage/resource behavior when it is part of the design.
+
+A clean-start test is not evidence for resumability.
 
 ## Performance qualification
 
-A performance test is not a correctness test. Require correctness first, then benchmark.
+Correctness precedes performance.
 
-- Warm up JIT/GPU/cache paths when relevant.
-- Use repeated measurements and robust summaries such as median; include dispersion when decisions are close.
-- Record input size/distribution, environment, versions, threads/workers, backend, precision, and memory metric.
-- Compare runtime, peak/transient memory, and I/O/on-disk footprint if optimization may trade among them.
-- Benchmark representative and adversarial workloads; do not tune only to one convenient fixture. Include cold-load/warm-cache and restart/recovery paths when they materially affect production cost.
-- Set automatic crossover/default policy conservatively and keep explicit override/fallback.
+For a comparative claim, use a trustworthy comparable baseline and material conditions: representative workload, backend, thread/resource policy, precision, and setup/I/O/recovery costs where relevant.
 
+Use repeated measurements when noise could change the decision. Record memory/I/O when the workplan makes them important.
 
-## Persistence and recovery verification
+If no trustworthy baseline exists, report absolute performance and do not claim a relative speedup. Do not manufacture an elaborate counterfactual solely to preserve a percentage or speedup claim.
 
-When a change creates or reuses material persisted state, add failure/recovery coverage proportional to risk:
+## Distribution qualification
 
-- stale identity or incompatible schema/version;
-- truncated/partial/corrupt artifact;
-- interrupted checkpoint/cache publication;
-- restart from the latest valid state and equivalence with uninterrupted execution;
-- cache hit/miss/invalidation reason;
-- storage admission/low-space failure where feasible;
-- concurrent writer/cache-creation collision;
-- cleanup that preserves authoritative/external inputs.
+When shipping a package/artifact:
 
-Do not treat a clean-start test as evidence that a resumable workflow is correct.
+- build from the intended candidate;
+- inspect artifact contents where relevant;
+- install in an isolated target;
+- exercise installed behavior outside the source checkout;
+- verify user-visible version only when version identity is part of the deliverable;
+- test entry points/resources that users rely on.
 
-## Production/user acceptance
+## Security/trust qualification
 
-After all internal gates pass, invite or run a production-like test on real data when it can expose integration, deployment, scale, or domain issues unavailable locally. Treat findings as new evidence: reproduce, fix, add regression coverage, and re-run affected gates.
+When trust boundaries changed materially, test the applicable boundary: path/archive escape, unsafe deserialization, subprocess handling, credentials/secrets, dependency/plugin behavior, tampered persistence, untrusted rendering, or other project-specific risks.
 
-## Security/trust-boundary verification
+Do not invent generic security gates unrelated to the change.
 
-When a change crosses a material trust boundary, read `references/security-and-trust-boundaries.md` and add focused tests proportional to the capability exposed. Examples include archive path/symlink escape, unsafe-deserialization rejection, subprocess argv handling, secret redaction, output-root enforcement, malformed-resource admission, stale/tampered persistence, and renderer/plugin restrictions. Do not claim absolute security; report what boundary and failure modes were actually exercised.
+## Reruns and evidence reuse
 
+Rerun a check when a changed candidate/input/config/environment dimension could plausibly affect its result or interpretation. Do not rerun because an advisory report/hash/path field changed.
 
-## Configuration and orchestration verification
+Expensive workflows may keep a dependency map when it saves substantial rerun cost, but the map is optional and must not become a second acceptance system.
 
-When configuration or concurrent orchestration changes, add evidence proportional to risk:
+## Verification
 
-- canonical precedence/default/override resolution and redaction;
-- stable resolved-configuration serialization/digest;
-- semantic cache invalidation when configuration changes;
-- serial-vs-concurrent equivalence and deterministic ordering;
-- worker failure propagation, bounded retry/backoff, cancellation/preemption, and cleanup;
-- queue/backpressure/resource-ownership behavior;
-- reader/artifact schema READ/MIGRATE/REJECT compatibility where durable state evolves.
+Verification asks:
 
-Read `configuration-and-policy.md` and `concurrency-and-orchestration.md` for the owning contracts.
+1. did implementation conform to material frozen design;
+2. did every acceptance-critical requirement receive adequate executed evidence;
+3. are failures attributable correctly;
+4. are scientific/performance/recovery/security claims supported;
+5. did qualification exercise the intended candidate under material conditions;
+6. is any unresolved material risk blocking acceptance.
+
+Final decision:
+
+```text
+MERGE_READY
+NOT_READY
+DESIGN_REVISION_REQUIRED
+```
+
+A report is evidence, not authority. Administrative metadata completeness is not a substitute for software evidence and is not a reason to discard valid evidence by itself.

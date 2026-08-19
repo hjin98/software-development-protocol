@@ -1,14 +1,17 @@
 # Software Development Protocol
 
-**Software Development Protocol** is a role-separated Agent Skills framework for disciplined, evidence-driven software engineering with AI coding agents. It is designed to divide development work between a **design/review role** and an **implementation/qualification role**, allowing expensive repository analysis, debugging, algorithmic redesign, and architectural reasoning to be completed once and handed off cleanly for execution.
+Software Development Protocol is a role-separated, evidence-driven workflow for AI-assisted software engineering.
 
-The protocol provides two generated Agent Skills:
+Protocol v3 keeps four useful authority boundaries:
 
-- **`software-design-review`** — inspects repositories, diagnoses root causes, evaluates algorithms and architecture, defines scientific and engineering invariants, creates Implementation Workplans, and reviews completed changes for conformance.
-- **`software-implementation`** — consumes an approved workplan, performs bounded revalidation, implements changes gate by gate, runs focused and broad tests, benchmarks performance, records evidence, and completes specification, documentation, version, and release closeout.
+```text
+software-design -> software-implementation -> software-qualification -> software-verification
+```
 
-The formal interface between the two roles is an **Implementation Workplan**: a versioned, auditable handoff that freezes design decisions, scope, invariants, acceptance criteria, and implementation gates so the implementation agent does not need to repeat the original investigation.
+The guiding rule is materiality: protocol mechanics exist to improve confidence in the software, not to become a second product that must be qualified. A process defect blocks acceptance only when it can materially change what code/input/environment was exercised or how a correctness, scientific, recovery, security, distribution, performance, or regression claim should be interpreted.
 
-The shared protocol also defines engineering practices for correctness and testing, scientific/numerical fidelity, CPU/GPU/RAM/VRAM optimization, disk I/O and storage, persistence and recovery, concurrency, configuration, security and trust boundaries, Git safety, documentation governance, versioning, and release qualification.
+For ordinary Git projects, the candidate commit is the default source identity. Extra hashes are used at real external/generated content boundaries, not as universal paperwork. Harmless qualification harness/report errors can be corrected in place without restarting valid software checks.
 
-`source/` contains the canonical shared protocol and role definitions. `dist/` contains the generated, self-contained Agent Skills intended for installation. Generated skills should not be edited independently; changes should be made to the canonical source and rebuilt so both roles remain consistent.
+Use the lightest lifecycle that preserves the needed authority separation. Small work may use `inspect -> implement -> relevant checks -> review`; substantial or cross-environment work uses a workplan and, when useful, a compact qualification run card.
+
+`source/` is canonical. `dist/` contains generated role skill packages.

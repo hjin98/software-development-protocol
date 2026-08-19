@@ -1,307 +1,174 @@
-# Implementation Workplans and Agent Handoff
+# Workplans, Qualification, and Agent Roles
 
 ## Purpose
 
-An **Implementation Workplan** is the temporary execution contract for moving a repository from an analyzed current state to an accepted target state. It is the formal handoff between design/review work and implementation/testing work.
-
-A workplan is not a specification, architecture manual, history document, audit, benchmark, or release record.
-
-Use a workplan when any of the following materially applies:
-
-- algorithmic or scientific-semantic change;
-- cross-module implementation;
-- public API/data/configuration contract change;
-- persistence/schema/cache/checkpoint change;
-- concurrency/orchestration change;
-- security/trust-boundary change;
-- substantial performance/resource/I/O/storage optimization;
-- migration/release qualification work;
-- a task for which prior design/diagnostic work can prevent expensive implementation-agent rediscovery.
-
-For trivial isolated fixes, use the compressed path `inspect -> edit -> focused test -> review` without creating a workplan.
-
-## Repository location and artifact class
-
-Prefer a repository-root coordination tree such as:
+Protocol v3 separates four authority roles:
 
 ```text
-workplans/
-  README.md
-  TEMPLATE.md
-  active/
-  archive/
+software-design -> software-implementation -> software-qualification -> software-verification
 ```
 
-unless the repository already has an equivalent convention.
+The roles prevent silent redesign, invented PASS claims, and self-acceptance of substantial work. They are authority boundaries, not a requirement for four different people, agents, or documents.
 
-Workplans are **Markdown-authoritative coordination artifacts** and are normally exempt from mandatory PDF rendering. They should not be packaged as user-facing runtime documentation unless the project explicitly chooses otherwise.
+## Materiality rule
 
-## Workplan lifecycle
+A protocol condition may block acceptance only when violating it could materially change the code executed, material inputs/configuration/environment, observable correctness, scientific or numerical interpretation, security or recovery behavior, performance/resource claims, installability/shipped artifacts, or whether the candidate introduced a regression.
 
-Use these statuses:
+Everything else is advisory recordkeeping. Administrative or evidence-format defects may be corrected without product requalification when they do not change those material dimensions or the interpretation of an observed result.
 
-- `DRAFT` - design/diagnosis is still being developed;
-- `READY_FOR_IMPLEMENTATION` - design is accepted and the executor may begin;
-- `IN_PROGRESS` - at least one implementation gate is active;
-- `BLOCKED` - execution cannot continue under the current contract;
-- `COMPLETE` - all mandatory gates and closeout checks passed;
-- `SUPERSEDED` - replaced by a newer workplan/revision;
-- `CANCELLED` - intentionally abandoned without completion.
+## Proportional lifecycle
 
-Only the design/review role promotes a workplan to `READY_FOR_IMPLEMENTATION` or changes frozen design semantics. The implementation role may update execution/gate status and evidence references without redefining the design contract.
+Use the lightest workflow that preserves the material authority boundaries.
 
-## Default gate execution policy
-
-Sequential gates **auto-advance after objective PASS by default**. Human confirmation between passing gates is not required unless a gate is explicitly marked `MANUAL_APPROVAL_REQUIRED`. This preserves gated validation without requiring repetitive "proceed to the next gate" prompts.
-
-Use these approval modes:
-
-- `AUTO` - default when omitted; after the gate satisfies all mandatory acceptance criteria, record PASS and continue to the next gate automatically.
-- `MANUAL_APPROVAL_REQUIRED` - stop after reporting the gate result and wait for explicit user/design-owner approval before advancing. Use only for genuinely consequential human decisions, irreversible/external actions, policy choices, or checkpoints the workplan intentionally reserves for manual review.
-
-For an `AUTO` gate, the executing role may fix gate-local implementation/editorial/test problems and rerun that gate without asking for approval. Stop automatic advancement when any of the following occurs:
-
-- a mandatory acceptance criterion remains failed after reasonable gate-local correction;
-- the gate is `BLOCKED`;
-- stale-plan evidence requires `STALE_WORKPLAN`;
-- continuing requires `DESIGN_REVISION_REQUIRED`;
-- a user decision is materially required and cannot be resolved from the frozen workplan;
-- the next gate is explicitly `MANUAL_APPROVAL_REQUIRED`.
-
-A PASS is still a real gate boundary: record the acceptance evidence before auto-advancing. Auto-advance removes conversational ceremony, not verification.
-
-## Versioned handoff contract
-
-A workplan should record at minimum:
-
-```yaml
-kind: implementation-workplan
-workplan_id: <stable task ID>
-plan_revision: <integer>
-status: READY_FOR_IMPLEMENTATION
-protocol_version: <shared protocol version>
-analysis_base_ref: <branch/tag/ref>
-analysis_base_commit: <commit SHA>
-```
-
-Also record where useful:
-
-```yaml
-assumption_paths:
-  - <files/directories whose state materially supports the design>
-architecture_refs:
-  - <current architecture documents>
-spec_refs:
-  - <current normative contracts>
-expected_change_paths:
-  - <likely implementation/test/doc surfaces>
-```
-
-Do not store a self-referential SHA-256 inside the workplan. The executor/review evidence should record the exact `workplan_sha256` it consumed together with `workplan_id` and `plan_revision`.
-
-## Required workplan sections
-
-A substantial workplan should contain:
-
-1. **Objective** - one concise outcome statement.
-2. **Current diagnosis** - evidence-grounded explanation of the problem.
-3. **Current authority references** - architecture/spec/source/test/evidence locations.
-4. **Frozen design decisions** - choices already resolved and not delegated to the executor.
-5. **Invariants and acceptance semantics** - scientific/numerical/API/persistence/security/resource properties that must hold.
-6. **Expected change surface** - likely modules/tests/specs/docs/benchmarks; this is a guide, not permission to ignore necessary adjacent files.
-7. **Non-goals** - explicitly excluded work.
-8. **Execution/resource constraints** - environment, compatibility, CPU/GPU/RAM/VRAM/I/O/storage, dependency, or release constraints that materially affect implementation.
-9. **Gate table and gate definitions** - ordered implementation/testing stages.
-10. **Design-revision triggers** - conditions under which the executor must stop rather than redesign silently.
-11. **Closeout requirements** - current specification/architecture/history/version/evidence/PDF/release reconciliation after implementation is accepted.
-
-Keep the workplan concise. Link to authoritative files and evidence instead of copying large code, logs, manuals, or benchmark output.
-
-## Role authority matrix
-
-| Decision/domain | Design/review role | Implementation role |
-|---|---|---|
-| Root-cause diagnosis | Owns/finalizes | May refine with implementation evidence |
-| Algorithm/architecture choice | Owns | Must follow or escalate |
-| Scientific/numerical semantics | Owns target/invariants | Must preserve |
-| Public API/data/persistence target contract | Owns | Implements; local details only |
-| Resource/performance strategy and acceptance threshold | Owns | Implements/measures; may propose change |
-| Security/trust model | Owns target | Implements/validates |
-| Gate structure/mandatory acceptance | Owns | Executes and records evidence |
-| Local helper placement/internal naming | Advisory | Owns within scope |
-| Small refactor required by chosen design | Reviews | Owns within scope |
-| Test implementation/instrumentation | Specifies acceptance intent | Owns implementation |
-| Benchmark execution | Specifies comparability/criteria | Owns execution |
-| Normative-doc closeout | Reviews for architectural/contract correctness | Updates after accepted implementation |
-| Redesign after contradiction | Owns revision | Must block/escalate |
-
-The implementation role may strengthen tests, improve diagnostics, or choose a better local implementation technique when this does not change frozen semantics, public contracts, persistence/trust architecture, acceptance thresholds, or declared non-goals.
-
-## Design revision required
-
-The implementation role must stop the affected gate and report `DESIGN_REVISION_REQUIRED` when implementation evidence shows that continuing would require changing any frozen item such as:
-
-- scientific/numerical meaning;
-- chosen algorithm or architectural ownership;
-- public contract/default semantics;
-- persistence/schema/recovery model;
-- security/trust model;
-- resource-policy semantics or acceptance thresholds;
-- mandatory gate acceptance criteria;
-- non-goals/scope boundary in a material way.
-
-Use a compact blocker record:
+### Small/local work
 
 ```text
-Gate: <ID>
-Status: BLOCKED
-Reason: DESIGN_REVISION_REQUIRED
-Finding: <earliest violated assumption/invariant>
-Evidence: <focused reproducer/test/file/measurement>
-Decision needed: <specific design choice>
+inspect -> implement -> relevant checks -> review
 ```
 
-Do not spend implementation-agent context on broad redesign after this boundary is crossed.
-
-## Stale-workplan detection
-
-Before implementation, perform bounded revalidation rather than a new repository-wide design pass.
-
-1. Read repository/agent instructions.
-2. Verify the workplan is `READY_FOR_IMPLEMENTATION` (or explicitly resumed `IN_PROGRESS`).
-3. Record its `workplan_id`, `plan_revision`, and SHA-256.
-4. Verify the analyzed base commit exists and determine its relationship to current `HEAD`.
-5. If `HEAD == analysis_base_commit`, proceed.
-6. If the base is an ancestor of `HEAD`, inspect changes since the base that intersect `assumption_paths`, referenced architecture/specs, target interfaces, and other design-critical surfaces.
-7. If those changes do not invalidate assumptions, record bounded revalidation and proceed.
-8. If the base is unrelated/unavailable or a material assumption changed, mark `BLOCKED: STALE_WORKPLAN` and return concise evidence for design review.
-
-A later unrelated commit is not sufficient reason to discard a valid plan. Conversely, matching branch names or file existence are not proof that assumptions remain valid.
-
-## Gate construction
-
-Use task-local gate IDs unless a stage is genuinely part of the product/domain architecture. Prefer `G0`, `G1`, `G2`, etc. or concise scoped names. Avoid permanently proliferating architecture-stage names for temporary engineering steps.
-
-Each gate may include `Approval: AUTO | MANUAL_APPROVAL_REQUIRED`. If omitted, treat it as `AUTO`. Do not mark ordinary implementation/review checkpoints manual merely to request conversational confirmation.
-
-A strong sequence often includes:
-
-### G0 - Baseline/oracle/preflight
-
-- freeze current accepted behavior;
-- qualify required dependencies/backends/environment early;
-- identify a trustworthy oracle;
-- record representative correctness/performance/resource/I/O/recovery baseline when relevant;
-- add focused fixtures for boundary/adversarial cases.
-
-### G1 - Minimal coherent capability
-
-- implement the smallest exact/compatible form;
-- compare directly with the oracle;
-- preserve fallback where required.
-
-### G2 - Integration/state reuse
-
-- add persistence/cache/reuse/consumer integration after the core result is correct;
-- validate identity/invalidation/atomic publication/recovery;
-- measure build/load/recovery cost if persistence exists to save work.
-
-### G3 - Hard/resource/concurrency cases
-
-- large inputs, deformation, concurrency, cancellation, disk pressure, restart, migration, or other difficult regimes;
-- adversarial and bounded-resource tests.
-
-### G4 - Automatic/default/production closeout
-
-- enable automatic/default behavior only from evidence;
-- run broad regression/release qualification as applicable;
-- reconcile current specs/architecture/history/version/evidence/PDFs with the accepted implementation.
-
-Adapt the number and names of gates. Do not force this exact sequence onto small work.
-
-## Gate template
+### Substantial work
 
 ```text
-Gate: <ID and short name>
-Approval: AUTO | MANUAL_APPROVAL_REQUIRED  # default AUTO
-Goal: <one coherent capability>
-Prerequisites: <prior gates/contracts/environment>
-Change surface: <modules/APIs/docs/tests>
-Work:
-  - ...
-Acceptance:
-  - exact check or tolerance/oracle
-  - edge/adversarial cases
-  - compatibility requirement
-  - resource/performance/storage/recovery criterion if applicable
-Evidence:
-  - tests/benchmarks/builds/audits/manifests
-Security/trust boundary:
-  - focused checks when applicable
-Fallback/rollback: <safe behavior>
-Excluded/deferred: <explicitly not in this gate>
+design/workplan -> implementation -> required checks -> verification
 ```
 
-Do not paste large logs into the workplan. Store them in the repository's audit/benchmark/evidence location and link them.
+### Cross-environment work
 
-## Design/review workflow (intended for Chat)
-
-Use two modes:
-
-### DESIGN
+When qualification must move to a workstation, HPC system, production dataset, external service, or other distinct execution environment:
 
 ```text
-repository reconnaissance
--> diagnosis/root cause
--> architecture/algorithm alternatives
--> chosen design and invariants
--> workplan DRAFT
--> review/convergence
--> READY_FOR_IMPLEMENTATION
+design/workplan -> implementation -> qualification run card -> target execution/evidence -> verification
 ```
 
-The deliverable is the accepted workplan, not broad implementation.
+A separate Qualification Handoff is therefore conditional, not universal.
 
-### REVIEW
+## Implementation Workplan
 
-After implementation, consume the exact workplan revision plus diff/evidence and check:
+Use a workplan when design reasoning, cross-module change, public/persisted/scientific semantics, performance/resource targets, security/recovery behavior, or expensive execution would otherwise be rediscovered.
 
-- conformance to frozen design/invariants;
-- accidental scope widening;
-- scientific/numerical/API/persistence semantics;
-- hidden scaling/I/O/storage/recovery regressions;
-- security/trust-boundary behavior;
-- whether acceptance evidence actually supports each PASS;
-- specification/architecture/history/version/documentation ownership;
-- unresolved blockers or deferred work.
+A substantial workplan records:
 
-Return narrow corrective actions to the implementation role when possible. Redesign only when evidence requires it.
+- objective and diagnosis;
+- frozen product/domain design decisions;
+- expected change surface and non-goals;
+- material execution constraints;
+- one authoritative **Acceptance-critical requirements** section;
+- ordered gates where staging is useful;
+- conditions that truly require `DESIGN_REVISION_REQUIRED`.
 
-## Implementation workflow (intended for Codex/executor agents)
+Acceptance-critical requirements should be written in product/domain language, not protocol-artifact language.
 
-When an approved workplan exists:
+Good: `restart after a corrupt checkpoint produces the uninterrupted result`.
+
+Bad: `the report contains the checkpoint-policy SHA`.
+
+The workplan revision changes only when target design, acceptance semantics, important scope, or material qualification conditions change. Correcting a command, path, report field, log destination, or other administrative detail does not require a new revision.
+
+## Gate state
+
+Use the simple state set:
 
 ```text
-bounded preflight/revalidation
--> implement one gate
--> focused tests/evidence
--> fix gate-local failures
--> next gate
--> broad qualification
--> normative closeout
+PENDING
+PREPARED
+PASS
+FAIL
+BLOCKED
 ```
 
-Do not repeat repository-wide investigation, algorithm comparison, or architecture planning already frozen in the workplan unless stale-plan/design-contradiction evidence requires escalation.
+`PREPARED` means implementation is ready but a required execution check remains. Final acceptance belongs to verification and is one of:
 
-## Closeout and archival lifecycle
+```text
+MERGE_READY
+NOT_READY
+DESIGN_REVISION_REQUIRED
+```
 
-After all mandatory gates pass:
+Future-release obligations belong in a separate section rather than being encoded as blocking/nonblocking deferred-state machinery.
 
-- update current specifications to describe accepted implemented behavior;
-- update architecture manuals only where the accepted current architecture actually changed;
-- update history/changelog/release notes and authoritative versions according to project policy;
-- regenerate permanent Markdown-derived PDFs/provenance manifests;
-- record final evidence, including the workplan identity/digest consumed;
-- mark the workplan `COMPLETE`.
+## Qualification run card
 
-For materially important changes, archive the completed workplan according to repository policy. For mundane tasks, deletion after closeout is acceptable because Git/history already preserves the transition. Do not turn every temporary workplan into permanent product documentation.
+A run card is useful only when execution crosses a real boundary. It identifies:
+
+- candidate Git commit or other materially sufficient source identity;
+- governing workplan/task;
+- checks to perform and their acceptance criteria;
+- material dataset/config/backend/hardware conditions;
+- product-defining things qualification must not change;
+- required external inputs or permissions.
+
+It freezes intent and material conditions, not shell spelling. Equivalent environment activation, cwd, absolute paths, quoting, scratch directories, and log destinations are operational choices unless the workplan says they are material.
+
+## Qualification correction authority
+
+Qualification distinguishes three classes.
+
+### Product/material failure
+
+Examples: wrong result, numerical mismatch, candidate-caused regression, invalid recovery, package failure, excessive memory, missed performance threshold, or needing changed dataset/config/scientific semantics to pass.
+
+Route to `RETURN_TO_IMPLEMENTATION`, or `DESIGN_REVISION_REQUIRED` if frozen target semantics must change.
+
+### Environment/input blocker
+
+A required GPU, dataset, service, compiler, credential, or target environment is unavailable. Record `BLOCKED`.
+
+### Harness/record defect
+
+Examples: wrong cwd, bad quoting, intended config path expressed incorrectly, unwritable evidence directory, report typo, stale administrative version label, missing advisory digest.
+
+Correct it locally, record what actually ran, and continue when candidate behavior and material test conditions remain unchanged.
+
+No administrative or evidence-format defect may by itself require product requalification.
+
+## Candidate source boundary
+
+In a normal Git repository, the candidate Git commit plus absence of unintended product-defining working-tree changes is the default source identity.
+
+Use additional hashes only at real content boundaries where Git does not sufficiently identify what is being accepted, such as external datasets, model weights, source archives, generated binaries, mutable production snapshots, or canonical-source/generated-artifact parity.
+
+Qualification should not modify product source or other candidate-defining files while claiming to test that candidate. Evidence, build, log, benchmark, profile, and scratch outputs are allowed unless a project says otherwise.
+
+## Evidence and reruns
+
+Record enough evidence to understand what was tested and what happened. Do not require provenance fields that cannot change interpretation of the result.
+
+Rerun a check when something changed that could plausibly alter that check's result or interpretation. Unrelated administrative edits do not invalidate execution evidence.
+
+For unusually expensive programs, a dependency map may help selective reuse, but it is optional optimization rather than default protocol ceremony.
+
+A repeated attempt remains part of the same qualification while candidate behavior and material test conditions remain unchanged. Record material changes between attempts. No formal retry taxonomy is required.
+
+## Role authority
+
+| Domain | Design | Implementation | Qualification | Verification |
+|---|---|---|---|---|
+| Root cause / target architecture | owns | follows or escalates | execution-local diagnosis | reviews |
+| Scientific/API/persistence/security semantics | owns target | implements | exercises | verifies |
+| Acceptance-critical requirements | owns | consumes | executes | decides sufficiency |
+| Local helpers/tests/harnesses | intent | owns | may repair non-material harness defects | reviews if consequential |
+| Product source | no broad implementation | owns | read-only during candidate qualification | review-only |
+| Final acceptance | no | no | no | owns |
+
+## Design revision boundary
+
+Use `DESIGN_REVISION_REQUIRED` only when proceeding requires materially changing frozen product/domain design, acceptance semantics, performance thresholds, public/persisted/scientific/security/recovery behavior, or a material scope boundary.
+
+Do not use design revision for operational commands, metadata, evidence layout, or report formatting.
+
+## Broad-suite policy
+
+A full-suite zero-failure requirement is mandatory only when the repository actually maintains that suite as a green gate or project/release policy explicitly requires it. Otherwise run broad tests when useful, attribute failures, and block the candidate only for failures plausibly introduced by it or for explicitly mandatory globally-green policy.
+
+Do not construct elaborate historical/counterfactual baselines solely to turn a repository with known unrelated failures into an artificial zero-failure oracle.
+
+## Protocol growth rule
+
+A proposed new blocking rule must state:
+
+1. the concrete software failure it prevents;
+2. why an existing simpler rule does not cover it;
+3. why advisory treatment is insufficient;
+4. why its burden is proportional to the risk.
+
+If the main benefit is provenance completeness, the rule is advisory by default.

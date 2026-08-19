@@ -1,8 +1,16 @@
 {
-  "protocol_version": "2.0.1",
+  "artifacts": {
+    "software-design": "software-design.zip",
+    "software-implementation": "software-implementation.zip",
+    "software-qualification": "software-qualification.zip",
+    "software-verification": "software-verification.zip"
+  },
+  "protocol_version": "3.0.0",
   "skills": [
-    "software-design-review",
-    "software-implementation"
+    "software-design",
+    "software-implementation",
+    "software-qualification",
+    "software-verification"
   ],
-  "source": "canonical shared protocol + role SKILL.md"
+  "source": "canonical materiality-first protocol source"
 }
