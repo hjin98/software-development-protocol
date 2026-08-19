@@ -19,5 +19,7 @@ jobs:
           python-version: "3.12"
       - name: Check canonical protocol semantic invariants
         run: python source/check_protocol_semantics.py
+      - name: Check synthetic protocol lifecycle cases
+        run: python source/check_protocol_lifecycle_cases.py
       - name: Check canonical/generated skill parity
         run: python source/build_skills.py --output dist --check
