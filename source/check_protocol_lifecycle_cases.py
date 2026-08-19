@@ -51,6 +51,15 @@ def qualification_candidate_valid(
     )
 
 
+def verification_candidate_valid(
+    *,
+    content_identity_matches: bool,
+    later_commits_only_declared_evidence_coordination: bool,
+) -> bool:
+    """Verification may inspect a later HEAD if qualified candidate content is unchanged."""
+    return content_identity_matches and later_commits_only_declared_evidence_coordination
+
+
 def output_allowed(*, output_class: str, declared_write_path: bool) -> bool:
     return output_class == "EPHEMERAL_QUALIFICATION_OUTPUT" and declared_write_path
 
@@ -75,7 +84,7 @@ def retry_allowed(
 
 
 def main() -> int:
-    # Candidate identity / dirty-tree cases.
+    # Qualification preflight requires exact candidate commit plus clean content state.
     assert qualification_candidate_valid(
         head_matches=True,
         content_identity_matches=True,
@@ -100,13 +109,25 @@ def main() -> int:
         tracked_dirty=False,
         undeclared_untracked_affects_execution=False,
     )
-
-    # Evidence-only commit is represented by unchanged candidate content identity.
-    assert qualification_candidate_valid(
-        head_matches=True,
+    assert not qualification_candidate_valid(
+        head_matches=False,
         content_identity_matches=True,
         tracked_dirty=False,
         undeclared_untracked_affects_execution=False,
+    )
+
+    # Verification after qualification may see later evidence-only commits.
+    assert verification_candidate_valid(
+        content_identity_matches=True,
+        later_commits_only_declared_evidence_coordination=True,
+    )
+    assert not verification_candidate_valid(
+        content_identity_matches=False,
+        later_commits_only_declared_evidence_coordination=True,
+    )
+    assert not verification_candidate_valid(
+        content_identity_matches=True,
+        later_commits_only_declared_evidence_coordination=False,
     )
 
     # Output classes.
