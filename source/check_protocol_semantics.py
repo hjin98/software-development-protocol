@@ -42,7 +42,7 @@ def main() -> int:
         [
             "Materiality rule",
             "Acceptance-critical requirements",
-            "No administrative or evidence-format defect may by itself require product requalification",
+            "No administrative, secondary diagnostic, or evidence-format defect may by itself require product requalification",
             "Harness/record defect",
             "MERGE_READY",
         ],
@@ -53,9 +53,28 @@ def main() -> int:
         testing,
         [
             "mandatory check that did not execute cannot be called PASS",
+            "smallest materially sufficient",
+            "full production scale only when production scale itself is materially required",
+            "hard-limit hit caused by an oversized harness is not by itself a product failure",
             "Broad regression policy",
             "If no trustworthy baseline exists",
-            "Harness/record problem",
+        ],
+    )
+
+    resource = REFS / "resource-bounded-execution.md"
+    errors += require(
+        resource,
+        [
+            "hard safety ceiling",
+            "planned operating envelope",
+            "Smallest materially sufficient workload",
+            "Automatic adaptation",
+            "Adaptive execution mechanics are allowed. Adaptive acceptance semantics are forbidden.",
+            "Autonomous external execution",
+            "Transient-state ownership and cleanup",
+            "startup scavenging",
+            "Do not turn observability into an acceptance system.",
+            "minimum materially sufficient workload cannot be executed safely",
         ],
     )
 
@@ -74,6 +93,9 @@ def main() -> int:
         qskill,
         [
             "Harness correction authority",
+            "smallest materially sufficient",
+            "Prefer autonomous one-command execution",
+            "clean owned large intermediates",
             "RETURN_TO_IMPLEMENTATION",
             "DESIGN_REVISION_REQUIRED",
             "BLOCKED",
@@ -81,8 +103,14 @@ def main() -> int:
         ],
     )
 
+    iskill = ROLES / "software-implementation" / "SKILL.md"
+    errors += require(iskill, ["standalone one-command qualifier", "automatically cleans run-owned large transient state"])
+
     vskill = ROLES / "software-verification" / "SKILL.md"
-    errors += require(vskill, ["MERGE_READY", "NOT_READY", "DESIGN_REVISION_REQUIRED"])
+    errors += require(vskill, ["MERGE_READY", "NOT_READY", "DESIGN_REVISION_REQUIRED", "did not merely rely on hard-limit termination"])
+
+    handoff = TEMPLATES / "qualification_handoff_template.md"
+    errors += require(handoff, ["Resource-bounded execution", "smallest materially sufficient", "cleanup/scavenging", "Optional telemetry/secondary diagnostics are advisory"])
 
     for template_name in (
         "implementation_workplan_template.md",
@@ -92,7 +120,7 @@ def main() -> int:
     ):
         errors += require(TEMPLATES / template_name, ["REPLACE_WITH_SKILL_PROTOCOL_VERSION"])
 
-    # The default templates/roles must not reinstate the discarded mandatory machinery.
+    # The default templates/roles must not reinstate discarded mandatory machinery.
     for path in [
         ROLES / "software-implementation" / "SKILL.md",
         ROLES / "software-qualification" / "SKILL.md",
@@ -118,7 +146,7 @@ def main() -> int:
             print(f"  {error}")
         return 2
 
-    print("PASS: Protocol v3 materiality semantic invariants")
+    print("PASS: Protocol v3.1 materiality/resource semantic invariants")
     return 0
 
 

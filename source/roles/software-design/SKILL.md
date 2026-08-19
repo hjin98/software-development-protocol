@@ -26,11 +26,17 @@ Freeze only decisions implementation must not invent:
 - security/trust behavior when changed;
 - non-goals and true redesign triggers.
 
+## Resource-bounded design
+
+When implementation or qualification could be expensive, distinguish production workload from the smallest materially sufficient validation workload. Require hard safety containment where runaway resource use is plausible, but design normal checks to finish with machine-adaptive headroom rather than reaching those ceilings.
+
+Do not require full production replay unless scale itself is material and bounded representative evidence cannot establish the claim. Prefer autonomous external qualification that can calibrate, adapt non-semantic execution mechanics, retain compact evidence, and clean owned transient state without continuous agent intervention.
+
 ## Acceptance-critical requirements
 
 For substantial work, make one explicit list of requirements whose failure would materially change acceptance. Write them in product/domain language.
 
-Do not make workplan hashes, report hashes, evidence filenames, timestamps, redundant candidate fingerprints, or other administrative metadata blocking unless a concrete project/release boundary makes them material.
+Do not make workplan hashes, report hashes, evidence filenames, timestamps, redundant candidate fingerprints, optional telemetry, or other administrative metadata blocking unless a concrete project/release boundary makes them material.
 
 ## Workplan
 
@@ -42,7 +48,7 @@ A separate qualification run card is needed only when execution crosses a real e
 
 Return to design only when evidence requires changing frozen product semantics, architecture, compatibility, recovery/security model, acceptance threshold, or a material scope boundary.
 
-Operational harness corrections belong to implementation/qualification.
+Operational harness corrections, adaptive safe benchmark sizing within frozen semantics, and non-material evidence defects belong to implementation/qualification.
 
 ## Completion
 

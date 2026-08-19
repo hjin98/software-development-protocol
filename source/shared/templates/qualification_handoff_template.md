@@ -22,6 +22,20 @@ Use this artifact only when execution crosses a real environment boundary.
 - Configuration semantics: ...
 - Backend/hardware/resource conditions when material: ...
 
+## Resource-bounded execution
+
+For potentially expensive checks describe only what is material:
+
+- smallest materially sufficient representative workload or calibration rule: ...
+- effective-resource discovery / explicit project or user caps: ...
+- hard safety containment: ...
+- planned operating-envelope/adaptation rule: ...
+- full-production-scale justification, if required: ...
+- owned scratch/evidence separation and cleanup/scavenging behavior: ...
+- autonomous/restart behavior when execution is nontrivial: ...
+
+Do not freeze universal machine numbers when the qualifier can safely discover and adapt to the target allocation.
+
 ## Checks
 
 ### Q1 — <name>
@@ -31,15 +45,17 @@ Use this artifact only when execution crosses a real environment boundary.
 - Suggested command/method: ...
 - Material constraints that must not change: ...
 
-Equivalent cwd, activation, quoting, scratch/log paths, and unambiguous path corrections are operationally flexible unless explicitly material.
+Equivalent cwd, activation, quoting, scratch/log paths, safe representative sizing, and unambiguous path corrections are operationally flexible unless explicitly material.
+
+Optional telemetry/secondary diagnostics are advisory unless required to execute safely or interpret the material claim.
 
 ## Forbidden material changes
 
-Do not change product code, scientific/dataset/config/backend semantics, material resource policy, or acceptance thresholds to obtain PASS.
+Do not change product code, scientific/dataset/config/backend semantics, workload representativeness, material product resource policy, or acceptance thresholds to obtain PASS.
 
 ## Routing
 
 - Product/material failure -> `RETURN_TO_IMPLEMENTATION`
 - Frozen target contradiction -> `DESIGN_REVISION_REQUIRED`
-- Missing required environment/input -> `BLOCKED`
-- Harness/report defect -> correct locally, record actual execution, continue
+- Minimum materially sufficient check cannot execute safely / required environment unavailable -> `BLOCKED`
+- Harness/resource-model/report/secondary diagnostic defect -> correct, resize, degrade, record, or skip as appropriate and continue

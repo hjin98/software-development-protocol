@@ -17,7 +17,11 @@ Establish the candidate commit/source and governing workplan/task. Then check:
 4. broad failures were attributed sensibly;
 5. scientific/numerical/recovery/security/performance claims are supported;
 6. package/install evidence applies to the intended artifact where relevant;
-7. no unresolved material risk remains.
+7. expensive qualification used a representative materially sufficient workload and did not merely rely on hard-limit termination;
+8. harness/resource-limit incidents were distinguished from genuine product resource failures;
+9. no unresolved material risk remains.
+
+Do not require full production replay when bounded representative evidence already establishes the material claim. Do not reject valid evidence for missing optional telemetry, secondary diagnostics, unnecessary repetitions, or other advisory completeness.
 
 Administrative provenance completeness is advisory unless a concrete release/compliance/content boundary makes it material.
 
@@ -25,7 +29,7 @@ Administrative provenance completeness is advisory unless a concrete release/com
 
 Accept previously executed evidence when later changes could not plausibly affect its result or interpretation. Require rerun when material dimensions changed or uncertainty touches an acceptance-critical claim.
 
-Do not demand reruns solely for report wording, evidence paths, hashes, timestamps, or later evidence-only commits.
+Do not demand reruns solely for report wording, evidence paths, hashes, timestamps, later evidence-only commits, or absent non-material diagnostics.
 
 ## Independence
 

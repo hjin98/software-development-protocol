@@ -26,7 +26,7 @@ analysis_base_commit: REPLACE_ME
 - A1. ...
 - A2. ...
 
-Write these in product/domain or material-execution language. Do not make administrative provenance fields acceptance criteria unless they protect a concrete material boundary.
+Write these in product/domain or material-execution language. Do not make administrative provenance fields, optional telemetry, or secondary diagnostics acceptance criteria unless they protect a concrete material boundary.
 
 ## Expected change surface / non-goals
 
@@ -35,7 +35,9 @@ Write these in product/domain or material-execution language. Do not make admini
 
 ## Material execution constraints
 
-- ...
+- Production workload versus smallest materially sufficient validation workload: ...
+- Resource/performance requirement when material: ...
+- Full-production-scale qualification justification, if genuinely required: ...
 
 ## Gates
 
@@ -47,8 +49,8 @@ Use only `PENDING | PREPARED | PASS | FAIL | BLOCKED`.
 
 ## External qualification needs
 
-<List workstation/HPC/production/external checks only when genuinely required.>
+<List workstation/HPC/production/external checks only when genuinely required. For expensive checks, prefer an autonomous resource-bounded qualifier that adapts to the target machine rather than freezing one machine's numerical limits here.>
 
 ## Design-revision triggers
 
-Return to design only for material target/acceptance/scope contradictions, not command/path/report corrections.
+Return to design only for material target/acceptance/scope contradictions, not command/path/report corrections, optional diagnostics, or safe adaptive benchmark sizing within frozen semantics.
