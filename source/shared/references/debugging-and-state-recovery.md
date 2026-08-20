@@ -1,104 +1,63 @@
-# Debugging, Data Lineage, and Stateful Recovery
-
-Use this workflow for nontrivial bugs, failed gates, inconsistent resumed runs, stale-state symptoms, dependency/backend failures, and long-running pipelines whose behavior depends on persisted state.
+# Debugging and Stateful Recovery
 
 ## Diagnose before patching
 
-1. Reproduce the smallest trustworthy failure without destroying the original evidence.
-2. Trace the real execution path from user entry point through orchestration, policy selection, numerical kernels, persistence/caches, and final consumer.
-3. Trace data lineage: source identity -> normalization -> derived state -> cache/checkpoint -> consumer.
-4. Classify the failure mechanism before editing.
-5. Identify the earliest violated invariant, not only the final exception/message.
-6. Inspect adjacent assumptions that share the same state or contract.
-7. Fix the owning layer and add regression evidence for the mechanism.
+For nontrivial failures:
 
-Useful failure classes include:
+1. reproduce the smallest trustworthy failure when practical;
+2. trace the actual execution path and authoritative state;
+3. identify the earliest violated invariant;
+4. classify the owning cause rather than the final symptom;
+5. fix the owning layer;
+6. add the narrowest regression evidence that protects the mechanism.
 
-- algorithmic/logical;
-- numerical/scientific;
-- parser/input-contract;
-- configuration/policy;
-- stale cache or invalid persisted state;
-- schema/version/lineage mismatch;
-- dependency/API/ABI/environment;
-- CPU/RAM/GPU/VRAM/disk resource admission;
-- I/O/storage/corruption/recovery;
-- concurrency/race/order/deadlock;
-- integration/packaging/installed-artifact behavior.
+Do not repeatedly patch downstream symptoms.
 
-Do not classify from the exception name alone; confirm with execution and state evidence.
+## Complexity as a diagnostic signal
 
-## State and lineage identity
+Repeated failures in the same area can indicate design debt rather than independent bugs.
 
-Long-lived derived state should be bound to the inputs and assumptions that produced it. Record a stable identity/manifest for material state such as:
+Stop adding machinery and reconsider the design when fixes increasingly require wrappers, adapters, retries, compatibility shims, duplicate state, translation layers, broad exception handling, or test-only reconstruction of production behavior.
 
-- source dataset or input digest;
-- configuration/plan identity;
-- schema and algorithm version;
-- model/checkpoint identity;
-- relevant feature/metric definitions;
-- backend/precision when semantically material.
+Prefer consolidation, deletion, refactoring, or replacement when it removes the root failure surface.
 
-A resume path must reject or explicitly migrate incompatible state. Never override a lineage/digest mismatch merely to continue execution unless the accepted design proves the mismatch irrelevant.
+Do not redesign a simple local bug if a small clean fix restores the intended contract.
 
-## Stateful stage design
+## Stateful systems
 
-For long-running stages:
+Persist only state that materially needs persistence. Prefer derivable state over synchronized duplicates when recomputation is reasonable.
 
-- model the stage as explicit states/transitions rather than inferring state from arbitrary files;
-- make completed work idempotent or safely discoverable;
-- distinguish partial, complete, stale, corrupt, and superseded artifacts;
-- publish completion only after required outputs and metadata are validated;
-- make retries bounded and semantically safe;
-- preserve deterministic aggregation/ordering where it is a contract;
-- ensure cancellation/failure does not leave state that looks complete.
+When durable state matters:
 
-When recovery uses checkpoints/caches/journals, read `storage-and-io.md` as well.
+- define its owner and validity boundary;
+- distinguish complete, partial, stale, corrupt, and incompatible forms when those states can occur materially;
+- publish completion only after authoritative outputs are valid;
+- make retries/restart semantics bounded and unambiguous;
+- reject or migrate incompatible state rather than silently treating it as current.
 
-## Qualification boundaries
+Do not create a state machine merely to manage incidental files when a simpler atomic output or checkpoint is sufficient.
 
-Separate environment/capability qualification from the scientific/algorithm execution path.
+## Real-world failures
 
-- Detect required/optional dependencies and accelerator/backend capabilities early.
-- Verify actual backend realization; a silent fallback is not evidence that the requested backend passed.
-- Record why a backend was selected, rejected, or degraded.
-- Keep CPU-only qualification distinct from target-GPU/HPC qualification.
-- Do not patch dependency versions or bypass preflight simply to reach later stages unless the accepted plan explicitly changes the supported environment.
+When a production input exposes a bug, preserve or reduce a fixture when useful, identify the general invariant, fix the owner, run focused tests, and rerun the affected real path when materially needed.
 
-## Regression from a reported production failure
+Avoid parallel diagnostic programs that duplicate the product. Instrument the product or expose a small testable seam instead.
 
-When a real input exposes a bug:
+## Recovery testing
 
-1. preserve/reduce a reproduction fixture where license/size permits;
-2. identify the general invariant that failed;
-3. add the narrowest regression/property test that captures the mechanism;
-4. fix the owning implementation/specification;
-5. run focused tests, then affected consumers, then broader gates as warranted;
-6. rerun the original production-like workflow when feasible;
-7. update persisted schema/cache invalidation rules if old state could reproduce the failure.
+Test the actual state transition that matters: interruption/restart, stale-state rejection, corrupt-state handling, migration, or equivalence with uninterrupted execution.
 
-Do not patch only the reported fixture when the mechanism affects a broader input class.
+A recovery test need not replay the entire production workflow when the relevant transition can be exercised directly.
 
 ## Anti-patterns
 
-- changing a test/reference value to make a failure disappear without revising an accepted contract;
-- catching a broad exception and continuing with partial/stale output;
-- deleting caches/checkpoints until the bug disappears without identifying invalidation failure;
-- treating a successful fallback backend as qualification of the requested backend;
-- retrying OOM/I/O failures indefinitely;
-- using file existence as proof that a stage completed;
-- hiding a blocked environment check behind a later successful unit test;
-- symptom-only patches in orchestration when the violated invariant is owned by a lower-level data/persistence contract.
+- catching broad exceptions and continuing with stale/partial output;
+- deleting caches until a failure disappears without finding the invalidation bug;
+- retrying resource/I/O failures indefinitely;
+- using file existence as proof of completion;
+- adding another translation/fallback layer instead of fixing ownership;
+- building a second implementation solely to diagnose the first.
 
-## Completion evidence for a bug fix
+## Completion
 
-Report:
-
-- reproduction and root cause;
-- violated invariant/contract;
-- owning-layer fix;
-- regression test added;
-- affected state/cache invalidation or migration;
-- focused and integration results;
-- environments/backends not reproduced or not qualified;
-- whether the original real-world failure was rerun successfully.
+Record root cause, owning-layer fix or redesign, relevant regression evidence, state compatibility impact when any, and whether the original material failure path was retested.

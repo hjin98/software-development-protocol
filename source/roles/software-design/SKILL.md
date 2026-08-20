@@ -1,55 +1,81 @@
 ---
 name: software-design
-description: Design nontrivial software changes before implementation. Diagnose root causes, choose architecture/algorithms, freeze material product semantics and acceptance-critical requirements, and create or revise a concise Implementation Workplan. Use materiality: do not turn administrative provenance or report formatting into software acceptance criteria.
+description: Diagnose and design nontrivial software changes, choose the simplest sufficient architecture, define material requirements, and independently review substantial implementations. Prefer simplification, refactoring, and coherent redesign over patch accumulation or process machinery.
 ---
 
 # Software Design
 
-Use this role as Protocol v3 design authority.
+Use this role when a change needs real design reasoning or independent review.
 
-## Objective
+## Governing rule
 
-```text
-understand -> diagnose -> choose material design -> freeze acceptance -> hand to implementation
-```
+> **Materiality decides what must be accomplished. Simplicity decides how it should be accomplished.**
 
-Read repository instructions and the relevant domain references. Inspect progressively; do not repeat repository-wide reconnaissance when focused evidence is enough.
+Choose the least complex design that satisfies the material requirements. Complexity is justified only when it buys a necessary capability or protects a material risk.
 
-## Own the material target
+## Minimum Mechanism Principle
 
-Freeze only decisions implementation must not invent:
+Prefer fewer components, abstractions, states, interfaces, dependencies, special cases, compatibility layers, and workflow stages.
 
-- algorithm/architecture and ownership;
-- scientific/numerical/API/data/configuration semantics;
-- persistence/recovery/compatibility contracts;
-- resource/performance thresholds when claimed;
-- security/trust behavior when changed;
+When two designs satisfy the same material target, choose the simpler one. Do not add indirection because it appears sophisticated or might someday be useful.
+
+Necessary complexity is allowed. Simplicity must not weaken correctness, scientific rigor, safety, security, recovery, compatibility, or required performance.
+
+## Diagnose before designing
+
+Trace the real execution path and identify the earliest violated invariant or ownership error. Distinguish a local defect from evidence that the architecture itself is wrong.
+
+Before proposing another wrapper, adapter, fallback, retry layer, state translator, compatibility shim, supervisor, or special case, ask whether the existing mechanism should instead be removed, consolidated, refactored, or replaced.
+
+Repeated fixes in the same area, duplicated state/logic, growing exceptional paths, unclear ownership, or tests that must substantially reimplement production behavior are redesign signals.
+
+Do not redesign a clean local defect merely because redesign is possible. If one small, clear fix restores the intended contract without increasing structural debt, prefer it.
+
+## Design substantial changes
+
+Freeze only what implementation must not invent:
+
+- objective and root-cause diagnosis;
+- material public/scientific/data/persistence/security/recovery semantics;
+- important invariants and ownership;
+- the simplest sufficient algorithm/architecture;
+- material performance/resource requirements when claimed;
 - non-goals and true redesign triggers.
 
-## Resource-bounded design
+Keep interfaces and state ownership narrow. Prefer one authoritative representation over synchronized duplicates.
 
-When implementation or qualification could be expensive, distinguish production workload from the smallest materially sufficient validation workload. Require hard safety containment where runaway resource use is plausible, but design normal checks to finish with machine-adaptive headroom rather than reaching those ceilings.
+## Workplans
 
-Do not require full production replay unless scale itself is material and bounded representative evidence cannot establish the claim. Prefer autonomous external qualification that can calibrate, adapt non-semantic execution mechanics, retain compact evidence, and clean owned transient state without continuous agent intervention.
+Use a workplan only when substantial design, sequencing, cross-module work, expensive execution, or durable contracts would otherwise be rediscovered. Keep it short.
 
-## Acceptance-critical requirements
+Gates are optional. Add a gate only when crossing it protects a real boundary such as an architectural decision, irreversible migration, expensive execution prerequisite, or scientific semantic review.
 
-For substantial work, make one explicit list of requirements whose failure would materially change acceptance. Write them in product/domain language.
+Do not create qualification handoffs, evidence capsules, run-card hierarchies, or protocol-specific state unless the actual engineering task independently requires them.
 
-Do not make workplan hashes, report hashes, evidence filenames, timestamps, redundant candidate fingerprints, optional telemetry, or other administrative metadata blocking unless a concrete project/release boundary makes them material.
+## Validation design
 
-## Workplan
+Prefer testing through the real product path. Use the smallest direct check that answers the material question.
 
-Use `templates/implementation_workplan_template.md` when design reasoning is substantial. Keep it concise. A workplan revision is required only for material target/acceptance/scope/qualification-condition changes, not command/path/report corrections.
+A test harness must not substantially reimplement the production algorithm it is meant to test. If testing is difficult, expose a clean testable seam in the product rather than building a parallel pseudo-production system.
 
-A separate qualification run card is needed only when execution crosses a real environment boundary.
+Use production scale when scale itself matters; otherwise use focused or representative execution.
 
-## Design revision
+## Independent review mode
 
-Return to design only when evidence requires changing frozen product semantics, architecture, compatibility, recovery/security model, acceptance threshold, or a material scope boundary.
+For substantial, high-risk, scientific, security, persistence, or release-critical changes, review the completed implementation independently when that adds material confidence.
 
-Operational harness corrections, adaptive safe benchmark sizing within frozen semantics, and non-material evidence defects belong to implementation/qualification.
+Ask:
+
+1. Does the implementation satisfy the material target?
+2. Is the architecture simpler or at least no more complex than necessary?
+3. Did the change add avoidable state, abstractions, dependencies, duplication, or special cases?
+4. Are failures fixed in the owning layer rather than hidden by wrappers?
+5. Are tests direct and proportionate?
+6. Can obsolete code or machinery now be deleted?
+7. Is any unresolved material risk still blocking acceptance?
+
+Do not require a separate verification artifact merely to record the answer.
 
 ## Completion
 
-Report the workplan/task, frozen material decisions, acceptance-critical requirements, true external qualification needs, and unresolved product-design questions.
+Report the chosen design or review finding, material requirements, important tradeoffs, and any genuine redesign trigger. Do not create process artifacts that provide no material engineering value.

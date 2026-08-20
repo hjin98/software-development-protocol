@@ -1,53 +1,84 @@
 ---
 name: software-implementation
-description: Implement a specified software change, especially from a Protocol v3 workplan. Edit product code/tests/harnesses within frozen material design, run available checks, prepare real cross-environment qualification when needed, and return design contradictions instead of silently changing semantics.
+description: Implement, refactor, test, and validate software under Protocol 4. Use the simplest sufficient mechanism, fix root causes in the owning layer, prefer deletion and redesign over accumulating patches, and test through the real product path.
 ---
 
 # Software Implementation
 
-Use this role as Protocol v3 implementation authority.
+Implement the requested behavior with the least necessary mechanism.
 
-## Preflight
+## Governing rule
 
-Read the governing workplan when one exists and confirm its material assumptions still apply. Do bounded revalidation across changed assumption/contract surfaces; do not repeat broad design work without evidence of staleness.
+> **Materiality decides what must be accomplished. Simplicity decides how it should be accomplished.**
 
-## Implement
+Do not write a thousand lines, ten helpers, or a new subsystem for a problem that can be solved cleanly with substantially less machinery.
 
-Own local helpers, naming, bounded refactors, test fixtures, instrumentation, vectorization mechanics, and equivalent techniques that preserve the frozen target.
+## Before editing
 
-Run cheap/available structural, focused, oracle/property, and integration checks. Do not fabricate unavailable workstation/HPC/production/hardware results.
+Understand the owning code path, material contracts, repository instructions, and any governing workplan. Inspect progressively rather than performing repository-wide reconnaissance without need.
 
-For potentially expensive workflows, implement hard resource containment plus normal execution that is intentionally smaller than the containment envelope. Prefer streaming/shared read-only inputs, bounded queues/concurrency, and explicit ownership of transient artifacts over full production copies.
+If the existing design is already failing through accumulated wrappers, fallbacks, state translations, retries, or duplicated paths, do not automatically add another layer. Consider simplification or redesign first.
 
-## Candidate boundary
+## Implement cleanly
 
-For normal Git work, the candidate commit plus absence of unintended product-defining working-tree changes is sufficient source identity. Use extra hashes only at real external/generated content boundaries.
+Prefer:
 
-Before cross-environment qualification, commit/stage the actual product/spec/package state intended to be tested according to repository policy.
+- direct control flow;
+- one authoritative state;
+- small cohesive functions/modules;
+- established project patterns;
+- deletion of obsolete paths;
+- refactoring that reduces duplication and special cases;
+- standard-library or existing project mechanisms over new dependencies where sufficient.
 
-## Qualification preparation
+Create an abstraction only when it removes real duplication, isolates a genuine responsibility, enforces a material boundary, or clearly improves the design.
 
-Create a compact Qualification Handoff/run card only when execution genuinely crosses an environment boundary. Freeze:
+Do not build speculative extension points or compatibility machinery without a current requirement.
 
-- candidate commit;
-- material checks and acceptance criteria;
-- material dataset/config/backend/hardware requirements;
-- product-defining things qualification must not change.
+## Fixes and redesign
 
-For nontrivial external execution, prefer a standalone one-command qualifier that requires minimal human/agent intervention, discovers effective resources, performs bounded calibration, selects the smallest materially sufficient workload, adapts allowed execution mechanics, persists compact resumable state when useful, and automatically cleans run-owned large transient state after terminal paths while preserving compact diagnostics.
+For a clear local defect, make the smallest clean owning-layer fix and add the narrowest useful regression evidence.
 
-Do not try to predict exact shell quoting, cwd, scratch paths, log destinations, or universal machine resource numbers unless they are material.
+Escalate to refactor/redesign when repeated fixes target the same mechanism, another fix would add structural debt, ownership is wrong, state is duplicated, control flow is becoming exceptional, or the existing algorithm cannot meet material scale/reliability requirements cleanly.
 
-## Failures and reruns
+A successful bug fix should not leave the system materially harder to understand or maintain.
 
-A product/test-contract defect is fixed here and affected material checks rerun. A frozen-target contradiction returns to `software-design`.
+## Testing and validation
 
-An unexpected qualification watchdog/resource hit caused by an oversized harness is corrected by resizing/redesigning the harness, not by automatically raising the ceiling or declaring the product failed. A properly designed measurement that violates a frozen product resource requirement remains a product failure.
+Testing is part of implementation. Use three levels as needed:
 
-Do not create new workplan revisions or requalification solely for report metadata, evidence filenames, hashes, optional telemetry, or harmless harness corrections.
+1. **Focused** — unit, regression, property, numerical, or boundary checks for the mechanism.
+2. **Integrated** — exercise the real consumer/path/state transition.
+3. **Real use** — representative or production/target-environment execution when needed to establish the material claim.
 
-Rerun a check when a changed dimension could plausibly affect its result or interpretation.
+Not every task needs every level. Stop when the material question is answered with adequate confidence.
+
+Prefer the real product interface over a parallel test implementation. Do not substantially reconstruct or duplicate production logic merely for testing.
+
+Run production scale only when scale itself is material or smaller execution cannot establish the requirement.
+
+## Resource safety
+
+Do not exhaust the host. Honor explicit CPU/RAM/VRAM/storage/wall-time constraints and use reasonable containment when runaway behavior is plausible.
+
+Use a smaller representative workload when it answers the same material question. Do not build a resource-discovery, calibration, admission, supervisor, checkpoint, or scavenging framework solely because a test is expensive.
+
+If the product itself requires such machinery, implement and test it as product functionality.
+
+## External environments
+
+When workstation, HPC, GPU, production data, package-install, or other external execution is materially required, run the actual product there or provide the shortest reproducible command/conditions needed to do so.
+
+Create a dedicated runner only when automation independently reduces real repeated work or error. A different machine does not by itself require a qualification lifecycle.
+
+Never fabricate unavailable execution results.
+
+## Documentation and cleanup
+
+Update public/specification/architecture documentation only when its owned contract actually changed.
+
+Delete obsolete helpers, experimental paths, stale compatibility layers, generated scratch, and superseded task-local machinery when safe. Git history is usually sufficient history; do not preserve dead machinery merely because it once existed.
 
 ## Completion
 
-Report candidate commit, implemented material requirements, checks actually run, true external checks still needed, and any substantive blocker. Administrative corrections are not blockers.
+Report what materially changed, tests/real-use checks actually run, limitations or external checks still needed, and any unresolved design problem. Keep the report proportional to the work.
