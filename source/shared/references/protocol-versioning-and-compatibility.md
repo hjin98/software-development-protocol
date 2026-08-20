@@ -1,92 +1,35 @@
-# Protocol Versioning, Candidate Identity, and Compatibility
+# Protocol Versioning and Compatibility
 
-## Protocol version
+## Versioning
 
-`PROTOCOL_VERSION` identifies the protocol contract. Use semantic-version intent:
+`PROTOCOL_VERSION` identifies the protocol contract.
 
-- major: incompatible role/lifecycle authority change;
+- major: incompatible role/lifecycle or governing-doctrine change;
 - minor: backward-compatible capability or doctrine addition;
 - patch: clarification or defect correction.
 
-A protocol version is interpretation metadata, not software acceptance evidence.
+Protocol 4 is a major revision because it replaces the four-role qualification lifecycle with two roles and makes simplicity/minimum mechanism a governing principle.
 
-Protocol v3 uses four authority roles: design, implementation, qualification, and verification.
+## Candidate identity
 
-## Default candidate identity
+For a normal Git repository, the candidate commit plus absence of unintended product-defining working-tree changes is usually sufficient source identity.
 
-For a normal Git repository, use:
+Use additional hashes/manifests only at real boundaries not already represented by Git, such as mutable external datasets, model weights, generated release binaries, or other artifacts whose exact bytes materially affect interpretation.
 
-```text
-candidate_commit = <Git commit SHA>
-```
+Do not duplicate Git identity through universal content digests.
 
-plus a check that no unintended product-defining working-tree changes affect execution.
+## Evidence invalidation
 
-This is the default because Git already content-addresses the tracked tree. Do not add a second universal candidate-content digest merely to duplicate Git.
+Rerun a check when a changed dimension could plausibly alter its result or interpretation. Do not rerun solely because documentation, report wording, evidence paths, timestamps, or unrelated administrative metadata changed.
 
-## When additional identity is material
+## Compatibility
 
-Use hashes/manifests when they identify a real boundary not sufficiently represented by the candidate commit, for example:
+Preserve software compatibility when the product contract requires it. Compatibility mechanisms themselves create complexity, so do not retain obsolete compatibility layers indefinitely without a supported-version or migration requirement.
 
-- external datasets or mutable production snapshots;
-- model weights/checkpoints supplied outside Git;
-- source archives or generated binaries;
-- wheels/release artifacts whose exact bytes matter;
-- canonical-source/generated-artifact parity;
-- configuration snapshots whose exact content materially changes a scientific or performance claim.
+Prefer deleting derived caches and rebuilding them when that is cheaper and safer than maintaining migration code. Preserve/migrate authoritative user data when required.
 
-Record only the identity needed to interpret the check.
+## Earlier protocol versions
 
-## Administrative metadata
+Completed Protocol 2/3 history remains valid historical work. Do not rewrite old records merely to resemble Protocol 4.
 
-Workplan SHA values, handoff/report digests, evidence-file hashes, repeated protocol-version fields, timestamps, filenames, and policy IDs are optional/advisory unless the current task makes them material to interpretation or an external compliance/release policy requires them.
-
-A defect in advisory metadata does not invalidate otherwise applicable execution evidence and does not create a new candidate.
-
-## Workplan revisions
-
-Increment a workplan revision only for material changes to target design, acceptance criteria, important scope, or material qualification conditions.
-
-Do not revise a workplan merely to fix shell commands, paths, report wording, evidence locations, or other non-material execution details.
-
-## Evidence reuse and invalidation
-
-Use one rule:
-
-> Rerun a check when a changed dimension could plausibly alter that check's result or interpretation.
-
-Examples:
-
-- algorithm change -> rerun affected correctness/integration/performance checks;
-- packaging change -> rerun package/build/install checks;
-- GPU kernel change -> rerun affected GPU checks; unaffected CPU evidence may remain;
-- report typo or evidence-only wording change -> rerun nothing.
-
-When uncertainty concerns an acceptance-critical result, rerun conservatively. Structured dependency manifests are optional for unusually expensive programs.
-
-## Attempts and retries
-
-A repeated attempt remains under the same qualification while candidate behavior and material conditions are unchanged. Record any material differences between attempts.
-
-Changing product code, scientific/dataset/configuration/backend semantics, or acceptance threshold is not a harmless retry; it is a changed candidate or changed contract.
-
-## Evidence and coordination commits
-
-Evidence may be committed after qualification. The evidence should state which candidate commit it applies to. A later evidence-only commit does not require requalification merely because repository `HEAD` changed.
-
-If product source changes, decide affected reruns by materiality rather than by evidence-commit bookkeeping.
-
-## v2 compatibility
-
-Protocol v2 used `software-design-review` and `software-implementation` with a workplan-centered lifecycle.
-
-- completed v2 work remains readable historical evidence;
-- active substantial v2 work may migrate to v3 when split qualification is useful;
-- do not rewrite completed history merely to conform to v3 artifact shapes;
-- a v2 workplan can inform v3 design, but target execution should receive a clear current run contract when a cross-environment handoff is needed.
-
-Protocol v3 is pre-freeze during the current four-role dogfood. Intermediate v3 hardening artifacts may be superseded without a major-version change when the four-role authority model remains intact.
-
-## Materiality rule
-
-No identity, versioning, or provenance mechanism is acceptance-critical solely because it improves traceability. It becomes blocking only when it protects a material software result or an explicitly required external release/compliance boundary.
+Active work may adopt Protocol 4 directly. Existing qualification/verification artifacts are not required for new Protocol 4 acceptance unless a project independently requires them.

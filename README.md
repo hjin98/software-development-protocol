@@ -1,19 +1,31 @@
 # Software Development Protocol
 
-Software Development Protocol is a role-separated, evidence-driven workflow for AI-assisted software engineering.
+Software Development Protocol 4 is a simplicity-first, materiality-driven workflow for AI-assisted software engineering.
 
-Protocol v3 keeps four useful authority boundaries:
+The governing rule is:
+
+> **Materiality decides what must be accomplished. Simplicity decides how it should be accomplished.**
+
+When two approaches satisfy the same material requirements, choose the one with fewer components, abstractions, states, interfaces, dependencies, workflow stages, and special cases. Complexity is justified only by a material capability or risk that the simpler design cannot satisfy.
+
+Protocol 4 uses two role skills:
 
 ```text
-software-design -> software-implementation -> software-qualification -> software-verification
+software-design -> software-implementation
 ```
 
-The guiding rule is materiality: protocol mechanics exist to improve confidence in the software, not to become a second product that must be qualified. A process defect blocks acceptance only when it can materially change what code/input/environment was exercised or how a correctness, scientific, recovery, security, distribution, performance, or regression claim should be interpreted.
+- `software-design` diagnoses root causes, chooses the simplest sufficient architecture, freezes material requirements when needed, and performs independent final review for substantial or high-risk work.
+- `software-implementation` implements, refactors, tests, and validates the real product path, including target-environment or production-scale execution when that is materially necessary.
 
-Protocol 3.1 adds resource-bounded autonomous execution for potentially expensive development and qualification. Use the smallest materially sufficient workload, adapt execution to the effective machine, plan to finish comfortably below hard safety ceilings, clean owned large transient state automatically, and prefer standalone qualification that does not require an agent session to remain connected. Secondary telemetry and advisory diagnostics remain non-blocking unless they are needed for safe execution or material interpretation.
+There is no separate qualification or verification lifecycle. Testing and target-environment validation are engineering activities, not parallel products. Independent review remains available through `software-design` when it adds material value.
 
-For ordinary Git projects, the candidate commit is the default source identity. Extra hashes are used at real external/generated content boundaries, not as universal paperwork. Harmless qualification harness/report errors can be corrected in place without restarting valid software checks.
+Default workflows are intentionally short:
 
-Use the lightest lifecycle that preserves the needed authority separation. Small work may use `inspect -> implement -> relevant checks -> review`; substantial or cross-environment work uses a workplan and, when useful, a compact qualification run card.
+```text
+small change:       inspect -> implement -> relevant test -> done
+substantial change: design -> implement -> affected tests/real-use check -> review
+```
 
-`source/` is canonical. `dist/` contains generated role skill packages.
+Use workplans, gates, special harnesses, generated evidence, and automation only when they solve a real problem. Do not build a second system merely to certify the first.
+
+`source/` is canonical. Generated skill packages under `dist/` are build output and are not version-controlled.
