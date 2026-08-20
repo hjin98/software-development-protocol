@@ -1,43 +1,41 @@
 # Software Development Protocol 4
 
-`source/` is the canonical Protocol 4 library.
+This directory is the canonical Protocol 4 source.
 
-Protocol 4 has two roles:
+## Governing doctrine
 
-- `software-design` — diagnose, design, simplify, and independently review substantial changes;
-- `software-implementation` — implement, refactor, test, and validate the real product behavior.
+**Materiality decides what must be accomplished. Simplicity decides how it should be accomplished.**
 
-The core doctrine is:
+Satisfy each material requirement with the least necessary mechanism. Every additional component, abstraction, state, interface, fallback, compatibility layer, dependency, workflow stage, and special case adds failure and maintenance surface. When a simple and a complex solution satisfy the same requirements, choose the simple solution.
 
-> **Materiality decides what must be accomplished. Simplicity decides how it should be accomplished.**
+Necessary complexity is allowed. Simplicity must never be used to omit correctness, scientific rigor, safety, recovery, security, compatibility, or performance requirements that are genuinely material.
 
-## Minimum Mechanism Principle
+When a mechanism repeatedly fails, first consider removing, consolidating, refactoring, or redesigning it. Do not stabilize a failing design by surrounding it with increasingly elaborate wrappers, adapters, supervisors, retries, state translators, recovery layers, or validation systems.
 
-Satisfy each material requirement with the least necessary mechanism. Every additional component, abstraction, state, interface, fallback, compatibility layer, dependency, workflow stage, and special case creates failure and maintenance surface.
+## Roles
 
-When a simple and a complex solution satisfy the same requirement, choose the simple solution. Complexity requires justification; simplicity does not.
+Protocol 4 keeps two roles:
 
-Necessary complexity is allowed. Simplicity does not justify omitting correctness, scientific rigor, safety, recovery, security, compatibility, or performance requirements. Add mechanism only when it protects a material capability or risk that a simpler design cannot satisfy.
+- `software-design` — root-cause diagnosis, simplest-sufficient design, material acceptance requirements, and independent review when useful;
+- `software-implementation` — implementation, refactoring, testing, real-use validation, and delivery under the chosen design.
 
-## Default lifecycle
+Testing, performance measurement, package checks, target-hardware runs, production-data runs, and recovery checks are implementation/validation activities. They do not require a separate qualification role or handoff unless the project itself genuinely needs such an artifact.
 
-For ordinary work:
+## Proportional workflow
 
-```text
-inspect -> implement -> relevant test -> done
-```
-
-For substantial work:
+Use the shortest workflow that answers the engineering question.
 
 ```text
-diagnose/design -> implement/refactor -> affected tests or real-use validation -> independent review
+small/local:         inspect -> implement -> relevant test -> done
+substantial:         design -> implement -> affected tests -> review
+external/production: design if needed -> implement -> run real program -> inspect result
 ```
 
-Testing, benchmarking, target-environment execution, and production-scale validation are engineering activities inside implementation. They do not require a separate qualification lifecycle.
+A workplan is optional and should exist only when it prevents material design or sequencing from being rediscovered. Gates are optional and should exist only when crossing a boundary has a real engineering reason.
 
-Use a workplan only when substantial design, sequencing, expensive execution, public or persisted contracts, scientific semantics, or other material constraints would otherwise be rediscovered.
+## Build
 
-`dist/` is generated output. Build role packages with:
+`source/` is canonical. `dist/` contains generated, ready-to-install role skill packages and is committed for convenient distribution. Whenever canonical source changes, rebuild it before committing:
 
 ```bash
 python source/build_skills.py --output dist

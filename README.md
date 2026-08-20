@@ -28,4 +28,4 @@ substantial change: design -> implement -> affected tests/real-use check -> revi
 
 Use workplans, gates, special harnesses, generated evidence, and automation only when they solve a real problem. Do not build a second system merely to certify the first.
 
-`source/` is canonical. Generated skill packages under `dist/` are build output and are not version-controlled.
+`source/` is canonical. `dist/` contains the generated, ready-to-install role skill packages and is committed for convenient distribution. Whenever canonical source changes, rebuild `dist/` before committing.
