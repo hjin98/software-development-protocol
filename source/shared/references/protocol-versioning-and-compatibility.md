@@ -8,7 +8,9 @@
 - minor: backward-compatible capability or doctrine addition;
 - patch: clarification or defect correction.
 
-Protocol 4 is a major revision because it replaces the four-role qualification lifecycle with two roles and makes simplicity/minimum mechanism a governing principle.
+Protocol 5 is a major revision because it changes the governing doctrine from simplicity-first selection to global engineering fitness: functionality, correctness/scientific fidelity, resource feasibility, scaling, hardware effectiveness, robustness, and materially required performance define the acceptable solution space; simplicity, reuse, clean architecture, refactoring, and deletion then minimize unnecessary total complexity within that space. Protocol 5 also makes complexity-regression/consolidation review an explicit corrective mechanism.
+
+The two-role lifecycle introduced by Protocol 4 remains unchanged.
 
 ## Candidate identity
 
@@ -30,6 +32,6 @@ Prefer deleting derived caches and rebuilding them when that is cheaper and safe
 
 ## Earlier protocol versions
 
-Completed Protocol 2/3 history remains valid historical work. Do not rewrite old records merely to resemble Protocol 4.
+Completed Protocol 2/3/4 history remains valid historical work. Do not rewrite old records merely to resemble Protocol 5.
 
-Active work may adopt Protocol 4 directly. Existing qualification/verification artifacts are not required for new Protocol 4 acceptance unless a project independently requires them.
+Active work may adopt Protocol 5 directly. Existing Protocol 4 workplans and review records remain interpretable under their original version. Earlier qualification/verification artifacts are not required for new Protocol 5 acceptance unless a project independently requires them.
