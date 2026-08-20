@@ -1,7 +1,15 @@
 {
-  "protocol_version": "5.0.0",
-  "skills": [
+  "lifecycle_roles": [
     "software-design",
     "software-implementation"
+  ],
+  "protocol_version": "5.1.0",
+  "skills": [
+    "software-design",
+    "software-implementation",
+    "software-documentation"
+  ],
+  "specialists": [
+    "software-documentation"
   ]
 }
