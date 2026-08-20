@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build Protocol 4 role-skill ZIP packages from canonical source."""
+"""Build role-skill ZIP packages from canonical protocol source."""
 
 from __future__ import annotations
 
@@ -22,6 +22,12 @@ CORE = [
     "protocol-versioning-and-compatibility.md",
 ]
 
+ENGINEERING_FITNESS = [
+    "performance-and-parallelism.md",
+    "storage-and-io.md",
+    "scientific-software.md",
+]
+
 ROLE_SPECS = {
     "software-design": {
         "role": "design",
@@ -29,7 +35,7 @@ ROLE_SPECS = {
             "architecture-and-design.md",
             "documentation-and-evidence.md",
             "specification-and-implementation.md",
-        ],
+        ] + ENGINEERING_FITNESS,
         "templates": ["implementation_workplan_template.md"],
     },
     "software-implementation": {
@@ -39,7 +45,7 @@ ROLE_SPECS = {
             "documentation-and-evidence.md",
             "specification-and-implementation.md",
             "release-and-distribution.md",
-        ],
+        ] + ENGINEERING_FITNESS,
         "templates": [],
     },
 }
@@ -68,6 +74,9 @@ def validate() -> None:
     expected = set(ROLE_SPECS)
     if actual != expected:
         raise SystemExit(f"role registry mismatch: expected={sorted(expected)} actual={sorted(actual)}")
+
+    if not re.fullmatch(r"\d+\.\d+\.\d+", PROTOCOL_VERSION):
+        raise SystemExit(f"invalid protocol version: {PROTOCOL_VERSION!r}")
 
     for skill_name, spec in ROLE_SPECS.items():
         skill = ROLES / skill_name / "SKILL.md"
@@ -120,7 +129,8 @@ def build(output: Path) -> None:
         shutil.rmtree(output)
     output.mkdir(parents=True)
 
-    with tempfile.TemporaryDirectory(prefix="protocol4-") as tmp:
+    prefix = f"software-protocol-{PROTOCOL_VERSION}-"
+    with tempfile.TemporaryDirectory(prefix=prefix) as tmp:
         stage = Path(tmp)
         for skill_name, spec in ROLE_SPECS.items():
             root = build_one(skill_name, spec, stage)

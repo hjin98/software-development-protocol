@@ -1,31 +1,35 @@
 # Software Development Protocol
 
-Software Development Protocol 4 is a simplicity-first, materiality-driven workflow for AI-assisted software engineering.
+Software Development Protocol 5 is a globally optimized, engineering-fitness-first workflow for AI-assisted software engineering.
 
-The governing rule is:
+The governing doctrine is:
 
-> **Materiality decides what must be accomplished. Simplicity decides how it should be accomplished.**
+> **Seek the best globally justified engineering solution.**
+>
+> First satisfy the material engineering requirements: required functionality and capability, correctness, scientific or domain fidelity, reliability, resource and hardware constraints, target-scale behavior, and materially important performance and scalability. Among designs that satisfy those requirements, prefer the one with the lowest justified total complexity and maintenance surface.
 
-When two approaches satisfy the same material requirements, choose the one with fewer components, abstractions, states, interfaces, dependencies, workflow stages, and special cases. Complexity is justified only by a material capability or risk that the simpler design cannot satisfy.
+Simplicity is therefore a strong design principle, not a goal that may weaken the product. Necessary complexity is justified when it materially improves capability, asymptotic scaling, resource efficiency, hardware utilization, robustness, recovery, portability, compatibility, security, or another real requirement. Complexity without such benefit is debt.
 
-Protocol 4 uses two role skills:
+Protocol 5 also treats simplicity as a corrective feedback mechanism. Substantial design and review should look beyond the immediate diff when appropriate for duplicated functionality, duplicated authority, stale compatibility paths, repeated special cases, and opportunities for semantic reuse, consolidation, refactoring, or deletion. Reuse responsibilities and invariants, not merely text that looks similar.
+
+Protocol 5 uses two role skills:
 
 ```text
 software-design -> software-implementation
 ```
 
-- `software-design` diagnoses root causes, chooses the simplest sufficient architecture, freezes material requirements when needed, and performs independent final review for substantial or high-risk work.
-- `software-implementation` implements, refactors, tests, and validates the real product path, including target-environment or production-scale execution when that is materially necessary.
+- `software-design` diagnoses root causes, defines the material engineering envelope, chooses an engineering-sufficient architecture, evaluates performance/resource/scaling tradeoffs, and performs independent review when useful.
+- `software-implementation` implements, refactors, tests, measures, and validates the real product path, including representative or target-environment execution when materially necessary.
 
-There is no separate qualification or verification lifecycle. Testing and target-environment validation are engineering activities, not parallel products. Independent review remains available through `software-design` when it adds material value.
+There is no separate qualification or verification lifecycle. Testing, benchmarking, target-hardware execution, recovery checks, and production-scale validation are engineering activities, not parallel products. Independent review remains available through `software-design` when it adds material confidence.
 
-Default workflows are intentionally short:
+Default workflows remain intentionally short:
 
 ```text
 small change:       inspect -> implement -> relevant test -> done
-substantial change: design -> implement -> affected tests/real-use check -> review
+substantial change: design -> implement/refactor -> affected tests/real-use check -> review
 ```
 
-Use workplans, gates, special harnesses, generated evidence, and automation only when they solve a real problem. Do not build a second system merely to certify the first.
+Use workplans, gates, special harnesses, generated evidence, and automation only when they solve a real engineering problem.
 
-`source/` is canonical. `dist/` contains the generated, ready-to-install role skill packages and is committed for convenient distribution. Whenever canonical source changes, rebuild `dist/` before committing.
+`source/` is canonical. `dist/` contains the generated, ready-to-install role-skill packages and is committed for convenient distribution. Whenever canonical source changes, rebuild `dist/` before committing.

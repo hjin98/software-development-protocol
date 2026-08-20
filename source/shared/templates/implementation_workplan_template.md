@@ -16,7 +16,7 @@ protocol_version: REPLACE_WITH_SKILL_PROTOCOL_VERSION
 
 ## Design
 
-<Simplest sufficient design, important invariants/ownership, and material non-goals.>
+<Engineering-sufficient design: material functionality/invariants, ownership, scale/resource/hardware/performance decisions when relevant, justified complexity, and material non-goals.>
 
 ## Acceptance
 

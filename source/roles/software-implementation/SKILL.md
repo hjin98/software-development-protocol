@@ -1,47 +1,87 @@
 ---
 name: software-implementation
-description: Implement, refactor, test, and validate software under Protocol 4. Use the simplest sufficient mechanism, fix root causes in the owning layer, prefer deletion and redesign over accumulating patches, and test through the real product path.
+description: Implement, refactor, test, benchmark, and validate software under Protocol 5. Meet functionality, correctness, resource, scaling, hardware, and performance requirements first; then minimize unnecessary total complexity through reuse, consolidation, refactoring, and deletion.
 ---
 
 # Software Implementation
 
-Implement the requested behavior with the least necessary mechanism.
+Implement the requested behavior as the best globally justified engineering solution for the material requirements and target environment.
 
-## Governing rule
+## Governing doctrine
 
-> **Materiality decides what must be accomplished. Simplicity decides how it should be accomplished.**
+> **Engineering fitness first; simplicity within the engineering-sufficient solution space.**
 
-Do not write a thousand lines, ten helpers, or a new subsystem for a problem that can be solved cleanly with substantially less machinery.
+Required functionality, correctness, scientific/domain fidelity, reliability, resource feasibility, target-scale behavior, hardware requirements, and materially important performance must be met. Do not weaken those properties merely to reduce line count, component count, or architectural sophistication.
+
+Necessary complexity is valid when it buys a material capability or prevents a material failure. Once the primary requirements are protected, aggressively avoid unnecessary mechanisms, duplicated authority, special cases, abstractions, and maintenance surface.
 
 ## Before editing
 
-Understand the owning code path, material contracts, repository instructions, and any governing workplan. Inspect progressively rather than performing repository-wide reconnaissance without need.
+Understand the owning code path, material contracts, governing workplan if any, production workload, relevant scaling variables, repository instructions, and target resource/hardware constraints.
 
-If the existing design is already failing through accumulated wrappers, fallbacks, state translations, retries, or duplicated paths, do not automatically add another layer. Consider simplification or redesign first.
+Inspect progressively. For a local change, understand the local owner. For substantial or repeatedly modified subsystems, also look for existing equivalent functionality, duplicated authorities, stale compatibility paths, or structural debt that would make another local patch the wrong solution.
+
+If the existing design is failing through accumulated wrappers, fallbacks, state translations, retries, duplicated paths, poor scaling, or repeated resource failures, do not automatically add another layer. Consider algorithmic improvement, data-layout change, consolidation, simplification, or redesign first.
+
+## Implement for engineering fitness
+
+Choose implementation techniques according to the actual workload and hardware.
+
+Prefer improving, in material order:
+
+1. unnecessary work and repeated I/O/serialization;
+2. asymptotic algorithm/search space;
+3. data representation, layout, reuse, and data movement;
+4. batching and allocation behavior;
+5. vectorized/compiled library kernels;
+6. locality and temporary-copy reduction;
+7. appropriate CPU concurrency;
+8. accelerator execution when justified;
+9. custom native kernels only when remaining benefit is material.
+
+Do not preserve a simpler but materially inferior algorithm merely because it is easier to read. Conversely, do not add sophisticated optimization whose measured benefit does not justify its engineering and maintenance cost.
+
+Treat CPU, RAM, VRAM, disk footprint, I/O bandwidth, serialization, host-device transfer, restart/recovery time, and wall time as first-class resources when relevant. Optimize the user-visible stage rather than moving cost outside the measured kernel.
 
 ## Implement cleanly
 
-Prefer:
+Within the engineering-sufficient design, prefer:
 
-- direct control flow;
-- one authoritative state;
-- small cohesive functions/modules;
+- direct and understandable control flow;
+- one authoritative state where feasible;
+- cohesive functions/modules with clear ownership;
 - established project patterns;
+- semantic reuse of existing mechanisms;
+- refactoring that reduces duplicated responsibility and special cases;
 - deletion of obsolete paths;
-- refactoring that reduces duplication and special cases;
 - standard-library or existing project mechanisms over new dependencies where sufficient.
 
-Create an abstraction only when it removes real duplication, isolates a genuine responsibility, enforces a material boundary, or clearly improves the design.
+Create an abstraction only when it removes real semantic duplication, isolates a genuine responsibility, enforces a material boundary, enables required hardware/performance behavior, or clearly improves the total design.
 
 Do not build speculative extension points or compatibility machinery without a current requirement.
 
+## Reuse, consolidation, and cleanup
+
+Before adding a new helper/module/state mechanism, check whether the owning area already has an implementation that can be cleanly reused or extended.
+
+Consolidate code when implementations represent the same responsibility, invariant, lifecycle, and reason to change. Do not deduplicate merely because source text looks similar.
+
+Retain intentional duplication when it has a distinct material role, such as:
+
+- independent trusted reference/oracle versus optimized production backend;
+- hardware-specific implementation required for effective target performance;
+- supported compatibility or migration path;
+- materially different lifecycle or failure semantics.
+
+After replacing a mechanism, delete the superseded path when compatibility, migration, validation, or recovery no longer materially requires it. Temporary complexity should have a retirement condition when practical.
+
 ## Fixes and redesign
 
-For a clear local defect, make the smallest clean owning-layer fix and add the narrowest useful regression evidence.
+For a clear local defect, make the smallest clean owning-layer fix that restores the material contract without degrading engineering fitness.
 
-Escalate to refactor/redesign when repeated fixes target the same mechanism, another fix would add structural debt, ownership is wrong, state is duplicated, control flow is becoming exceptional, or the existing algorithm cannot meet material scale/reliability requirements cleanly.
+Escalate to refactor/redesign when repeated fixes target the same mechanism, another fix would add structural debt, ownership is wrong, state or functionality is duplicated, control flow is becoming exceptional, resource behavior is unacceptable, or the existing algorithm cannot meet material scale/reliability/performance requirements cleanly.
 
-A successful bug fix should not leave the system materially harder to understand or maintain.
+A successful fix should not leave the system materially less capable, less efficient, or harder to understand and maintain without explicit justification.
 
 ## Testing and validation
 
@@ -55,15 +95,19 @@ Not every task needs every level. Stop when the material question is answered wi
 
 Prefer the real product interface over a parallel test implementation. Do not substantially reconstruct or duplicate production logic merely for testing.
 
-Run production scale only when scale itself is material or smaller execution cannot establish the requirement.
+Run production scale when scale itself is material or smaller execution cannot establish the required algorithmic/resource/performance behavior.
 
-## Resource safety
+For performance or accelerator changes, compare against an accepted reference under representative conditions and verify correctness/equivalence. Do not claim target-hardware behavior from unavailable hardware.
 
-Do not exhaust the host. Honor explicit CPU/RAM/VRAM/storage/wall-time constraints and use reasonable containment when runaway behavior is plausible.
+## Resource safety and performance evidence
+
+Do not exhaust the host. Honor explicit CPU/RAM/VRAM/storage/I/O/wall-time constraints and use reasonable containment when runaway behavior is plausible.
 
 Use a smaller representative workload when it answers the same material question. Do not build a resource-discovery, calibration, admission, supervisor, checkpoint, or scavenging framework solely because a test is expensive.
 
-If the product itself requires such machinery, implement and test it as product functionality.
+When performance materially matters, measure enough to establish the claim: comparable baseline/candidate, representative input, wall time or throughput, relevant peak resources, scaling trend, and end-to-end costs such as I/O/recovery when applicable.
+
+Optimize until further complexity is no longer materially justified; do not pursue theoretical optimum for its own sake.
 
 ## External environments
 
@@ -81,4 +125,4 @@ Delete obsolete helpers, experimental paths, stale compatibility layers, generat
 
 ## Completion
 
-Report what materially changed, tests/real-use checks actually run, limitations or external checks still needed, and any unresolved design problem. Keep the report proportional to the work.
+Report what materially changed; functionality/correctness/scientific behavior established; tests, benchmarks, and real-use checks actually run; resource/performance limitations or external checks still needed; justified complexity added; complexity removed or consolidated; and any unresolved design problem. Keep the report proportional to the work.
