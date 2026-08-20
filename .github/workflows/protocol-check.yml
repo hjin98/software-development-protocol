@@ -5,55 +5,17 @@ on:
   push:
     branches:
       - main
-      - feat/protocol-5.1-documentation-specialist
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Build canonical skills
+      - name: Build canonical role skills
         run: python source/build_skills.py --output /tmp/protocol-dist
-      - name: Inspect generated packages
-        run: |
-          python - <<'PY'
-          import json, zipfile
-          from pathlib import Path
-          root=Path('/tmp/protocol-dist')
-          index=json.loads((root/'BUILD_INDEX.json').read_text())
-          assert index['protocol_version']=='5.1.0'
-          assert index['lifecycle_roles']==['software-design','software-implementation']
-          assert index['specialists']==['software-documentation']
-          for name in index['skills']:
-              p=root/f'{name}.zip'
-              assert p.is_file() and p.stat().st_size > 0
-              with zipfile.ZipFile(p) as zf:
-                  names=set(zf.namelist())
-                  assert f'{name}/SKILL.md' in names
-                  assert f'{name}/PROTOCOL_VERSION' in names
-          print(index)
-          PY
-      - name: Commit generated dist on feature branch
-        if: github.ref == 'refs/heads/feat/protocol-5.1-documentation-specialist' && github.actor != 'github-actions[bot]'
-        shell: bash
-        run: |
-          set -euo pipefail
-          rm -rf dist
-          cp -a /tmp/protocol-dist dist
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- dist/BUILD_INDEX.json dist/software-design.zip dist/software-implementation.zip dist/software-documentation.zip
-          if git diff --cached --quiet; then
-            echo 'dist already current'
-            exit 0
-          fi
-          git commit -m 'Regenerate Protocol 5.1 skill distribution'
-          git push origin HEAD:feat/protocol-5.1-documentation-specialist
