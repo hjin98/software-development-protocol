@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build role-skill ZIP packages from canonical protocol source."""
+"""Build skill ZIP packages from canonical protocol source."""
 
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 SHARED = ROOT / "shared"
 ROLES = ROOT / "roles"
+SPECIALISTS = ROOT / "specialists"
 PROTOCOL_VERSION = (ROOT / "PROTOCOL_VERSION").read_text(encoding="utf-8").strip()
 
 CORE = [
@@ -50,12 +51,35 @@ ROLE_SPECS = {
     },
 }
 
+SPECIALIST_SPECS = {
+    "software-documentation": {
+        "specialty": "documentation",
+        "references": CORE + [
+            "architecture-and-design.md",
+            "documentation-and-evidence.md",
+            "documentation-maintenance.md",
+            "scientific-technical-writing.md",
+            "specification-and-implementation.md",
+            "release-and-distribution.md",
+        ] + ENGINEERING_FITNESS,
+        "templates": [],
+    },
+}
+
 NAME_RE = re.compile(r"(?m)^name:\s*([A-Za-z0-9_.-]+)\s*$")
 
 
-def entries(skill_name: str, spec: dict) -> list[tuple[str, Path]]:
+def skill_root(skill_name: str, kind: str) -> Path:
+    if kind == "role":
+        return ROLES / skill_name
+    if kind == "specialist":
+        return SPECIALISTS / skill_name
+    raise ValueError(f"unknown skill kind: {kind!r}")
+
+
+def entries(skill_name: str, spec: dict, kind: str) -> list[tuple[str, Path]]:
     out = [
-        ("SKILL.md", ROLES / skill_name / "SKILL.md"),
+        ("SKILL.md", skill_root(skill_name, kind) / "SKILL.md"),
         ("PROTOCOL_VERSION", ROOT / "PROTOCOL_VERSION"),
     ]
     out += [
@@ -69,30 +93,40 @@ def entries(skill_name: str, spec: dict) -> list[tuple[str, Path]]:
     return out
 
 
-def validate() -> None:
-    actual = {p.name for p in ROLES.iterdir() if p.is_dir() and (p / "SKILL.md").is_file()}
-    expected = set(ROLE_SPECS)
+def validate_registry(root: Path, specs: dict, kind: str) -> None:
+    actual = {
+        p.name for p in root.iterdir()
+        if p.is_dir() and (p / "SKILL.md").is_file()
+    } if root.is_dir() else set()
+    expected = set(specs)
     if actual != expected:
-        raise SystemExit(f"role registry mismatch: expected={sorted(expected)} actual={sorted(actual)}")
+        raise SystemExit(
+            f"{kind} registry mismatch: expected={sorted(expected)} actual={sorted(actual)}"
+        )
 
-    if not re.fullmatch(r"\d+\.\d+\.\d+", PROTOCOL_VERSION):
-        raise SystemExit(f"invalid protocol version: {PROTOCOL_VERSION!r}")
-
-    for skill_name, spec in ROLE_SPECS.items():
-        skill = ROLES / skill_name / "SKILL.md"
+    for skill_name, spec in specs.items():
+        skill = skill_root(skill_name, kind) / "SKILL.md"
         match = NAME_RE.search(skill.read_text(encoding="utf-8"))
         if match is None or match.group(1) != skill_name:
             raise SystemExit(f"{skill}: frontmatter name mismatch")
-        for _, path in entries(skill_name, spec):
+        for _, path in entries(skill_name, spec, kind):
             if not path.is_file():
                 raise SystemExit(f"missing package source: {path}")
 
 
-def build_one(skill_name: str, spec: dict, stage: Path) -> Path:
+def validate() -> None:
+    if not re.fullmatch(r"\d+\.\d+\.\d+", PROTOCOL_VERSION):
+        raise SystemExit(f"invalid protocol version: {PROTOCOL_VERSION!r}")
+
+    validate_registry(ROLES, ROLE_SPECS, "role")
+    validate_registry(SPECIALISTS, SPECIALIST_SPECS, "specialist")
+
+
+def build_one(skill_name: str, spec: dict, kind: str, stage: Path) -> Path:
     root = stage / skill_name
     root.mkdir(parents=True, exist_ok=True)
 
-    for rel, src in entries(skill_name, spec):
+    for rel, src in entries(skill_name, spec, kind):
         dst = root / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
         text = src.read_text(encoding="utf-8").replace(
@@ -100,17 +134,18 @@ def build_one(skill_name: str, spec: dict, stage: Path) -> Path:
         )
         dst.write_text(text, encoding="utf-8")
 
+    manifest = {
+        "protocol_version": PROTOCOL_VERSION,
+        "skill_name": skill_name,
+    }
+    if kind == "role":
+        manifest["role"] = spec["role"]
+    else:
+        manifest["kind"] = "specialist"
+        manifest["specialty"] = spec["specialty"]
+
     (root / "protocol-manifest.json").write_text(
-        json.dumps(
-            {
-                "protocol_version": PROTOCOL_VERSION,
-                "skill_name": skill_name,
-                "role": spec["role"],
-            },
-            indent=2,
-            sort_keys=True,
-        )
-        + "\n",
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     return root
@@ -123,6 +158,13 @@ def zip_tree(src_root: Path, zip_path: Path) -> None:
             zf.write(path, path.relative_to(base).as_posix())
 
 
+def all_specs() -> list[tuple[str, dict, str]]:
+    return [
+        *[(name, spec, "role") for name, spec in ROLE_SPECS.items()],
+        *[(name, spec, "specialist") for name, spec in SPECIALIST_SPECS.items()],
+    ]
+
+
 def build(output: Path) -> None:
     validate()
     if output.exists():
@@ -132,15 +174,18 @@ def build(output: Path) -> None:
     prefix = f"software-protocol-{PROTOCOL_VERSION}-"
     with tempfile.TemporaryDirectory(prefix=prefix) as tmp:
         stage = Path(tmp)
-        for skill_name, spec in ROLE_SPECS.items():
-            root = build_one(skill_name, spec, stage)
+        for skill_name, spec, kind in all_specs():
+            root = build_one(skill_name, spec, kind, stage)
             zip_tree(root, output / f"{skill_name}.zip")
 
+    all_names = [name for name, _, _ in all_specs()]
     (output / "BUILD_INDEX.json").write_text(
         json.dumps(
             {
                 "protocol_version": PROTOCOL_VERSION,
-                "skills": list(ROLE_SPECS),
+                "skills": all_names,
+                "lifecycle_roles": list(ROLE_SPECS),
+                "specialists": list(SPECIALIST_SPECS),
             },
             indent=2,
             sort_keys=True,
@@ -155,7 +200,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path, default=ROOT.parent / "dist")
     args = parser.parse_args()
     build(args.output.resolve())
-    for skill_name in ROLE_SPECS:
+    for skill_name, _, _ in all_specs():
         print(args.output.resolve() / f"{skill_name}.zip")
     return 0
 

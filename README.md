@@ -12,7 +12,7 @@ Simplicity is therefore a strong design principle, not a goal that may weaken th
 
 Protocol 5 also treats simplicity as a corrective feedback mechanism. Substantial design and review should look beyond the immediate diff when appropriate for duplicated functionality, duplicated authority, stale compatibility paths, repeated special cases, and opportunities for semantic reuse, consolidation, refactoring, or deletion. Reuse responsibilities and invariants, not merely text that looks similar.
 
-Protocol 5 uses two role skills:
+Protocol 5.1 keeps the same two-role development lifecycle:
 
 ```text
 software-design -> software-implementation
@@ -20,6 +20,12 @@ software-design -> software-implementation
 
 - `software-design` diagnoses root causes, defines the material engineering envelope, chooses an engineering-sufficient architecture, evaluates performance/resource/scaling tradeoffs, and performs independent review when useful.
 - `software-implementation` implements, refactors, tests, measures, and validates the real product path, including representative or target-environment execution when materially necessary.
+
+Protocol 5.1 also adds one optional specialist:
+
+- `software-documentation` keeps an evolving AI-developed software system intellectually accessible to humans by reconciling documentation drift, refactoring degraded narratives, explaining theory and algorithms, maintaining usable guides, and publishing reproducible derived documents.
+
+The specialist is not a third lifecycle role or an approval gate. Documentation follows accepted engineering results proportionally and must not obstruct capability-first development or create a parallel acceptance system.
 
 There is no separate qualification or verification lifecycle. Testing, benchmarking, target-hardware execution, recovery checks, and production-scale validation are engineering activities, not parallel products. Independent review remains available through `software-design` when it adds material confidence.
 
@@ -30,6 +36,8 @@ small change:       inspect -> implement -> relevant test -> done
 substantial change: design -> implement/refactor -> affected tests/real-use check -> review
 ```
 
+Before completion, ask whether the accepted change materially altered a public capability, scientific interpretation, durable architecture, API/configuration contract, workflow, or existing explanation. If so, reconcile the affected documentation proportionally; use `software-documentation` when that requires substantive synthesis, restructuring, theory explanation, or publication work.
+
 Use workplans, gates, special harnesses, generated evidence, and automation only when they solve a real engineering problem.
 
-`source/` is canonical. `dist/` contains the generated, ready-to-install role-skill packages and is committed for convenient distribution. Whenever canonical source changes, rebuild `dist/` before committing.
+`source/` is canonical. `dist/` contains the generated, ready-to-install skill packages and is committed for convenient distribution. Whenever canonical source changes, rebuild `dist/` before committing.

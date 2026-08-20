@@ -121,8 +121,12 @@ Never fabricate unavailable execution results.
 
 Update public/specification/architecture documentation only when its owned contract actually changed.
 
+Before completion, ask whether the accepted change materially altered a public capability, scientific interpretation, durable architecture, API/configuration contract, workflow, or existing explanation. If not, do not invent a documentation stage. If yes, update the affected durable documentation proportionally. Make a trivial local documentation correction directly; use the optional `software-documentation` specialist when the work requires substantive reconciliation, restructuring, theory/method explanation, user-oriented synthesis, or publication maintenance.
+
+Documentation must describe the accepted present system rather than accumulate implementation chronology. Do not append layers of corrective prose merely to minimize documentation diffs when a conceptual rewrite is warranted. At the same time, documentation maintenance must not become a third lifecycle gate or cause unrelated stale documents to block a correct local product change.
+
 Delete obsolete helpers, experimental paths, stale compatibility layers, generated scratch, and superseded task-local machinery when safe. Git history is usually sufficient history; do not preserve dead machinery merely because it once existed.
 
 ## Completion
 
-Report what materially changed; functionality/correctness/scientific behavior established; tests, benchmarks, and real-use checks actually run; resource/performance limitations or external checks still needed; justified complexity added; complexity removed or consolidated; and any unresolved design problem. Keep the report proportional to the work.
+Report what materially changed; functionality/correctness/scientific behavior established; tests, benchmarks, and real-use checks actually run; resource/performance limitations or external checks still needed; justified complexity added; complexity removed or consolidated; affected durable documentation reconciled when material; and any unresolved design problem. Keep the report proportional to the work.
