@@ -8,13 +8,15 @@ on:
       - feat/protocol-5.1-documentation-specialist
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -39,8 +41,19 @@ jobs:
                   assert f'{name}/PROTOCOL_VERSION' in names
           print(index)
           PY
-      - uses: actions/upload-artifact@v4
-        with:
-          name: protocol-5.1-dist
-          path: /tmp/protocol-dist
-          if-no-files-found: error
+      - name: Commit generated dist on feature branch
+        if: github.ref == 'refs/heads/feat/protocol-5.1-documentation-specialist' && github.actor != 'github-actions[bot]'
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf dist
+          cp -a /tmp/protocol-dist dist
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- dist/BUILD_INDEX.json dist/software-design.zip dist/software-implementation.zip dist/software-documentation.zip
+          if git diff --cached --quiet; then
+            echo 'dist already current'
+            exit 0
+          fi
+          git commit -m 'Regenerate Protocol 5.1 skill distribution'
+          git push origin HEAD:feat/protocol-5.1-documentation-specialist
