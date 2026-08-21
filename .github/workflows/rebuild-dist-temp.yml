@@ -1,0 +1,55 @@
+name: Temporary Protocol 5.2 dist rebuild
+
+on:
+  push:
+    branches:
+      - feat/repository-hygiene-specialist
+    paths:
+      - source/**
+      - .github/workflows/rebuild-dist-temp.yml
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/repository-hygiene-specialist
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Rebuild skill distributions
+        run: python source/build_skills.py --output dist
+      - name: Inspect generated distribution
+        run: |
+          cat dist/BUILD_INDEX.json
+          python - <<'PY'
+          import json, pathlib, zipfile
+          root = pathlib.Path('dist')
+          index = json.loads((root / 'BUILD_INDEX.json').read_text())
+          assert index['protocol_version'] == '5.2.0'
+          assert 'repository-hygiene' in index['specialists']
+          for name in index['skills']:
+              path = root / f'{name}.zip'
+              assert path.is_file(), path
+              with zipfile.ZipFile(path) as zf:
+                  assert f'{name}/SKILL.md' in zf.namelist()
+                  assert f'{name}/PROTOCOL_VERSION' in zf.namelist()
+          with zipfile.ZipFile(root / 'repository-hygiene.zip') as zf:
+              names = set(zf.namelist())
+              assert 'repository-hygiene/references/git-and-version-control.md' in names
+          PY
+      - name: Commit generated dist
+        run: |
+          if git diff --quiet -- dist; then
+            echo 'dist already current'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- dist
+          git commit -m 'Rebuild Protocol 5.2 skill distributions'
+          git push origin HEAD:feat/repository-hygiene-specialist
