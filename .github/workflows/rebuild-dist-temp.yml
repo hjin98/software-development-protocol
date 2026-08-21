@@ -1,6 +1,7 @@
 name: Temporary Protocol 5.2 dist rebuild
 
 on:
+  pull_request:
   push:
     branches:
       - feat/repository-hygiene-specialist
