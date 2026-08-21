@@ -6,6 +6,10 @@ Use this policy for work inside a Git repository. It protects repository history
 
 Before acting, read the repository-root `AGENTS.md` and every applicable nearer `AGENTS.md` for the files in scope. Recheck instructions when work crosses into another directory tree. Project instructions may define branch names, worktree use, generated-file ownership, required checks, commit conventions, or stricter authorization rules. Follow the most specific applicable project rule. Project instructions do not override the user's scope, platform safety requirements, or the need for explicit authorization for consequential external or history-changing actions. If instructions conflict or would endanger unrelated work, stop and report the conflict.
 
+### Permanent branch invariant
+
+The branch named `main` is permanently protected by this protocol. **Never delete `main`, rename it away as a cleanup action, or force-move it in a way that discards its reachable history.** Normal authorized commits, merges, and fast-forward updates to `main` remain ordinary development operations. Also preserve the repository's configured default branch when it is not named `main` unless a separately authorized default-branch migration has first established and verified its durable replacement; such a migration still does not authorize deleting `main`.
+
 ## Establish the baseline
 
 Perform read-only reconnaissance before editing tracked files or changing Git state:
@@ -42,7 +46,7 @@ Before creating or switching:
 - choose a location that will not nest one repository inside another or place generated/build output into a tracked tree;
 - state whether uncommitted changes will remain in the original worktree.
 
-Creating, switching, renaming, deleting, or force-updating a branch/worktree is a repository-state mutation. Do it only when requested, required by applicable project workflow, or clearly necessary to complete the authorized task without disturbing existing work. Report any branch or worktree created. Do not delete task-created isolation at completion if it contains unmerged or otherwise unrecoverable work; removal must be safe, scoped, and authorized.
+Creating, switching, renaming, deleting, or force-updating a branch/worktree is a repository-state mutation. Do it only when requested, required by applicable project workflow, or clearly necessary to complete the authorized task without disturbing existing work. Report any branch or worktree created. Do not delete task-created isolation at completion if it contains unmerged or otherwise unrecoverable work; removal must be safe, scoped, and authorized. The permanent `main` invariant above always applies and cannot be bypassed by a general cleanup request.
 
 ## Destructive and history-changing operations
 
@@ -55,7 +59,7 @@ Do not run commands that can discard work or rewrite history without explicit, o
 - commit amendment, interactive or non-interactive rebase, history filtering, reflog expiration, or aggressive pruning;
 - force push or deletion/overwrite of remote refs, tags, or branches.
 
-Prefer a non-destructive alternative such as a new corrective commit, a patch, a new branch, or preserving a recoverable copy. Explicit authorization for one target or operation does not authorize adjacent cleanup, other branches/worktrees, or later repetitions. Never use a destructive Git command merely to simplify the task or make tests pass.
+Prefer a non-destructive alternative such as a new corrective commit, a patch, a new branch, or preserving a recoverable copy. Explicit authorization for one target or operation does not authorize adjacent cleanup, other branches/worktrees, or later repetitions. Never use a destructive Git command merely to simplify the task or make tests pass. No authorization can make deletion of `main` a valid cleanup action under this protocol.
 
 ## Authorization boundaries
 
