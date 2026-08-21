@@ -64,6 +64,17 @@ SPECIALIST_SPECS = {
         ] + ENGINEERING_FITNESS,
         "templates": [],
     },
+    "repository-hygiene": {
+        "specialty": "repository-hygiene",
+        "references": CORE + [
+            "git-and-version-control.md",
+            "documentation-and-evidence.md",
+            "release-and-distribution.md",
+            "repository-intake.md",
+            "storage-and-io.md",
+        ],
+        "templates": [],
+    },
 }
 
 NAME_RE = re.compile(r"(?m)^name:\s*([A-Za-z0-9_.-]+)\s*$")

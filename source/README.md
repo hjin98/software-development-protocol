@@ -1,6 +1,6 @@
-# Software Development Protocol 5.1
+# Software Development Protocol 5.2
 
-This directory is the canonical Protocol 5.1 source.
+This directory is the canonical Protocol 5.2 source.
 
 ## Governing doctrine
 
@@ -41,20 +41,22 @@ Scope this review proportionally. A small local fix does not require a repositor
 
 ## Lifecycle roles
 
-Protocol 5.1 keeps the two-role lifecycle introduced by Protocol 4 and retained by Protocol 5:
+Protocol 5.2 keeps the two-role lifecycle introduced by Protocol 4 and retained by Protocol 5:
 
 - `software-design` — root-cause diagnosis, engineering-envelope definition, architecture/algorithm/resource decisions, complexity-regression review, and independent review when useful;
 - `software-implementation` — implementation, refactoring, testing, benchmarking, target-environment validation, cleanup, and delivery under the chosen design.
 
-Testing, performance measurement, package checks, target-hardware runs, production-data runs, and recovery checks are implementation/validation activities. They do not require a separate qualification role or handoff unless the project itself genuinely needs such an artifact.
+Testing, performance measurement, package checks, target-hardware runs, production-data runs, recovery checks, and ordinary task cleanup are implementation/validation activities. They do not require a separate qualification role or handoff unless the project itself genuinely needs such an artifact.
 
-## Optional specialist
+## Optional specialists
 
-`software-documentation` is an optional specialist, not a lifecycle role. Its purpose is to keep an evolving AI-developed software system intellectually accessible to humans.
+Optional specialists are supporting capabilities, not lifecycle roles or approval gates.
 
-It reconciles documentation drift against accepted implementation and specifications, preserves one normative owner per contract, refactors documentation whose conceptual structure has degraded, explains scientific theory and algorithms for human use, maintains task-oriented guides, and publishes reproducible derived formats when the project needs them.
+`software-documentation` keeps an evolving AI-developed software system intellectually accessible to humans. It reconciles documentation drift against accepted implementation and specifications, preserves one normative owner per contract, refactors documentation whose conceptual structure has degraded, explains scientific theory and algorithms for human use, maintains task-oriented guides, and publishes reproducible derived formats when the project needs them.
 
-Documentation is part of product transparency and usability, but it follows the same governing doctrine: it must not weaken capability-first engineering, create a parallel acceptance system, or introduce unrelated failure modes. Current documents describe the present accepted system rather than accumulating implementation chronology; history belongs in history and proposed change belongs in workplans.
+`repository-hygiene` performs a conservative repository cleanup after a substantial development stage has been formally closed or when explicitly requested. It classifies artifacts before deletion, removes proven disposable cache/test/scratch residue, archives completed workplans, repairs clear directory-tree drift, and handles temporary branch retirement under strict Git safety rules. It preserves useful evidence/history, ambiguous material, unique work, protected branches, the default branch, and **always `main`**.
+
+Neither specialist changes the governing doctrine or creates a parallel acceptance system. Documentation and hygiene follow accepted engineering results proportionally and must not obstruct active development.
 
 ## Proportional workflow
 
@@ -71,6 +73,8 @@ Before completion, ask:
 > Did this accepted change materially alter a public capability, scientific interpretation, durable architecture, API/configuration contract, workflow, or existing explanation?
 
 If no, finish. If yes, update the affected documentation proportionally. A trivial edit can remain part of implementation; call `software-documentation` when the work requires substantive reconciliation, restructuring, theory/method explanation, user-oriented synthesis, or publication maintenance.
+
+After a substantial stage is formally closed, call `repository-hygiene` only when accumulated temporary diagnostics, completed workplans, branch residue, generated scratch, or directory drift makes a dedicated cleanup pass materially useful. Do not insert it into every development cycle and do not use it while active work still depends on the artifacts being inspected.
 
 A workplan is optional and should exist only when it prevents material design or sequencing from being rediscovered. Gates are optional and should exist only when crossing a boundary has a real engineering reason.
 

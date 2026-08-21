@@ -12,7 +12,7 @@ Simplicity is therefore a strong design principle, not a goal that may weaken th
 
 Protocol 5 also treats simplicity as a corrective feedback mechanism. Substantial design and review should look beyond the immediate diff when appropriate for duplicated functionality, duplicated authority, stale compatibility paths, repeated special cases, and opportunities for semantic reuse, consolidation, refactoring, or deletion. Reuse responsibilities and invariants, not merely text that looks similar.
 
-Protocol 5.1 keeps the same two-role development lifecycle:
+Protocol 5.2 keeps the same two-role development lifecycle:
 
 ```text
 software-design -> software-implementation
@@ -21,11 +21,12 @@ software-design -> software-implementation
 - `software-design` diagnoses root causes, defines the material engineering envelope, chooses an engineering-sufficient architecture, evaluates performance/resource/scaling tradeoffs, and performs independent review when useful.
 - `software-implementation` implements, refactors, tests, measures, and validates the real product path, including representative or target-environment execution when materially necessary.
 
-Protocol 5.1 also adds one optional specialist:
+Protocol 5.2 provides two optional specialists:
 
 - `software-documentation` keeps an evolving AI-developed software system intellectually accessible to humans by reconciling documentation drift, refactoring degraded narratives, explaining theory and algorithms, maintaining usable guides, and publishing reproducible derived documents.
+- `repository-hygiene` performs conservative cleanup after a development stage is formally closed: classify before deleting, remove proven temporary/cache/test residue, archive completed workplans, repair clear directory hierarchy drift, and retire proven disposable branches under strict Git safeguards. It preserves useful evidence and ambiguous material and treats `main` plus the repository default branch as undeletable.
 
-The specialist is not a third lifecycle role or an approval gate. Documentation follows accepted engineering results proportionally and must not obstruct capability-first development or create a parallel acceptance system.
+The specialists are not additional lifecycle roles or approval gates. They follow accepted engineering results proportionally and must not obstruct active capability-first development or create parallel acceptance systems.
 
 There is no separate qualification or verification lifecycle. Testing, benchmarking, target-hardware execution, recovery checks, and production-scale validation are engineering activities, not parallel products. Independent review remains available through `software-design` when it adds material confidence.
 
@@ -37,6 +38,8 @@ substantial change: design -> implement/refactor -> affected tests/real-use chec
 ```
 
 Before completion, ask whether the accepted change materially altered a public capability, scientific interpretation, durable architecture, API/configuration contract, workflow, or existing explanation. If so, reconcile the affected documentation proportionally; use `software-documentation` when that requires substantive synthesis, restructuring, theory explanation, or publication work.
+
+After a substantial stage is formally closed, use `repository-hygiene` only when a dedicated cleanup pass is materially useful. It is not a mandatory final gate and should not disturb active work.
 
 Use workplans, gates, special harnesses, generated evidence, and automation only when they solve a real engineering problem.
 

@@ -3,13 +3,15 @@
     "software-design",
     "software-implementation"
   ],
-  "protocol_version": "5.1.0",
+  "protocol_version": "5.2.0",
   "skills": [
     "software-design",
     "software-implementation",
-    "software-documentation"
+    "software-documentation",
+    "repository-hygiene"
   ],
   "specialists": [
-    "software-documentation"
+    "software-documentation",
+    "repository-hygiene"
   ]
 }
