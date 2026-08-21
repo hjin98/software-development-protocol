@@ -12,6 +12,8 @@ Protocol 5 is a major revision because it changes the governing doctrine from si
 
 Protocol 5.1 is a backward-compatible capability addition. It preserves the two-role lifecycle and governing doctrine while adding the optional `software-documentation` specialist plus documentation-evolution guidance. The specialist keeps evolving AI-developed software understandable and usable, but it is not a third lifecycle role, approval gate, or parallel acceptance authority.
 
+Protocol 5.2 is another backward-compatible capability addition. It preserves the same two-role lifecycle and governing doctrine while adding the optional `repository-hygiene` specialist for conservative post-stage repository cleanup. The specialist classifies before deleting, preserves useful/ambiguous material and unique work, archives genuinely completed workplans, repairs clear directory-tree drift, and places branch retirement behind strict Git/reachability/authorization checks. It is not a required final gate and never authorizes deletion of `main` or the repository default branch.
+
 The two-role lifecycle introduced by Protocol 4 remains unchanged.
 
 ## Candidate identity
@@ -24,9 +26,11 @@ Do not duplicate Git identity through universal content digests.
 
 ## Evidence invalidation
 
-Rerun a check when a changed dimension could plausibly alter its result or interpretation. Do not rerun solely because documentation, report wording, evidence paths, timestamps, or unrelated administrative metadata changed.
+Rerun a check when a changed dimension could plausibly alter its result or interpretation. Do not rerun solely because documentation, report wording, evidence paths, timestamps, unrelated administrative metadata, or a hygiene-only move/removal that cannot affect the result has changed.
 
 Documentation checks follow the same rule: a local product or documentation change should not be blocked by unrelated stale generated artifacts. Scope mechanical document validation to affected source chains and directly affected navigation unless a repository-wide audit or release policy independently requires broader review.
+
+Repository hygiene follows the same principle. Do not rerun expensive scientific/production qualification merely because caches, completed workplans, temporary diagnostics, or other non-authoritative residue were removed or archived. Rerun only when cleanup changed an input, package path, generated authority, runtime-discovered resource, or other dimension that could plausibly change behavior.
 
 ## Compatibility
 
@@ -36,6 +40,6 @@ Prefer deleting derived caches and rebuilding them when that is cheaper and safe
 
 ## Earlier protocol versions
 
-Completed Protocol 2/3/4/5.0 history remains valid historical work. Do not rewrite old records merely to resemble Protocol 5.1.
+Completed Protocol 2/3/4/5.0/5.1 history remains valid historical work. Do not rewrite old records merely to resemble Protocol 5.2.
 
-Active work may adopt Protocol 5.1 directly. Existing Protocol 4/5.0 workplans and review records remain interpretable under their original version. Earlier qualification/verification artifacts are not required for new Protocol 5.1 acceptance unless a project independently requires them.
+Active work may adopt Protocol 5.2 directly. Existing Protocol 4/5.0/5.1 workplans and review records remain interpretable under their original version. Earlier qualification/verification artifacts are not required for new Protocol 5.2 acceptance unless a project independently requires them.
