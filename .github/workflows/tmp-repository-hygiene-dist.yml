@@ -1,0 +1,34 @@
+name: Temporary repository-hygiene dist regeneration
+
+on:
+  push:
+    branches:
+      - feat/repository-hygiene-specialist
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/repository-hygiene-specialist
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Rebuild canonical skill distributions
+        run: python source/build_skills.py --output dist
+      - name: Commit regenerated dist if changed
+        run: |
+          if git diff --quiet -- dist; then
+            echo "dist already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- dist
+          git commit -m "Regenerate Protocol 5.2 skill distributions"
+          git push origin HEAD:feat/repository-hygiene-specialist
