@@ -8,11 +8,16 @@ Protocol 5 deliberately keeps the software-development lifecycle small while req
 software-design -> software-implementation
 ```
 
-`software-design` owns substantial diagnosis/design, engineering-envelope definition, architecture/algorithm/resource decisions, complexity-regression review, and independent final review when materially useful. `software-implementation` owns code changes, refactoring, testing, benchmarking, target-environment validation, cleanup, and completion evidence.
+`software-design` owns substantial diagnosis/design, engineering-envelope definition, architecture/algorithm/resource decisions, complexity-regression review, and independent final review when materially useful. `software-implementation` owns code changes, refactoring, testing, benchmarking, target-environment validation, ordinary task cleanup, and completion evidence.
 
 Testing is not a separate authority. Verification is review, not a separate workflow system.
 
-Protocol 5.1 adds `software-documentation` as an optional specialist rather than a lifecycle role. Use it when accepted software needs substantive documentation reconciliation, editorial refactoring, theory/method explanation, user-oriented synthesis, or derived-document publication. It does not approve code and must not become a third development gate.
+Protocol 5.2 provides optional specialists rather than additional lifecycle roles:
+
+- `software-documentation` — substantive documentation reconciliation, editorial refactoring, theory/method explanation, user-oriented synthesis, or derived-document publication;
+- `repository-hygiene` — conservative repository cleanup after a development stage is formally closed or when explicitly requested: removal of proven disposable residue, archival of completed workplans, repair of clear hierarchy drift, and strictly guarded temporary-branch retirement.
+
+Neither specialist approves code or becomes a required development gate. `repository-hygiene` must not interrupt active work merely to make the tree look tidy, and it must preserve useful/ambiguous material, unique work, protected branches, the default branch, and `main`.
 
 ## Default workflows
 
@@ -36,6 +41,8 @@ Before completion, ask one lightweight documentation-impact question:
 
 If not, no documentation stage is required. If yes, reconcile only the affected durable documentation. A trivial edit can remain part of implementation; use `software-documentation` when the change requires real synthesis, restructuring, theory explanation, or publication work. Do not make unrelated stale documents block a local product change.
 
+After a substantial stage is formally closed, a dedicated hygiene pass is optional. Use `repository-hygiene` only when accumulated temporary diagnostics, completed workplans, generated scratch/test residue, stale temporary branches, or directory-tree drift create a real maintenance/safety burden. Ordinary cleanup remains part of implementation; do not invoke a repository-wide hygiene pass after every local change.
+
 ## Workplans
 
 Use a workplan only when it prevents meaningful rediscovery or ambiguity: substantial architectural or algorithmic change, cross-module work, durable API/persistence/scientific semantics, expensive execution, migration, target-hardware work, or other material sequencing.
@@ -53,6 +60,8 @@ A useful workplan contains only:
 
 Do not make administrative provenance, evidence filenames, report schemas, or optional telemetry acceptance requirements.
 
+Completed workplans may be moved from a repository's active location to its canonical archive only after their terminal state is genuinely accepted. A paused, blocked, deferred, or partially implemented plan remains active unless project policy says otherwise.
+
 ## Gates
 
 Gates are optional. Use one when crossing it protects a real boundary, such as:
@@ -65,7 +74,7 @@ Gates are optional. Use one when crossing it protects a real boundary, such as:
 
 Do not create G0/G1/G2/... merely because a template can represent them.
 
-Documentation maintenance is not by itself a reason to add a gate. Mechanical document checks may fail only on objective integrity problems in the affected document chain; semantic ambiguity should be routed to design/implementation rather than converted into brittle lint rules.
+Documentation maintenance or repository hygiene is not by itself a reason to add a gate. Mechanical document checks may fail only on objective integrity problems in the affected document chain; semantic ambiguity should be routed to design/implementation rather than converted into brittle lint rules.
 
 ## External execution
 
@@ -92,6 +101,6 @@ Do not create formal retry/state taxonomies unless the product itself needs them
 
 Independent review is appropriate when the change is substantial or risk warrants it. Review material functionality/correctness, scientific fidelity, algorithmic scaling, resource and target-hardware behavior, end-to-end performance where material, architecture, complexity, reuse/consolidation opportunities, tests, cleanup opportunities, and whether any materially affected durable documentation now misrepresents the accepted system.
 
-Scope complexity and documentation review proportionally. A small local change does not require repository-wide refactoring or a repository-wide documentation audit.
+Scope complexity, documentation, and hygiene review proportionally. A small local change does not require repository-wide refactoring, a repository-wide documentation audit, or a repository-wide cleanup.
 
 No separate verification report is required unless project/release/compliance policy independently requires one.
