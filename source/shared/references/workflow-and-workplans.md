@@ -19,6 +19,10 @@ Protocol 5.2 provides optional specialists rather than additional lifecycle role
 
 Neither specialist approves code or becomes a required development gate. `repository-hygiene` must not interrupt active work merely to make the tree look tidy, and it must preserve useful/ambiguous material, unique work, protected branches, the default branch, and `main`.
 
+### Permanent repository safety invariant
+
+Across every role, specialist, development stage, cleanup pass, migration, and release operation, **never delete the branch named `main`**. Preserve the configured default branch as well unless an explicitly authorized default-branch migration has first established and verified its replacement; even such a migration does not authorize deleting `main`. Normal authorized commits, merges, and fast-forward updates to `main` are unaffected.
+
 ## Default workflows
 
 Small/local work:
