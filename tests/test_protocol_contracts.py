@@ -70,6 +70,17 @@ class ProtocolContractTests(unittest.TestCase):
         self.assertIn("earliest materially affected", implementation)
         self.assertIn("reopen only the affected", architecture)
 
+    def test_workplan_inheritance_is_bound_to_declared_protocol_version(self) -> None:
+        versioning = read("source/shared/references/protocol-versioning-and-compatibility.md").lower()
+        template = read("source/shared/templates/implementation_workplan_template.md").lower()
+        self.assertIn("workplan protocol binding", versioning)
+        self.assertIn("declared `protocol_version`", versioning)
+        self.assertIn("later protocol releases do not silently change", template)
+        self.assertIn("implementation authority", template)
+        self.assertIn("### frozen", template)
+        self.assertIn("### delegated", template)
+        self.assertIn("### reopen only on evidence", template)
+
 
 if __name__ == "__main__":
     unittest.main()
