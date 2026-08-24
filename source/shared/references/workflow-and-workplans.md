@@ -1,6 +1,6 @@
 # Workflow and Workplans
 
-Protocol 5 deliberately keeps the software-development lifecycle small while requiring engineering decisions to account for the whole material problem.
+Protocol 5 keeps the software-development lifecycle small in role count while allowing whatever proportionate engineering work is needed to reach and establish the correct product.
 
 ## Roles
 
@@ -8,103 +8,77 @@ Protocol 5 deliberately keeps the software-development lifecycle small while req
 software-design -> software-implementation
 ```
 
-`software-design` owns substantial diagnosis/design, engineering-envelope definition, architecture/algorithm/resource decisions, complexity-regression review, and independent final review when materially useful. `software-implementation` owns code changes, refactoring, testing, benchmarking, target-environment validation, ordinary task cleanup, and completion evidence.
+`software-design` owns diagnosis/design, engineering-envelope definition, architecture/algorithm/resource decisions, product-complexity review, validation design, and independent review when materially useful. `software-implementation` owns code changes, refactoring, mandatory affected-surface regression and integration testing for executable changes, benchmarking/validation, ordinary cleanup, and completion evidence.
 
-Testing is not a separate authority. Verification is review, not a separate workflow system.
+Testing is not a separate authority. Production qualification is not a separate lifecycle role.
 
-Protocol 5.2 provides optional specialists rather than additional lifecycle roles:
+## Product simplicity versus process proportionality
 
-- `software-documentation` — substantive documentation reconciliation, editorial refactoring, theory/method explanation, user-oriented synthesis, or derived-document publication;
-- `repository-hygiene` — conservative repository cleanup after a development stage is formally closed or when explicitly requested: removal of proven disposable residue, archival of completed workplans, repair of clear hierarchy drift, and strictly guarded temporary-branch retirement.
+The protocol's simplicity doctrine targets the engineered product/system. Among solutions that satisfy the material engineering requirements, prefer the product with the lowest justified total system complexity.
 
-Neither specialist approves code or becomes a required development gate. `repository-hygiene` must not interrupt active work merely to make the tree look tidy, and it must preserve useful/ambiguous material, unique work, protected branches, the default branch, and `main`.
+The engineering process has a different objective: use a sufficient, efficient workflow that reaches and establishes the right product with appropriate confidence. Avoid redundant, ceremonial, duplicative, or low-information work; do not omit materially useful design, testing, review, or validation merely because a shorter workflow exists.
 
-### Permanent repository safety invariant
+## Typical workflows
 
-Across every role, specialist, development stage, cleanup pass, migration, and release operation, **never delete the branch named `main`**. Preserve the configured default branch as well unless an explicitly authorized default-branch migration has first established and verified its replacement; even such a migration does not authorize deleting `main`. Normal authorized commits, merges, and fast-forward updates to `main` are unaffected.
-
-## Default workflows
-
-Small/local work:
+Small/local executable work may look like:
 
 ```text
-inspect -> implement -> relevant test -> done
+inspect -> implement -> affected regression -> integration -> done
 ```
 
-Substantial work:
+Substantial work may look like:
 
 ```text
-design -> implement/refactor -> affected tests/real-use validation -> independent review
+design -> staged implementation + useful intermediate regression -> final affected regression -> integration -> independent review
 ```
 
-Use the shorter path unless the additional step protects a material risk.
+Production qualification is appended only when explicitly requested, required by project/release policy, or necessary to establish a material production-scale/resource/performance/hardware claim.
 
-Before completion, ask one lightweight documentation-impact question:
-
-> Did this accepted change materially alter a public capability, scientific interpretation, durable architecture, API/configuration contract, workflow, or existing explanation?
-
-If not, no documentation stage is required. If yes, reconcile only the affected durable documentation. A trivial edit can remain part of implementation; use `software-documentation` when the change requires real synthesis, restructuring, theory explanation, or publication work. Do not make unrelated stale documents block a local product change.
-
-After a substantial stage is formally closed, a dedicated hygiene pass is optional. Use `repository-hygiene` only when accumulated temporary diagnostics, completed workplans, generated scratch/test residue, stale temporary branches, or directory-tree drift create a real maintenance/safety burden. Ordinary cleanup remains part of implementation; do not invoke a repository-wide hygiene pass after every local change.
+These are patterns, not fixed gate counts. Add or remove process steps according to engineering value, not minimum length.
 
 ## Workplans
 
-Use a workplan only when it prevents meaningful rediscovery or ambiguity: substantial architectural or algorithmic change, cross-module work, durable API/persistence/scientific semantics, expensive execution, migration, target-hardware work, or other material sequencing.
+Use a workplan when it materially reduces rediscovery, ambiguity, sequencing risk, cross-module drift, or downstream rework.
 
-A useful workplan contains only:
+A useful substantial-work plan contains:
 
-- objective;
-- diagnosis;
-- material engineering envelope where relevant, including required functionality, invariants, scale, resources, hardware, and performance;
-- proposed engineering-sufficient design and important ownership;
-- significant justified complexity or specialization;
-- acceptance requirements;
-- implementation sequence when ordering matters;
+- objective and diagnosis;
+- material engineering envelope;
+- globally justified product design, ownership, and important complexity decisions;
+- affected behavioral/regression surface;
+- focused/new tests required for changed mechanisms;
+- integration path(s) required for end-to-end functional acceptance;
+- stage-local regression checks where they materially improve fault localization or risk control;
+- production qualification requirement, deferral, or explicit non-requirement;
+- implementation sequence where ordering matters;
 - material risks/redesign triggers.
 
-Do not make administrative provenance, evidence filenames, report schemas, or optional telemetry acceptance requirements.
-
-Completed workplans may be moved from a repository's active location to its canonical archive only after their terminal state is genuinely accepted. A paused, blocked, deferred, or partially implemented plan remains active unless project policy says otherwise.
+Do not make administrative provenance, evidence filenames, report schemas, or optional telemetry acceptance requirements unless the project independently needs them.
 
 ## Gates
 
-Gates are optional. Use one when crossing it protects a real boundary, such as:
+Gates are optional but value-based. Use one when validating a boundary before proceeding materially reduces risk or wasted downstream work, such as architecture/algorithm decisions, irreversible migration, expensive execution prerequisites, scientific semantics, security boundaries, or fault-localization boundaries in substantial staged work.
 
-- architecture/algorithm approval before a broad rewrite;
-- irreversible schema/data migration;
-- expensive execution after prerequisites;
-- target-hardware decision or deployment;
-- scientific semantics requiring review.
+Do not create G0/G1/G2 merely because a template can represent them. Do not remove a useful gate merely to make the process shorter.
 
-Do not create G0/G1/G2/... merely because a template can represent them.
+## Functional acceptance
 
-Documentation maintenance or repository hygiene is not by itself a reason to add a gate. Mechanical document checks may fail only on objective integrity problems in the affected document chain; semantic ambiguity should be routed to design/implementation rather than converted into brittle lint rules.
+For executable changes, final acceptance requires affected-surface regression and integration testing. A production run, benchmark, or qualification result cannot substitute for missing regression coverage.
+
+The affected surface extends beyond the diff when behavior can propagate through callers/consumers, shared utilities, interfaces, configuration/persistence/state/orchestration, packaging, or other transitive dependencies.
 
 ## External execution
 
-A different machine, GPU, HPC allocation, production dataset, or external service does not automatically require a handoff artifact or qualification role.
+A different machine, GPU, HPC allocation, production dataset, or external service does not automatically create a handoff or qualification role. Record reproducible commands and material conditions when external execution is required. Create dedicated runners when they materially reduce repeated work/error or are product functionality.
 
-Record the shortest reproducible command and material conditions. Create a dedicated runner only when automation independently reduces repeated work/error or is product functionality.
+## Documentation and hygiene
 
-## Failure routing
+Update affected durable documentation when accepted product behavior/architecture/contracts changed. Use `software-documentation` when substantive reconciliation or publication work is useful. Use `repository-hygiene` after substantial work only when a dedicated cleanup pass materially improves repository safety/clarity.
 
-Use one decision:
-
-```text
-failure
-  -> find owning cause
-  -> clean fix fits engineering requirements? yes: fix simply
-                                         no: refactor/redesign owning mechanism
-```
-
-The redesign may target architecture, algorithmic scaling, data representation, resource use, hardware utilization, or accumulated structural complexity depending on the evidence.
-
-Do not create formal retry/state taxonomies unless the product itself needs them.
+Neither specialist is a mandatory lifecycle gate.
 
 ## Review
 
-Independent review is appropriate when the change is substantial or risk warrants it. Review material functionality/correctness, scientific fidelity, algorithmic scaling, resource and target-hardware behavior, end-to-end performance where material, architecture, complexity, reuse/consolidation opportunities, tests, cleanup opportunities, and whether any materially affected durable documentation now misrepresents the accepted system.
-
-Scope complexity, documentation, and hygiene review proportionally. A small local change does not require repository-wide refactoring, a repository-wide documentation audit, or a repository-wide cleanup.
+Independent review is appropriate when change scope/risk warrants it. Review material functionality/correctness, scientific fidelity, scaling/resources/hardware/performance, product complexity and ownership, reuse/consolidation/deletion opportunities, affected regression coverage, integration results, unavailable checks, production-qualification boundaries, and unresolved material risks.
 
 No separate verification report is required unless project/release/compliance policy independently requires one.

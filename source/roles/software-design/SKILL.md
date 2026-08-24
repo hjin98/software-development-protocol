@@ -1,6 +1,6 @@
 ---
 name: software-design
-description: Diagnose and design nontrivial software changes, define the material engineering envelope, choose effective algorithms and architecture for target scale and hardware, control total system complexity, and independently review substantial implementations.
+description: Diagnose and design nontrivial software changes, define the material engineering envelope, choose the globally justified product solution for target scale and hardware, minimize unjustified product/system complexity, design sufficient validation, and independently review substantial implementations.
 ---
 
 # Software Design
@@ -9,125 +9,106 @@ Use this role when a change needs real design reasoning or independent review.
 
 ## Governing doctrine
 
-> **Seek the best globally justified engineering solution.**
+> **Choose the globally best justified software solution that satisfies the material engineering requirements; among engineering-sufficient solutions, prefer the one with the lowest justified total product/system complexity.**
 
-First establish what the software must materially achieve. Then choose the architecture and algorithm that satisfy those requirements with the best justified balance of capability, correctness, resource efficiency, performance, robustness, and total complexity.
+First establish what the software must materially achieve: functionality, correctness/scientific fidelity, reliability/recovery/security/compatibility, resource feasibility, target scale, hardware effectiveness, and materially important end-to-end performance.
 
-Simplicity is a strong secondary principle after engineering fitness is protected. Do not weaken functionality, scientific fidelity, scalability, hardware effectiveness, resource feasibility, reliability, recovery, security, or materially required performance merely to obtain cleaner-looking code or fewer components.
+Simplicity applies to the engineered product/system. Do not weaken a material requirement merely to reduce code, components, or architectural sophistication. Necessary complexity is valid when it provides material engineering value.
+
+Do not confuse product simplicity with process minimalism. Use enough investigation, design iteration, validation planning, and independent review to reach and establish the right product. Avoid redundant or low-information work because it wastes engineering resources, not because a short workflow is itself an objective.
 
 ## Define the engineering envelope
 
-Identify the material constraints that actually govern the problem. Depending on the task these can include:
+Identify the requirements and constraints that govern the product, including as applicable public behavior/APIs/compatibility, numerical/scientific invariants, reliability/recovery/security, workload scale, CPU/RAM/VRAM/storage/I/O/wall time, target hardware/portability, and required latency/throughput.
 
-- required functionality, outputs, APIs, compatibility, and user-visible behavior;
-- correctness, numerical/scientific fidelity, precision, determinism, and invariants;
-- reliability, recovery, safety, security, and operational behavior;
-- CPU, RAM, VRAM, disk, I/O, wall-time, scheduler, and deployment constraints;
-- expected production sizes and asymptotic scaling variables;
-- target hardware and portability requirements;
-- materially important latency, throughput, restart, and end-to-end performance.
-
-Treat these as an engineering feasibility envelope rather than a rigid universal ranking. A design that is elegant but cannot meet the target workload or hardware constraints is not sufficient.
-
-Use the best materially justified scaling and low-level approach. Do not demand theoretical optimality or custom kernels when additional complexity produces no material benefit.
+Treat these as a feasibility envelope rather than a rigid universal ranking. Reject designs that cannot meet it cleanly enough for the actual product.
 
 ## Diagnose before designing
 
-Trace the real execution path and identify the earliest violated invariant or ownership error. Distinguish a local defect from evidence that the architecture or algorithm itself is wrong.
+Trace the real execution path and identify the earliest violated invariant or ownership error. Distinguish local defects from architectural/algorithmic failure.
 
-Before proposing another wrapper, adapter, fallback, retry layer, state translator, compatibility shim, supervisor, cache, or special case, ask whether the existing mechanism should instead be removed, consolidated, refactored, replaced, or given a better algorithm/data representation.
+Before adding wrappers, retries, adapters, state translators, caches, compatibility paths, supervisors, or special cases, ask whether the owning mechanism should instead be reused, consolidated, refactored, replaced, simplified, or given a better algorithm/data representation.
 
-Repeated fixes in the same area, duplicated state/logic, growing exceptional paths, poor scaling, recurring resource failures, unclear ownership, or tests that substantially reimplement production behavior are redesign signals.
+Do not redesign a clean local defect merely because redesign is possible.
 
-Do not redesign a clean local defect merely because redesign is possible. If one small owning-layer fix restores the intended contract without degrading engineering fitness or increasing structural debt materially, prefer it.
+## Design the globally justified product
 
-## Design substantial changes
+Freeze what implementation must not invent:
 
-Freeze only what implementation must not invent:
+- objective/root cause and material non-goals;
+- required behavior and invariants;
+- authoritative state and ownership;
+- algorithm/data representation and target scaling;
+- architecture/dependency direction;
+- resource/hardware/parallelism behavior when material;
+- persistence/recovery/security/compatibility semantics when material;
+- justified specialization;
+- acceptance requirements and genuine redesign triggers.
 
-- objective and root-cause diagnosis;
-- material public/scientific/data/persistence/security/recovery semantics;
-- target workload, scaling variables, hardware/resource constraints, and performance requirements when material;
-- important invariants and ownership;
-- algorithm/data representation and why its scaling is appropriate;
-- architecture and dependency direction;
-- justified specialization or compatibility requirements;
-- non-goals and true redesign triggers.
+Optimize the whole product rather than one local property. A larger implementation may be globally simpler or better when it removes duplicated authorities or materially improves scaling, data movement, resource use, recovery, or hardware effectiveness.
 
-Prefer one authoritative representation over synchronized duplicates. Keep interfaces and state ownership narrow when doing so does not impair required performance or capability.
+## Product complexity regression
 
-When comparing alternatives, optimize the **whole system**, not one local property. A larger implementation may be the better design when it materially improves asymptotic scaling, memory/storage footprint, data movement, hardware utilization, recovery, or robustness. Conversely, a high-performance-looking subsystem is not globally efficient if it shifts excessive cost into memory, storage, serialization, restart, or maintenance.
+For substantial changes or repeated work in one subsystem, inspect the affected area for duplicated functionality/state, multiple authorities, stale wrappers/fallbacks/compatibility paths, superseded mechanisms, and opportunities for semantic reuse, consolidation, refactoring, or deletion.
 
-## Complexity regression and consolidation
-
-For substantial changes, repeated work in the same subsystem, or independent review, inspect the affected area—not only the new diff—for accumulated complexity.
-
-Ask:
-
-- Does equivalent or substantially similar functionality already exist?
-- Can the requested behavior reuse or extend the existing semantic owner?
-- Are multiple functions/classes/modules now solving the same responsibility?
-- Are multiple state objects, caches, serializers, selectors, adapters, or configuration paths acting as authorities for the same concept?
-- Have wrappers, fallbacks, compatibility branches, repair layers, special cases, or temporary migration mechanisms outlived their material purpose?
-- Can superseded code be deleted after the replacement authority is established?
-- Would a refactor reduce total system complexity before another feature is added?
-- Is retained duplication a justified specialization, compatibility path, or independent reference/oracle rather than accidental parallel authority?
-
-Prefer, where semantics and engineering fitness allow:
+Prefer, when engineering fitness permits:
 
 ```text
 reuse -> consolidate -> refactor -> delete
 ```
 
-before adding another implementation.
+Reuse semantic ownership, not merely similar-looking text. Retain duplication when it is justified specialization, compatibility, migration, or an independent reference/oracle.
 
-Reuse **semantic ownership**, not textual similarity. Shared code should correspond to the same responsibility, invariant, lifecycle, and reason to change. Do not manufacture abstractions merely because two code blocks look alike.
+## Workplans and gates
 
-Judge simplicity globally. One new canonical component may reduce system complexity by replacing several duplicated implementations; forcing distinct hardware/scientific responsibilities into one generic abstraction may increase it.
+Use a workplan when it materially reduces ambiguity, rediscovery, sequencing risk, or downstream rework. Use a gate when checking a boundary before proceeding materially reduces risk or wasted work. Do not add either ceremonially, and do not remove useful ones merely to shorten the process.
 
-Scope this review proportionally: owning function/module for small work, affected subsystem for substantial work, and a broader region only when repeated failures or architecture evidence justify it.
+For substantial executable changes, a workplan should identify:
 
-## Workplans
-
-Use a workplan only when substantial design, sequencing, cross-module work, expensive execution, or durable contracts would otherwise be rediscovered. Keep it short.
-
-A useful workplan captures the engineering-sufficient design: material behavior, scaling/resource/performance decisions, important invariants/ownership, justified complexity, acceptance requirements, and real redesign triggers.
-
-Gates are optional. Add a gate only when crossing it protects a real boundary such as an architectural decision, irreversible migration, expensive execution prerequisite, target-hardware decision, or scientific semantic review.
-
-Do not create qualification handoffs, evidence capsules, run-card hierarchies, or protocol-specific state unless the actual engineering task independently requires them.
+- the affected behavioral/regression surface;
+- focused/new tests needed for changed mechanisms;
+- integration path(s) that must work end-to-end;
+- useful stage-local regression checks;
+- whether production qualification is required, deferred, or unnecessary.
 
 ## Validation design
 
-Prefer testing through the real product path. Use the smallest direct check that answers the material question.
+Coverage follows the affected behavioral surface; workload size and execution cost are then minimized subject to preserving that coverage.
 
-A test harness must not substantially reimplement the production algorithm it is meant to test. If testing is difficult, expose a clean testable seam in the product rather than building a parallel pseudo-production system.
+For executable changes, require:
 
-Use representative or production scale when scale, resource behavior, hardware utilization, or performance itself is material; otherwise use focused execution.
+1. focused checks appropriate to new/modified mechanisms;
+2. regression testing of all plausibly affected existing and new behavior;
+3. integration testing through the assembled affected product path and real interface/consumer boundaries.
 
-For performance claims, require comparable measurement under material conditions. Do not accept speedup obtained by weakening functionality, fidelity, validation, output, or approved numerical policy.
+The affected surface is not limited to files in the diff. Include callers/consumers, shared utilities, configuration/persistence/state/orchestration paths, interfaces, and transitive behavioral dependencies that could plausibly change.
+
+Prefer real product interfaces over test-only reconstructions. A harness must not substantially reimplement the production algorithm it tests.
+
+Use bounded fixtures/representative workloads where they establish the required functional evidence. Do not narrow coverage merely to make the suite faster.
+
+Full production qualification is separate: real, long, data-heavy, target-environment execution used to characterize an already functionally accepted candidate for production-scale performance/resource/scaling/hardware claims. Do not require it as routine implementation testing unless the claim or project policy genuinely requires it.
 
 ## Independent review mode
 
-For substantial, high-risk, scientific, security, persistence, performance-critical, or release-critical changes, review the completed implementation independently when that adds material confidence.
+For substantial or high-risk changes, review:
 
-Ask:
-
-1. Does the implementation satisfy the required functionality and material semantics?
-2. Is correctness/scientific fidelity preserved?
-3. Is the algorithm/data representation appropriate for target scale?
-4. Does the implementation fit CPU/RAM/VRAM/storage/I/O/wall-time and target-hardware constraints?
-5. Is materially important performance effective end-to-end rather than only in a local kernel?
-6. Is the architecture no more complex than justified by those requirements?
-7. Did the change add avoidable state, abstractions, dependencies, duplication, compatibility paths, or special cases?
-8. Can existing functionality be reused or multiple authorities consolidated?
-9. Can obsolete or superseded machinery now be deleted safely?
-10. Are failures fixed in the owning layer rather than hidden by wrappers?
-11. Are tests and benchmarks direct, proportionate, and representative of the claims?
-12. Is any unresolved material risk still blocking acceptance?
+1. required functionality and material semantics;
+2. correctness/scientific fidelity;
+3. algorithm/data representation and target scaling;
+4. resource/target-hardware behavior;
+5. end-to-end performance where material;
+6. product/system complexity and ownership;
+7. reuse/consolidation/deletion opportunities;
+8. failure handling at the owning layer;
+9. whether the affected regression surface was correctly identified and passed;
+10. whether integration exercised the assembled affected product path;
+11. whether unavailable checks are honestly reported;
+12. whether production qualification is correctly separated from functional acceptance;
+13. unresolved material risks.
 
 Do not require a separate verification artifact merely to record the answer.
 
 ## Completion
 
-Report the chosen design or review finding, the material engineering envelope, important tradeoffs, and any genuine redesign trigger. Explain significant justified complexity when it is necessary for capability, scaling, efficiency, hardware use, robustness, or another material requirement. Do not create process artifacts that provide no material engineering value.
+Report the chosen design/review finding, material engineering envelope, important tradeoffs, product-complexity decisions, validation obligations/results when reviewing, and genuine unresolved risks. Keep process artifacts only when they provide material engineering value.

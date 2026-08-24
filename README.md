@@ -1,46 +1,49 @@
 # Software Development Protocol
 
-Software Development Protocol 5 is a globally optimized, engineering-fitness-first workflow for AI-assisted software engineering.
+Software Development Protocol 5 is an engineering-fitness-first workflow for AI-assisted software engineering.
 
-The governing doctrine is:
+## Governing doctrine
 
-> **Seek the best globally justified engineering solution.**
->
-> First satisfy the material engineering requirements: required functionality and capability, correctness, scientific or domain fidelity, reliability, resource and hardware constraints, target-scale behavior, and materially important performance and scalability. Among designs that satisfy those requirements, prefer the one with the lowest justified total complexity and maintenance surface.
+> **Choose the globally best justified software solution that satisfies the material engineering requirements; among engineering-sufficient solutions, prefer the one with the lowest justified total product/system complexity.**
 
-Simplicity is therefore a strong design principle, not a goal that may weaken the product. Necessary complexity is justified when it materially improves capability, asymptotic scaling, resource efficiency, hardware utilization, robustness, recovery, portability, compatibility, security, or another real requirement. Complexity without such benefit is debt.
+Material requirements can include functionality and capability, correctness and scientific/domain fidelity, reliability, recovery, safety, security, required compatibility, CPU/RAM/VRAM/storage/I/O/wall-time constraints, target-scale behavior, effective hardware use, and materially important end-to-end performance.
 
-Protocol 5 also treats simplicity as a corrective feedback mechanism. Substantial design and review should look beyond the immediate diff when appropriate for duplicated functionality, duplicated authority, stale compatibility paths, repeated special cases, and opportunities for semantic reuse, consolidation, refactoring, or deletion. Reuse responsibilities and invariants, not merely text that looks similar.
+Simplicity applies primarily to the **engineering target: the software/system being produced**. Minimize unnecessary product mechanisms, duplicated authorities, states, abstractions, interfaces, dependencies, synchronization points, compatibility paths, runtime/operational stages, special cases, and maintenance surface after the required engineering envelope is satisfied. Necessary specialization remains valid when it buys a material capability or prevents a material failure.
 
-Protocol 5.2 keeps the same two-role development lifecycle:
+Do **not** turn product simplicity into a requirement to minimize the number of engineering steps. The development process is governed by sufficiency, confidence, risk reduction, and efficient use of engineering time and compute resources. Use the design, implementation staging, regression testing, integration testing, review, benchmarking, and validation needed to establish the required result. Remove redundant, ceremonial, duplicative, or low-information work, but do not omit materially useful work merely to make the workflow shorter.
+
+Protocol 5.3 keeps the same two-role lifecycle:
 
 ```text
 software-design -> software-implementation
 ```
 
-- `software-design` diagnoses root causes, defines the material engineering envelope, chooses an engineering-sufficient architecture, evaluates performance/resource/scaling tradeoffs, and performs independent review when useful.
-- `software-implementation` implements, refactors, tests, measures, and validates the real product path, including representative or target-environment execution when materially necessary.
+- `software-design` diagnoses root causes, defines the material engineering envelope, chooses the globally justified product design, controls product complexity, defines validation obligations, and performs independent review when useful.
+- `software-implementation` implements/refactors the product, performs mandatory affected-surface regression and integration testing for executable changes, benchmarks and validates material claims, cleans up superseded product machinery, and delivers the result.
 
-Protocol 5.2 provides two optional specialists:
+Optional specialists remain supporting capabilities, not approval gates:
 
-- `software-documentation` keeps an evolving AI-developed software system intellectually accessible to humans by reconciling documentation drift, refactoring degraded narratives, explaining theory and algorithms, maintaining usable guides, and publishing reproducible derived documents.
-- `repository-hygiene` performs conservative cleanup after a development stage is formally closed: classify before deleting, remove proven temporary/cache/test residue, archive completed workplans, repair clear directory hierarchy drift, and retire proven disposable branches under strict Git safeguards. It preserves useful evidence and ambiguous material and treats `main` plus the repository default branch as undeletable.
+- `software-documentation` — reconcile and improve durable documentation;
+- `repository-hygiene` — conservative post-stage repository cleanup.
 
-The specialists are not additional lifecycle roles or approval gates. They follow accepted engineering results proportionally and must not obstruct active capability-first development or create parallel acceptance systems.
+## Functional acceptance versus production qualification
 
-There is no separate qualification or verification lifecycle. Testing, benchmarking, target-hardware execution, recovery checks, and production-scale validation are engineering activities, not parallel products. Independent review remains available through `software-design` when it adds material confidence.
+For executable product changes, functional acceptance requires:
 
-Default workflows remain intentionally short:
+1. focused checks for new/modified mechanisms as appropriate;
+2. regression coverage across the complete plausibly affected behavioral surface, including affected existing code and new code;
+3. integration testing through the assembled affected product path and real consumer/interface boundaries.
 
-```text
-small change:       inspect -> implement -> relevant test -> done
-substantial change: design -> implement/refactor -> affected tests/real-use check -> review
-```
+Use bounded fixtures/workloads where they preserve required behavioral coverage. Optimize test cost without narrowing required coverage.
 
-Before completion, ask whether the accepted change materially altered a public capability, scientific interpretation, durable architecture, API/configuration contract, workflow, or existing explanation. If so, reconcile the affected documentation proportionally; use `software-documentation` when that requires substantive synthesis, restructuring, theory explanation, or publication work.
+Full production qualification is distinct. It uses real, long, data-heavy, target-machine/target-hardware runs to characterize an already functionally accepted candidate for production-scale wall time, throughput, RAM/VRAM/storage/I/O, accelerator utilization, recovery cost, and similar environment-specific properties. It is not a substitute for regression/integration testing and is not run by default during implementation unless explicitly requested, required by project/release policy, or necessary to establish a material scale/resource/performance claim.
 
-After a substantial stage is formally closed, use `repository-hygiene` only when a dedicated cleanup pass is materially useful. It is not a mandatory final gate and should not disturb active work.
+There is no separate qualification or verification lifecycle. These are engineering activities within the two-role lifecycle.
 
-Use workplans, gates, special harnesses, generated evidence, and automation only when they solve a real engineering problem.
+## Process proportionality
 
-`source/` is canonical. `dist/` contains the generated, ready-to-install skill packages and is committed for convenient distribution. Whenever canonical source changes, rebuild `dist/` before committing.
+Use a workflow sufficient for the material engineering risks and acceptance requirements. Small work may be short; substantial work may need staged implementation, repeated regression checks, integration tests, and review. Intermediate checks are justified when they materially reduce defect propagation, debugging ambiguity, rework, or downstream risk.
+
+Workplans and gates are instrumental, not ceremonial. Use them when they reduce ambiguity, rediscovery, sequencing risk, or wasted downstream work. Do not add them merely because a template can represent them, and do not remove useful ones merely to reduce process length.
+
+`source/` is canonical. `dist/` contains generated ready-to-install skill packages and is committed for distribution. Whenever canonical source changes, rebuild `dist/` and verify semantic source-to-distribution parity before completion.

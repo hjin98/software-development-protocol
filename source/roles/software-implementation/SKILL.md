@@ -1,132 +1,127 @@
 ---
 name: software-implementation
-description: Implement, refactor, test, benchmark, and validate software under Protocol 5. Meet functionality, correctness, resource, scaling, hardware, and performance requirements first; then minimize unnecessary total complexity through reuse, consolidation, refactoring, and deletion.
+description: Implement, refactor, test, benchmark, and validate software under Protocol 5. Meet the material functionality, correctness, scientific, resource, scaling, hardware, and performance requirements; minimize unjustified product/system complexity; and require affected-surface regression plus integration testing for executable changes.
 ---
 
 # Software Implementation
 
-Implement the requested behavior as the best globally justified engineering solution for the material requirements and target environment.
+Implement the requested behavior as the globally best justified software solution for the material requirements and target environment.
 
 ## Governing doctrine
 
-> **Engineering fitness first; simplicity within the engineering-sufficient solution space.**
+> **Engineering fitness first; minimize unjustified product/system complexity within the engineering-sufficient solution space.**
 
-Required functionality, correctness, scientific/domain fidelity, reliability, resource feasibility, target-scale behavior, hardware requirements, and materially important performance must be met. Do not weaken those properties merely to reduce line count, component count, or architectural sophistication.
+Required functionality, correctness, scientific/domain fidelity, reliability, resource feasibility, target-scale behavior, hardware requirements, compatibility/security where relevant, and materially important performance must be met. Necessary complexity is valid when it buys a material capability or prevents a material failure.
 
-Necessary complexity is valid when it buys a material capability or prevents a material failure. Once the primary requirements are protected, aggressively avoid unnecessary mechanisms, duplicated authority, special cases, abstractions, and maintenance surface.
+Simplicity applies primarily to the product being engineered: code, runtime mechanisms, state, interfaces, dependencies, compatibility machinery, operational stages, and maintenance surface. Do not weaken the engineering process merely to reduce the number of steps. Use the implementation staging, tests, integration checks, review support, and benchmarks needed to establish the result; avoid redundant or low-information work because it wastes engineering time/resources.
 
 ## Before editing
 
-Understand the owning code path, material contracts, governing workplan if any, production workload, relevant scaling variables, repository instructions, and target resource/hardware constraints.
+Understand the owning code path, material contracts, governing workplan if any, production workload, relevant scaling variables, repository instructions, target resources/hardware, and the plausibly affected behavioral surface.
 
-Inspect progressively. For a local change, understand the local owner. For substantial or repeatedly modified subsystems, also look for existing equivalent functionality, duplicated authorities, stale compatibility paths, or structural debt that would make another local patch the wrong solution.
+The affected surface is broader than the diff when behavior propagates. Include directly changed/new code plus existing callers/consumers, shared utilities, public interfaces, configuration, persistence, caches/checkpoints, state transitions, orchestration/concurrency paths, packaging/entry points, and transitive behavioral dependencies that could plausibly change.
 
-If the existing design is failing through accumulated wrappers, fallbacks, state translations, retries, duplicated paths, poor scaling, or repeated resource failures, do not automatically add another layer. Consider algorithmic improvement, data-layout change, consolidation, simplification, or redesign first.
+Inspect progressively. Expand scope when evidence shows broader ownership or impact; do not inventory unrelated areas merely for ceremony.
 
 ## Implement for engineering fitness
 
-Choose implementation techniques according to the actual workload and hardware.
+Choose implementation techniques according to the actual workload and hardware. Prefer, in material order, eliminating redundant work/I/O, improving algorithmic scaling, improving representation/layout/reuse/data movement, batching/allocation behavior, compiled/vectorized kernels, locality/copy reduction, appropriate CPU concurrency, accelerator execution when justified, and custom native kernels only when remaining benefit is material.
 
-Prefer improving, in material order:
+Do not preserve a simpler but materially inferior algorithm merely because it is easier to read. Conversely, do not add sophisticated optimization whose material benefit does not justify its product complexity and maintenance cost.
 
-1. unnecessary work and repeated I/O/serialization;
-2. asymptotic algorithm/search space;
-3. data representation, layout, reuse, and data movement;
-4. batching and allocation behavior;
-5. vectorized/compiled library kernels;
-6. locality and temporary-copy reduction;
-7. appropriate CPU concurrency;
-8. accelerator execution when justified;
-9. custom native kernels only when remaining benefit is material.
-
-Do not preserve a simpler but materially inferior algorithm merely because it is easier to read. Conversely, do not add sophisticated optimization whose measured benefit does not justify its engineering and maintenance cost.
-
-Treat CPU, RAM, VRAM, disk footprint, I/O bandwidth, serialization, host-device transfer, restart/recovery time, and wall time as first-class resources when relevant. Optimize the user-visible stage rather than moving cost outside the measured kernel.
+Treat CPU, RAM, VRAM, storage, I/O, serialization, host-device transfer, restart/recovery time, and wall time as first-class resources where relevant.
 
 ## Implement cleanly
 
-Within the engineering-sufficient design, prefer:
+Within the engineering-sufficient design, prefer direct control flow, one authoritative state, cohesive ownership, established project patterns, semantic reuse, consolidation, deletion of obsolete paths, and standard/existing mechanisms when sufficient.
 
-- direct and understandable control flow;
-- one authoritative state where feasible;
-- cohesive functions/modules with clear ownership;
-- established project patterns;
-- semantic reuse of existing mechanisms;
-- refactoring that reduces duplicated responsibility and special cases;
-- deletion of obsolete paths;
-- standard-library or existing project mechanisms over new dependencies where sufficient.
+Create abstractions only when they remove real semantic duplication, isolate genuine responsibilities, enforce material boundaries, enable required hardware/performance behavior, or reduce total product complexity.
 
-Create an abstraction only when it removes real semantic duplication, isolates a genuine responsibility, enforces a material boundary, enables required hardware/performance behavior, or clearly improves the total design.
-
-Do not build speculative extension points or compatibility machinery without a current requirement.
-
-## Reuse, consolidation, and cleanup
-
-Before adding a new helper/module/state mechanism, check whether the owning area already has an implementation that can be cleanly reused or extended.
-
-Consolidate code when implementations represent the same responsibility, invariant, lifecycle, and reason to change. Do not deduplicate merely because source text looks similar.
-
-Retain intentional duplication when it has a distinct material role, such as:
-
-- independent trusted reference/oracle versus optimized production backend;
-- hardware-specific implementation required for effective target performance;
-- supported compatibility or migration path;
-- materially different lifecycle or failure semantics.
-
-After replacing a mechanism, delete the superseded path when compatibility, migration, validation, or recovery no longer materially requires it. Temporary complexity should have a retirement condition when practical.
+Retain intentional duplication when it has a distinct material role such as an independent reference/oracle, hardware-specific backend, supported compatibility/migration path, or materially different lifecycle/failure semantics.
 
 ## Fixes and redesign
 
-For a clear local defect, make the smallest clean owning-layer fix that restores the material contract without degrading engineering fitness.
+For a clear local defect, make the clean owning-layer fix that restores the material contract without degrading engineering fitness. The implementation may be small; the validation coverage still follows the affected behavioral surface.
 
-Escalate to refactor/redesign when repeated fixes target the same mechanism, another fix would add structural debt, ownership is wrong, state or functionality is duplicated, control flow is becoming exceptional, resource behavior is unacceptable, or the existing algorithm cannot meet material scale/reliability/performance requirements cleanly.
+Escalate to refactor/redesign when repeated fixes target the same mechanism, another patch would add structural debt, ownership is wrong, state/functionality is duplicated, exceptional paths proliferate, resource behavior is unacceptable, or the current algorithm cannot meet material scale/reliability/performance requirements cleanly.
 
-A successful fix should not leave the system materially less capable, less efficient, or harder to understand and maintain without explicit justification.
+## Mandatory functional testing
 
-## Testing and validation
+Testing is part of implementation. For every executable product change, functional acceptance requires both **affected-surface regression testing** and **integration testing**.
 
-Testing is part of implementation. Use three levels as needed:
+### Focused checks
 
-1. **Focused** — unit, regression, property, numerical, or boundary checks for the mechanism.
-2. **Integrated** — exercise the real consumer/path/state transition.
-3. **Real use** — representative or production/target-environment execution when needed to establish the material claim.
+Add or run unit/property/numerical/boundary/error tests appropriate to each new or modified mechanism. A bug fix should preserve a reproducing case as regression coverage when practical.
 
-Not every task needs every level. Stop when the material question is answered with adequate confidence.
+Do not require one test per file/function. Existing tests count when they genuinely protect the changed contract; add coverage where they do not.
 
-Prefer the real product interface over a parallel test implementation. Do not substantially reconstruct or duplicate production logic merely for testing.
+### Affected-surface regression
 
-Run production scale when scale itself is material or smaller execution cannot establish the required algorithmic/resource/performance behavior.
+Run the regression tests needed to establish that:
 
-For performance or accelerator changes, compare against an accepted reference under representative conditions and verify correctness/equivalence. Do not claim target-hardware behavior from unavailable hardware.
+- new/modified behavior works;
+- supported behavior across every plausibly affected existing path remains functional;
+- changed shared contracts do not silently break consumers;
+- relevant failure/error/recovery behavior still works.
+
+A shared or central change may require a broad or repository-wide suite. Unrelated modules need not be tested merely for symmetry.
+
+A required regression check that did not execute is not a pass. Newly introduced failures and failures that plausibly intersect the affected surface block functional acceptance. Demonstrably pre-existing unrelated failures may be attributed and reported rather than repaired, but not silently ignored.
+
+### Integration testing
+
+Exercise the assembled affected product path across the relevant real module/interface boundaries using bounded representative fixtures when possible. Prefer the public/real consumer path over a parallel test implementation. Do not mock away the boundary whose integration is being established.
+
+For libraries, use the nearest real consumer/public interface. For CLI/package/build changes, exercise the user-facing entry point or installed/built artifact as applicable.
+
+### Stage-local and final testing
+
+After a material implementation stage changes executable behavior, run focused checks plus the regression subset whose early execution materially reduces defect propagation, debugging ambiguity, rework, or downstream risk. A tiny atomic change may use its final pass as the stage pass; do not duplicate identical work ceremonially.
+
+Before completion, run a final assembled affected-surface regression pass and integration pass after all material implementation/refactoring/cleanup changes that could affect behavior.
+
+Optimize test **cost**, not required **coverage**. Use small deterministic fixtures, bounded datasets, reduced epochs/iterations, synthetic inputs, and representative workloads when they exercise the same behavioral contracts.
+
+## Production qualification is separate
+
+Full production qualification assumes functional regression and integration acceptance already passed. It uses real, long, data-heavy, target-machine/target-hardware workloads to characterize production-scale wall time/throughput, RAM/VRAM/storage/I/O, scaling, accelerator utilization, recovery cost, and similar environment-specific properties.
+
+Do not run full production qualification by default during implementation or between implementation stages. Run it only when explicitly requested, project/release policy requires it, or the material scale/resource/performance/hardware claim cannot be established otherwise.
+
+Bounded performance benchmarks, accelerator smoke tests, CPU/GPU/reference equivalence checks, and representative resource sanity checks remain normal implementation validation when affected code requires them. Do not claim unavailable target-hardware results.
 
 ## Resource safety and performance evidence
 
-Do not exhaust the host. Honor explicit CPU/RAM/VRAM/storage/I/O/wall-time constraints and use reasonable containment when runaway behavior is plausible.
+Honor explicit CPU/RAM/VRAM/storage/I/O/wall-time constraints. Use bounded representative workloads when they establish the same claim. Do not build unnecessary calibration/supervision infrastructure solely because a test is expensive.
 
-Use a smaller representative workload when it answers the same material question. Do not build a resource-discovery, calibration, admission, supervisor, checkpoint, or scavenging framework solely because a test is expensive.
-
-When performance materially matters, measure enough to establish the claim: comparable baseline/candidate, representative input, wall time or throughput, relevant peak resources, scaling trend, and end-to-end costs such as I/O/recovery when applicable.
-
-Optimize until further complexity is no longer materially justified; do not pursue theoretical optimum for its own sake.
+When performance materially matters, measure enough to establish the claim under comparable conditions: baseline/candidate, representative inputs, wall time/throughput, relevant peak resources, scaling trend, and end-to-end costs such as I/O/recovery where applicable.
 
 ## External environments
 
-When workstation, HPC, GPU, production data, package-install, or other external execution is materially required, run the actual product there or provide the shortest reproducible command/conditions needed to do so.
-
-Create a dedicated runner only when automation independently reduces real repeated work or error. A different machine does not by itself require a qualification lifecycle.
-
-Never fabricate unavailable execution results.
+When workstation, HPC, GPU, production data, package installation, or another external environment is materially required, run the actual product there when available or provide reproducible commands/conditions. A different machine does not itself create a qualification lifecycle. Never fabricate unavailable execution results.
 
 ## Documentation and cleanup
 
-Update public/specification/architecture documentation only when its owned contract actually changed.
+Update durable public/specification/architecture/user documentation when its owned contract actually changed. Documentation work should be sufficient to keep the accepted system accurate and understandable; it need not become a separate approval lifecycle.
 
-Before completion, ask whether the accepted change materially altered a public capability, scientific interpretation, durable architecture, API/configuration contract, workflow, or existing explanation. If not, do not invent a documentation stage. If yes, update the affected durable documentation proportionally. Make a trivial local documentation correction directly; use the optional `software-documentation` specialist when the work requires substantive reconciliation, restructuring, theory/method explanation, user-oriented synthesis, or publication maintenance.
-
-Documentation must describe the accepted present system rather than accumulate implementation chronology. Do not append layers of corrective prose merely to minimize documentation diffs when a conceptual rewrite is warranted. At the same time, documentation maintenance must not become a third lifecycle gate or cause unrelated stale documents to block a correct local product change.
-
-Delete obsolete helpers, experimental paths, stale compatibility layers, generated scratch, and superseded task-local machinery when safe. Git history is usually sufficient history; do not preserve dead machinery merely because it once existed.
+Delete obsolete helpers, experimental paths, stale compatibility layers, generated scratch, and superseded product machinery when safe. Do not treat useful tests or validation infrastructure as product complexity to be removed merely because they lengthen the engineering process.
 
 ## Completion
 
-Report what materially changed; functionality/correctness/scientific behavior established; tests, benchmarks, and real-use checks actually run; resource/performance limitations or external checks still needed; justified complexity added; complexity removed or consolidated; affected durable documentation reconciled when material; and any unresolved design problem. Keep the report proportional to the work.
+Report:
+
+- what materially changed;
+- functionality/correctness/scientific behavior established;
+- affected behavioral surface identified;
+- focused tests added/run;
+- intermediate regression checks actually run where material;
+- final affected-surface regression results;
+- integration path(s) exercised;
+- benchmarks/target-hardware checks actually run;
+- any unavailable required functional checks;
+- production qualification performed, explicitly deferred, or unnecessary and why;
+- product complexity added/removed/consolidated;
+- affected durable documentation reconciled;
+- unresolved material risks.
+
+Keep the report proportional to the work, but do not call an executable change functionally complete while required regression or integration checks are failing or unexecuted.

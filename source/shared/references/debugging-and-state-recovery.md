@@ -4,24 +4,21 @@
 
 For nontrivial failures:
 
-1. reproduce the smallest trustworthy failure when practical;
+1. reproduce a bounded trustworthy failure when practical;
 2. trace the actual execution path and authoritative state;
 3. identify the earliest violated invariant;
 4. classify the owning cause rather than the final symptom;
 5. fix the owning layer;
-6. add the narrowest regression evidence that protects the mechanism.
+6. add focused regression evidence for the defect;
+7. run the affected-surface regression and integration checks required by `testing-and-validation.md`.
 
-Do not repeatedly patch downstream symptoms.
+A reduced reproducer is a diagnostic aid, not a reason to narrow final regression coverage.
 
 ## Complexity as a diagnostic signal
 
-Repeated failures in the same area can indicate design debt rather than independent bugs.
+Repeated failures in the same area can indicate product/design debt rather than independent bugs. Reconsider the design when fixes increasingly require wrappers, adapters, retries, compatibility shims, duplicate state, translation layers, broad exception handling, or test-only reconstruction of production behavior.
 
-Stop adding machinery and reconsider the design when fixes increasingly require wrappers, adapters, retries, compatibility shims, duplicate state, translation layers, broad exception handling, or test-only reconstruction of production behavior.
-
-Prefer consolidation, deletion, refactoring, or replacement when it removes the root failure surface.
-
-Do not redesign a simple local bug if a small clean fix restores the intended contract.
+Prefer consolidation, deletion, refactoring, or replacement when it removes the root failure surface. Do not redesign a simple local bug if a clean owning-layer fix restores the contract.
 
 ## Stateful systems
 
@@ -29,35 +26,24 @@ Persist only state that materially needs persistence. Prefer derivable state ove
 
 When durable state matters:
 
-- define its owner and validity boundary;
-- distinguish complete, partial, stale, corrupt, and incompatible forms when those states can occur materially;
+- define owner and validity boundary;
+- distinguish complete, partial, stale, corrupt, and incompatible forms where material;
 - publish completion only after authoritative outputs are valid;
-- make retries/restart semantics bounded and unambiguous;
+- make retry/restart semantics bounded and unambiguous;
 - reject or migrate incompatible state rather than silently treating it as current.
-
-Do not create a state machine merely to manage incidental files when a simpler atomic output or checkpoint is sufficient.
 
 ## Real-world failures
 
-When a production input exposes a bug, preserve or reduce a fixture when useful, identify the general invariant, fix the owner, run focused tests, and rerun the affected real path when materially needed.
+When production input exposes a bug, preserve/reduce a fixture when useful, identify the general invariant, fix the owner, run focused tests, run affected regression/integration, and rerun the original real path when materially needed to establish that production-specific dimension.
 
-Avoid parallel diagnostic programs that duplicate the product. Instrument the product or expose a small testable seam instead.
+Do not build a second implementation solely to diagnose the first. Instrument the product or expose a clean test seam instead.
 
 ## Recovery testing
 
-Test the actual state transition that matters: interruption/restart, stale-state rejection, corrupt-state handling, migration, or equivalence with uninterrupted execution.
+Test the actual state transitions that matter: interruption/restart, stale-state rejection, corrupt-state handling, migration, or equivalence with uninterrupted execution. Bounded fixtures are preferred when they preserve the transition semantics.
 
-A recovery test need not replay the entire production workflow when the relevant transition can be exercised directly.
-
-## Anti-patterns
-
-- catching broad exceptions and continuing with stale/partial output;
-- deleting caches until a failure disappears without finding the invalidation bug;
-- retrying resource/I/O failures indefinitely;
-- using file existence as proof of completion;
-- adding another translation/fallback layer instead of fixing ownership;
-- building a second implementation solely to diagnose the first.
+Recovery-specific checks augment, rather than replace, protocol-wide affected regression and integration requirements.
 
 ## Completion
 
-Record root cause, owning-layer fix or redesign, relevant regression evidence, state compatibility impact when any, and whether the original material failure path was retested.
+Record root cause, owning-layer fix/redesign, focused reproducer coverage, affected regression/integration evidence, state compatibility impact, and whether any original production-specific failure path was retested or explicitly deferred.
