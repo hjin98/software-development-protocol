@@ -14,10 +14,11 @@ Protocol 5.1 added the optional `software-documentation` specialist without chan
 
 Protocol 5.2 added the optional `repository-hygiene` specialist without changing the two-role lifecycle.
 
-Protocol 5.3 is a backward-compatible doctrine clarification and functional-acceptance strengthening. It preserves the Protocol 5 product doctrine and two-role lifecycle while making two points explicit:
+Protocol 5.3 is a backward-compatible doctrine clarification and functional-acceptance strengthening. It preserves the Protocol 5 product doctrine and two-role lifecycle while making three points explicit:
 
 1. **Product simplicity is not process minimalism.** Simplicity primarily optimizes the engineered software/system. The engineering process is governed by sufficiency, confidence, risk reduction, and efficient use of engineering resources; materially useful design/testing/review/validation must not be omitted merely to shorten the workflow.
-2. **Executable changes require affected-surface regression and integration testing.** Coverage follows the complete plausibly affected behavioral surface, including affected existing code and new code. Test workloads should be bounded when equivalent evidence is available, but coverage must not be narrowed merely to reduce execution cost.
+2. **Executable changes require stage-local and final affected-surface regression plus integration testing.** Each material behavior-changing implementation stage closes with its relevant regression checks before dependent implementation proceeds. Final acceptance re-derives the affected surface from the assembled candidate, covers that complete surface, runs repository-required/broader checks when applicable, and exercises the assembled integration path.
+3. **Coverage is optimized for cost only after its required breadth is established.** Bounded fixtures and workloads are preferred when they preserve evidence, but impact uncertainty expands rather than narrows the regression scope.
 
 Protocol 5.3 also explicitly separates functional regression/integration acceptance from full production qualification. Production qualification characterizes an already functionally accepted candidate using long, real, data-heavy, target-environment runs and is not a default implementation-stage requirement.
 
@@ -31,7 +32,7 @@ For a normal Git repository, the candidate commit plus absence of unintended pro
 
 Rerun a check when a changed dimension could plausibly alter its result or interpretation.
 
-For executable changes, final affected-surface regression and integration checks must reflect the assembled candidate after all material executable edits that could invalidate earlier evidence. Intermediate checks remain valuable when they reduce fault-localization cost or downstream risk.
+For executable changes, stage-local evidence must correspond to the stage it accepts. Final affected-surface regression and integration checks must reflect the assembled candidate after all material executable edits that could invalidate earlier evidence. Re-derive the final affected surface rather than assuming the initial workplan remained complete.
 
 Do not rerun expensive scientific/production qualification merely because documentation wording, evidence paths, timestamps, unrelated administrative metadata, or hygiene-only movement/removal changed. Rerun qualification only when a dimension relevant to the qualification claim changed.
 

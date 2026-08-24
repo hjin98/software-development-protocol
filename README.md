@@ -19,7 +19,7 @@ software-design -> software-implementation
 ```
 
 - `software-design` diagnoses root causes, defines the material engineering envelope, chooses the globally justified product design, controls product complexity, defines validation obligations, and performs independent review when useful.
-- `software-implementation` implements/refactors the product, performs mandatory affected-surface regression and integration testing for executable changes, benchmarks and validates material claims, cleans up superseded product machinery, and delivers the result.
+- `software-implementation` implements/refactors the product, performs mandatory stage-local and final affected-surface regression plus integration testing for executable changes, benchmarks and validates material claims, cleans up superseded product machinery, and delivers the result.
 
 Optional specialists remain supporting capabilities, not approval gates:
 
@@ -31,10 +31,13 @@ Optional specialists remain supporting capabilities, not approval gates:
 For executable product changes, functional acceptance requires:
 
 1. focused checks for new/modified mechanisms as appropriate;
-2. regression coverage across the complete plausibly affected behavioral surface, including affected existing code and new code;
-3. integration testing through the assembled affected product path and real consumer/interface boundaries.
+2. affected regression after each material behavior-changing implementation stage before dependent work proceeds;
+3. re-deriving the affected behavioral surface from the final assembled implementation;
+4. final regression coverage across that complete surface, including affected existing and new code;
+5. integration testing through the assembled affected product path and real consumer/interface boundaries;
+6. repository/project-required checks, using the broader/full available suite when impact cannot be bounded confidently.
 
-Use bounded fixtures/workloads where they preserve required behavioral coverage. Optimize test cost without narrowing required coverage.
+Use bounded fixtures/workloads where they preserve required behavioral coverage. Optimize test cost without narrowing required coverage. A tiny atomic change can share its stage and final pass; a genuinely non-executable intermediate may carry validation to the nearest executable stage when that dependency is explicit.
 
 Full production qualification is distinct. It uses real, long, data-heavy, target-machine/target-hardware runs to characterize an already functionally accepted candidate for production-scale wall time, throughput, RAM/VRAM/storage/I/O, accelerator utilization, recovery cost, and similar environment-specific properties. It is not a substitute for regression/integration testing and is not run by default during implementation unless explicitly requested, required by project/release policy, or necessary to establish a material scale/resource/performance claim.
 
@@ -42,8 +45,8 @@ There is no separate qualification or verification lifecycle. These are engineer
 
 ## Process proportionality
 
-Use a workflow sufficient for the material engineering risks and acceptance requirements. Small work may be short; substantial work may need staged implementation, repeated regression checks, integration tests, and review. Intermediate checks are justified when they materially reduce defect propagation, debugging ambiguity, rework, or downstream risk.
+Use a workflow sufficient for the material engineering risks and acceptance requirements. Small work may be short; substantial work may need staged implementation, repeated regression checks, integration tests, and review. Required stage-local regression is part of functional acceptance, not optional process ceremony.
 
 Workplans and gates are instrumental, not ceremonial. Use them when they reduce ambiguity, rediscovery, sequencing risk, or wasted downstream work. Do not add them merely because a template can represent them, and do not remove useful ones merely to reduce process length.
 
-`source/` is canonical. `dist/` contains generated ready-to-install skill packages and is committed for distribution. Whenever canonical source changes, rebuild `dist/` and verify semantic source-to-distribution parity before completion.
+`source/` is canonical. `dist/` contains generated ready-to-install skill packages and is committed for distribution. Whenever canonical source changes, build once from canonical source, validate the generated packages as shipped artifacts, run protocol regression tests, and verify semantic parity with committed `dist/` before completion.

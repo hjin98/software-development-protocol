@@ -1,0 +1,94 @@
+name: Protocol 5.3 closeout rebuild
+
+on:
+  push:
+    branches:
+      - feat/protocol-5.3-product-simplicity-testing
+
+permissions:
+  contents: write
+
+jobs:
+  closeout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Reconcile remaining specialist wording
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              Path("source/specialists/software-documentation/SKILL.md"): [
+                  (
+                      "Choose the smallest useful mode; these are reasoning modes, not required commands or workflow states.",
+                      "Choose the fit-for-purpose mode; use only modes that materially serve the documentation task. These are reasoning modes, not required commands or workflow states.",
+                  ),
+              ],
+              Path("source/specialists/repository-hygiene/SKILL.md"): [
+                  (
+                      "Use the smallest useful operating mode:",
+                      "Use the fit-for-purpose operating mode; do not take broader cleanup authority than the task needs:",
+                  ),
+                  (
+                      "Run the smallest relevant tests/build/index checks required by the paths moved or regenerated.",
+                      "Run the relevant tests/build/index checks required by the affected paths moved or regenerated. Minimize check cost only after required coverage is established.",
+                  ),
+              ],
+              Path("source/shared/references/documentation-maintenance.md"): [
+                  (
+                      "The governing engineering doctrine remains unchanged: seek the best globally justified solution, satisfy capability/correctness/scientific/resource/performance requirements first, then minimize unnecessary complexity. Documentation makes the resulting system understandable and usable; it must not constrain sound engineering through a parallel process.",
+                      "The governing engineering doctrine remains unchanged: seek the best globally justified solution, satisfy capability/correctness/scientific/resource/performance requirements first, then minimize unnecessary product/system complexity among engineering-sufficient solutions. That simplicity target does not require minimum documentation or development-process length. Documentation makes the resulting system understandable and usable without constraining sound engineering through a parallel process.",
+                  ),
+              ],
+          }
+
+          for path, pairs in replacements.items():
+              text = path.read_text(encoding="utf-8")
+              for old, new in pairs:
+                  if text.count(old) != 1:
+                      raise SystemExit(f"expected exactly one closeout phrase in {path}: {old!r}")
+                  text = text.replace(old, new)
+              path.write_text(text, encoding="utf-8")
+
+          insertions = {
+              Path("source/specialists/software-documentation/SKILL.md"): """## Supporting references\n\nRead the packaged references when their surface is material:\n\n- `references/workflow-and-workplans.md` and `references/testing-and-validation.md` — protocol workflow and functional acceptance boundaries;\n- `references/protocol-versioning-and-compatibility.md` — protocol/candidate compatibility;\n- `references/architecture-and-design.md` and `references/specification-and-implementation.md` — normative structure and contracts;\n- `references/documentation-and-evidence.md` and `references/documentation-maintenance.md` — authority, current-state writing, and evidence;\n- `references/scientific-technical-writing.md` and `references/scientific-software.md` — scientific exposition and numerical semantics;\n- `references/security-and-trust-boundaries.md` — rendering, external-resource, credential, and untrusted-input boundaries;\n- `references/performance-and-parallelism.md` and `references/storage-and-io.md` — performance/resource behavior that documentation must explain when material;\n- `references/release-and-distribution.md` — generated/shipped documentation and package boundaries.\n\n""",
+              Path("source/specialists/repository-hygiene/SKILL.md"): """## Supporting references\n\nRead the packaged references when their surface is material:\n\n- `references/workflow-and-workplans.md` and `references/testing-and-validation.md` — lifecycle closure and affected validation;\n- `references/protocol-versioning-and-compatibility.md` — evidence invalidation and protocol compatibility;\n- `references/git-and-version-control.md` — Git safety and authorization boundaries;\n- `references/repository-intake.md` — progressive repository inspection;\n- `references/security-and-trust-boundaries.md` — secrets, unsafe artifacts, and trust boundaries;\n- `references/storage-and-io.md` — cache/checkpoint/scratch ownership and recovery value;\n- `references/release-and-distribution.md` — tracked/generated/release artifact boundaries;\n- `references/documentation-and-evidence.md` — durable records versus disposable coordination/evidence.\n\n""",
+          }
+
+          for path, insertion in insertions.items():
+              text = path.read_text(encoding="utf-8")
+              marker = "## Completion"
+              if text.count(marker) != 1:
+                  raise SystemExit(f"expected one completion section in {path}")
+              if "## Supporting references" not in text:
+                  text = text.replace(marker, insertion + marker)
+              path.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Run protocol regression tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Build and validate final skill packages
+        run: |
+          python source/build_skills.py --output /tmp/protocol-dist
+          python source/validate_packages.py --dist /tmp/protocol-dist
+          rm -rf dist
+          cp -a /tmp/protocol-dist dist
+          python source/check_dist.py --expected /tmp/protocol-dist --committed dist
+          git diff --check
+
+      - name: Commit generated closeout state and retire one-shot workflow
+        run: |
+          rm .github/workflows/protocol-53-closeout.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add source/specialists source/shared/references/documentation-maintenance.md dist .github/workflows/protocol-53-closeout.yml
+          if ! git diff --cached --quiet; then
+            git commit -m "Complete Protocol 5.3 closeout and regenerate distributions"
+            git push
+          fi

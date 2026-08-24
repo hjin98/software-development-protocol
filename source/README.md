@@ -19,17 +19,24 @@ Do not generalize this objective into a requirement to minimize engineering-proc
 Protocol 5.3 preserves the two-role lifecycle:
 
 - `software-design` — diagnosis, engineering-envelope definition, globally justified architecture/algorithm/resource decisions, product-complexity review, validation design, and independent review when useful;
-- `software-implementation` — implementation/refactoring, mandatory affected-surface regression and integration testing for executable changes, benchmarking/validation of material claims, cleanup, and delivery.
+- `software-implementation` — implementation/refactoring, mandatory stage-local and final affected-surface regression plus integration testing for executable changes, benchmarking/validation of material claims, cleanup, and delivery.
 
 Testing and production qualification remain engineering activities, not additional lifecycle roles.
 
 ## Functional acceptance
 
-Executable changes require affected-surface regression testing and integration testing through the assembled affected product path. The affected surface includes directly changed/new code and existing consumers, callers, shared utilities, configuration/persistence/state/orchestration paths, interfaces, and transitive behavioral dependencies that could plausibly change because of the revision.
+Executable changes require:
+
+- focused checks appropriate to changed mechanisms;
+- relevant affected regression after every material behavior-changing implementation stage before dependent work proceeds;
+- final re-derivation of the affected behavioral surface from the assembled implementation;
+- final regression across that complete surface;
+- integration testing through the assembled affected product path;
+- repository/project-required checks, with the broader/full available suite when impact cannot be bounded confidently.
+
+The affected surface includes directly changed/new code and existing consumers, callers, shared utilities, configuration/persistence/state/orchestration paths, interfaces, packaging, and transitive behavioral dependencies that could plausibly change because of the revision.
 
 Use bounded fixtures and representative workloads where they preserve required coverage. Test-cost minimization must never become coverage minimization.
-
-Intermediate regression checks are appropriate between material behavior-changing stages when they reduce defect propagation, debugging ambiguity, rework, or downstream risk. A final assembled regression and integration pass is required after material implementation/cleanup changes.
 
 ## Production qualification
 
@@ -45,13 +52,17 @@ Do not run full production qualification by default during implementation. Run i
 
 Use a workflow sufficient for the material risks and acceptance requirements. Workplans, gates, reviews, and repeated checks are justified when they reduce ambiguity, risk, rediscovery, debugging cost, or wasted downstream work. Avoid them when they add no material engineering value. The objective is an effective engineering process, not the fewest process steps.
 
-## Build
+## Build and repository acceptance
 
-`source/` is canonical. `dist/` contains generated ready-to-install skill packages and is committed for convenient distribution. Whenever canonical source changes:
+`source/` is canonical. `dist/` contains generated ready-to-install skill packages and is committed for convenient distribution.
+
+Run the protocol's fast regression suite, build the skill packages once, validate those generated artifacts independently, and compare that exact build with committed `dist/`:
 
 ```bash
-python source/build_skills.py --output dist
-python source/check_dist.py
+python -m unittest discover -s tests -v
+python source/build_skills.py --output /tmp/protocol-dist
+python source/validate_packages.py --dist /tmp/protocol-dist
+python source/check_dist.py --expected /tmp/protocol-dist --committed dist
 ```
 
-Both commands must succeed before the protocol revision is complete.
+All commands must succeed before a protocol revision is complete. Package validation complements source-to-dist parity: parity detects stale committed output, while independent validation checks that the shipped Skill structure is itself valid.

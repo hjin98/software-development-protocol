@@ -8,7 +8,7 @@ Protocol 5 keeps the software-development lifecycle small in role count while al
 software-design -> software-implementation
 ```
 
-`software-design` owns diagnosis/design, engineering-envelope definition, architecture/algorithm/resource decisions, product-complexity review, validation design, and independent review when materially useful. `software-implementation` owns code changes, refactoring, mandatory affected-surface regression and integration testing for executable changes, benchmarking/validation, ordinary cleanup, and completion evidence.
+`software-design` owns diagnosis/design, engineering-envelope definition, architecture/algorithm/resource decisions, product-complexity review, validation design, and independent review when materially useful. `software-implementation` owns code changes, refactoring, mandatory stage-local and final affected-surface regression plus integration testing for executable changes, benchmarking/validation, ordinary cleanup, and completion evidence.
 
 Testing is not a separate authority. Production qualification is not a separate lifecycle role.
 
@@ -26,15 +26,20 @@ Small/local executable work may look like:
 inspect -> implement -> affected regression -> integration -> done
 ```
 
-Substantial work may look like:
+Substantial work normally behaves like:
 
 ```text
-design -> staged implementation + useful intermediate regression -> final affected regression -> integration -> independent review
+design
+  -> material implementation stage -> focused + affected regression
+  -> next material implementation stage -> focused + affected regression
+  -> re-derive final affected surface
+  -> final affected regression + integration
+  -> independent review when warranted
 ```
 
 Production qualification is appended only when explicitly requested, required by project/release policy, or necessary to establish a material production-scale/resource/performance/hardware claim.
 
-These are patterns, not fixed gate counts. Add or remove process steps according to engineering value, not minimum length.
+These are patterns, not fixed gate counts. Add or remove process activities according to engineering value, but do not omit required stage-local/final functional acceptance merely to reduce process length.
 
 ## Workplans
 
@@ -45,10 +50,12 @@ A useful substantial-work plan contains:
 - objective and diagnosis;
 - material engineering envelope;
 - globally justified product design, ownership, and important complexity decisions;
-- affected behavioral/regression surface;
+- initially expected affected behavioral/regression surface;
 - focused/new tests required for changed mechanisms;
+- affected regression subset required after each material behavior-changing stage;
 - integration path(s) required for end-to-end functional acceptance;
-- stage-local regression checks where they materially improve fault localization or risk control;
+- repository/project-required broader checks;
+- final affected-surface reconciliation and assembled regression/integration pass;
 - production qualification requirement, deferral, or explicit non-requirement;
 - implementation sequence where ordering matters;
 - material risks/redesign triggers.
@@ -57,15 +64,17 @@ Do not make administrative provenance, evidence filenames, report schemas, or op
 
 ## Gates
 
-Gates are optional but value-based. Use one when validating a boundary before proceeding materially reduces risk or wasted downstream work, such as architecture/algorithm decisions, irreversible migration, expensive execution prerequisites, scientific semantics, security boundaries, or fault-localization boundaries in substantial staged work.
+Gates are value-based. Architecture/release/project gates remain optional unless project policy requires them, but a material behavior-changing implementation stage is not accepted until its relevant focused/regression checks pass or its explicitly non-executable validation dependency is carried to the nearest executable stage.
+
+Use additional gates when validating a boundary before proceeding materially reduces risk or wasted downstream work, such as architecture/algorithm decisions, irreversible migration, expensive execution prerequisites, scientific semantics, or security boundaries.
 
 Do not create G0/G1/G2 merely because a template can represent them. Do not remove a useful gate merely to make the process shorter.
 
 ## Functional acceptance
 
-For executable changes, final acceptance requires affected-surface regression and integration testing. A production run, benchmark, or qualification result cannot substitute for missing regression coverage.
+For executable changes, final acceptance requires re-deriving the affected surface from the assembled candidate, complete affected-surface regression, repository/project-required checks, and integration testing. When impact cannot be bounded confidently, run the broader/full available suite.
 
-The affected surface extends beyond the diff when behavior can propagate through callers/consumers, shared utilities, interfaces, configuration/persistence/state/orchestration, packaging, or other transitive dependencies.
+A production run, benchmark, or qualification result cannot substitute for missing regression coverage.
 
 ## External execution
 
@@ -79,6 +88,6 @@ Neither specialist is a mandatory lifecycle gate.
 
 ## Review
 
-Independent review is appropriate when change scope/risk warrants it. Review material functionality/correctness, scientific fidelity, scaling/resources/hardware/performance, product complexity and ownership, reuse/consolidation/deletion opportunities, affected regression coverage, integration results, unavailable checks, production-qualification boundaries, and unresolved material risks.
+Independent review is appropriate when change scope/risk warrants it. Review material functionality/correctness, scientific fidelity, scaling/resources/hardware/performance, product complexity and ownership, reuse/consolidation/deletion opportunities, stage-local regression evidence, final affected-surface reconciliation and regression, integration results, repository-required/broader checks, unavailable checks, production-qualification boundaries, and unresolved material risks.
 
 No separate verification report is required unless project/release/compliance policy independently requires one.

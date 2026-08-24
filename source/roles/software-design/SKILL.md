@@ -1,6 +1,6 @@
 ---
 name: software-design
-description: Diagnose and design nontrivial software changes, define the material engineering envelope, choose the globally justified product solution for target scale and hardware, minimize unjustified product/system complexity, design sufficient validation, and independently review substantial implementations.
+description: Diagnose and design nontrivial software changes, define the material engineering envelope, choose the globally justified product solution for target scale and hardware, minimize unjustified product/system complexity, design complete regression/integration acceptance, and independently review substantial implementations.
 ---
 
 # Software Design
@@ -15,7 +15,7 @@ First establish what the software must materially achieve: functionality, correc
 
 Simplicity applies to the engineered product/system. Do not weaken a material requirement merely to reduce code, components, or architectural sophistication. Necessary complexity is valid when it provides material engineering value.
 
-Do not confuse product simplicity with process minimalism. Use enough investigation, design iteration, validation planning, and independent review to reach and establish the right product. Avoid redundant or low-information work because it wastes engineering resources, not because a short workflow is itself an objective.
+Do not confuse product simplicity with process minimalism. Use enough investigation, design iteration, validation planning, implementation staging, and independent review to reach and establish the right product. Avoid redundant or low-information work because it wastes engineering resources, not because a short workflow is itself an objective.
 
 ## Define the engineering envelope
 
@@ -43,7 +43,8 @@ Freeze what implementation must not invent:
 - resource/hardware/parallelism behavior when material;
 - persistence/recovery/security/compatibility semantics when material;
 - justified specialization;
-- acceptance requirements and genuine redesign triggers.
+- affected behavioral surface and acceptance requirements;
+- genuine redesign triggers.
 
 Optimize the whole product rather than one local property. A larger implementation may be globally simpler or better when it removes duplicated authorities or materially improves scaling, data movement, resource use, recovery, or hardware effectiveness.
 
@@ -65,11 +66,15 @@ Use a workplan when it materially reduces ambiguity, rediscovery, sequencing ris
 
 For substantial executable changes, a workplan should identify:
 
-- the affected behavioral/regression surface;
+- the initially expected affected behavioral/regression surface;
 - focused/new tests needed for changed mechanisms;
+- the affected regression subset required after **each material behavior-changing implementation stage**;
 - integration path(s) that must work end-to-end;
-- useful stage-local regression checks;
+- repository/project-required broader checks;
+- the final affected-surface reconciliation and assembled regression/integration pass;
 - whether production qualification is required, deferred, or unnecessary.
+
+A stage-local regression gate is not optional for a material behavior-changing stage merely because final regression will run later. An atomic stage may share its final pass; a genuinely non-executable intermediate may close with the nearest executable integration stage when the dependency is explicit.
 
 ## Validation design
 
@@ -78,10 +83,12 @@ Coverage follows the affected behavioral surface; workload size and execution co
 For executable changes, require:
 
 1. focused checks appropriate to new/modified mechanisms;
-2. regression testing of all plausibly affected existing and new behavior;
-3. integration testing through the assembled affected product path and real interface/consumer boundaries.
+2. stage-local affected regression after each material behavior-changing implementation stage;
+3. final regression testing of all plausibly affected existing and new behavior after re-deriving the affected surface from the assembled implementation;
+4. integration testing through the assembled affected product path and real interface/consumer boundaries;
+5. repository/project-required checks, with the broader/full available suite when impact cannot be bounded confidently.
 
-The affected surface is not limited to files in the diff. Include callers/consumers, shared utilities, configuration/persistence/state/orchestration paths, interfaces, and transitive behavioral dependencies that could plausibly change.
+The affected surface is not limited to files in the diff. Include callers/consumers, shared utilities, configuration/persistence/state/orchestration paths, interfaces, packaging, and transitive behavioral dependencies that could plausibly change.
 
 Prefer real product interfaces over test-only reconstructions. A harness must not substantially reimplement the production algorithm it tests.
 
@@ -101,13 +108,35 @@ For substantial or high-risk changes, review:
 6. product/system complexity and ownership;
 7. reuse/consolidation/deletion opportunities;
 8. failure handling at the owning layer;
-9. whether the affected regression surface was correctly identified and passed;
-10. whether integration exercised the assembled affected product path;
-11. whether unavailable checks are honestly reported;
-12. whether production qualification is correctly separated from functional acceptance;
-13. unresolved material risks.
+9. whether the final affected surface was re-derived from the assembled implementation;
+10. whether every material behavior-changing stage passed its relevant regression checks before dependent work proceeded;
+11. whether final regression covered the complete affected surface and repository-required/broader checks ran when required;
+12. whether integration exercised the assembled affected product path;
+13. whether unavailable checks are honestly reported;
+14. whether production qualification is correctly separated from functional acceptance;
+15. unresolved material risks.
 
 Do not require a separate verification artifact merely to record the answer.
+
+## Supporting references
+
+Read the packaged references when their surface is material:
+
+- `references/workflow-and-workplans.md` — lifecycle, gates, stage acceptance, and workplans;
+- `references/testing-and-validation.md` — regression/integration contract and qualification boundary;
+- `references/protocol-versioning-and-compatibility.md` — protocol/candidate/evidence compatibility;
+- `references/architecture-and-design.md` — ownership, redesign, and product-complexity review;
+- `references/specification-and-implementation.md` — API/schema/persistence/scientific contracts;
+- `references/configuration-and-policy.md` — configuration resolution and semantic identity;
+- `references/concurrency-and-orchestration.md` — concurrency correctness and execution state machines;
+- `references/security-and-trust-boundaries.md` — security boundaries and least privilege;
+- `references/performance-and-parallelism.md` — scaling, resource budgets, accelerators, and benchmarks;
+- `references/storage-and-io.md` — persistence, storage, cache/checkpoint, and recovery design;
+- `references/scientific-software.md` — numerical/scientific invariants and equivalence;
+- `references/repository-intake.md` — progressive repository inspection and change surfaces;
+- `references/release-and-distribution.md` — built/installed artifact acceptance;
+- `references/documentation-and-evidence.md` — documentation authority and durable evidence;
+- `templates/implementation_workplan_template.md` — substantial implementation workplan structure.
 
 ## Completion
 

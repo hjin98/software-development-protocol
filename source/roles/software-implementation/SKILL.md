@@ -1,6 +1,6 @@
 ---
 name: software-implementation
-description: Implement, refactor, test, benchmark, and validate software under Protocol 5. Meet the material functionality, correctness, scientific, resource, scaling, hardware, and performance requirements; minimize unjustified product/system complexity; and require affected-surface regression plus integration testing for executable changes.
+description: Implement, refactor, test, benchmark, and validate software under Protocol 5. Meet material functionality, correctness, scientific, resource, scaling, hardware, security, and performance requirements; minimize unjustified product/system complexity; and require stage-local plus final affected-surface regression and integration testing for executable changes.
 ---
 
 # Software Implementation
@@ -21,7 +21,7 @@ Understand the owning code path, material contracts, governing workplan if any, 
 
 The affected surface is broader than the diff when behavior propagates. Include directly changed/new code plus existing callers/consumers, shared utilities, public interfaces, configuration, persistence, caches/checkpoints, state transitions, orchestration/concurrency paths, packaging/entry points, and transitive behavioral dependencies that could plausibly change.
 
-Inspect progressively. Expand scope when evidence shows broader ownership or impact; do not inventory unrelated areas merely for ceremony.
+Inspect progressively. Expand scope when evidence shows broader ownership or impact; do not inventory unrelated areas merely for ceremony. When impact cannot be bounded confidently, assume the broader plausible surface until evidence narrows it.
 
 ## Implement for engineering fitness
 
@@ -47,7 +47,7 @@ Escalate to refactor/redesign when repeated fixes target the same mechanism, ano
 
 ## Mandatory functional testing
 
-Testing is part of implementation. For every executable product change, functional acceptance requires both **affected-surface regression testing** and **integration testing**.
+Testing is part of implementation. For every executable product change, functional acceptance requires **affected-surface regression testing** and **integration testing**. Focused checks establish individual mechanisms; regression and integration establish the assembled product.
 
 ### Focused checks
 
@@ -57,14 +57,14 @@ Do not require one test per file/function. Existing tests count when they genuin
 
 ### Affected-surface regression
 
-Run the regression tests needed to establish that:
+Run regression tests sufficient to establish that:
 
 - new/modified behavior works;
 - supported behavior across every plausibly affected existing path remains functional;
 - changed shared contracts do not silently break consumers;
 - relevant failure/error/recovery behavior still works.
 
-A shared or central change may require a broad or repository-wide suite. Unrelated modules need not be tested merely for symmetry.
+Repository/project-required checks remain mandatory. A shared or central change may require a broad or repository-wide suite. If impact analysis cannot confidently bound the regression surface, run the broader/full available suite rather than assuming unexamined consumers are unaffected.
 
 A required regression check that did not execute is not a pass. Newly introduced failures and failures that plausibly intersect the affected surface block functional acceptance. Demonstrably pre-existing unrelated failures may be attributed and reported rather than repaired, but not silently ignored.
 
@@ -72,13 +72,24 @@ A required regression check that did not execute is not a pass. Newly introduced
 
 Exercise the assembled affected product path across the relevant real module/interface boundaries using bounded representative fixtures when possible. Prefer the public/real consumer path over a parallel test implementation. Do not mock away the boundary whose integration is being established.
 
-For libraries, use the nearest real consumer/public interface. For CLI/package/build changes, exercise the user-facing entry point or installed/built artifact as applicable.
+For libraries, use the nearest real consumer/public interface. For CLI/package/build changes, exercise the user-facing entry point or built/installed artifact as applicable.
 
-### Stage-local and final testing
+### Stage-local regression is required
 
-After a material implementation stage changes executable behavior, run focused checks plus the regression subset whose early execution materially reduces defect propagation, debugging ambiguity, rework, or downstream risk. A tiny atomic change may use its final pass as the stage pass; do not duplicate identical work ceremonially.
+After **each material implementation stage that changes executable behavior**, run the focused checks and affected regression subset relevant to that stage before dependent implementation proceeds. Fix newly introduced hard failures and affected regressions at the stage that introduced them rather than stacking later work on an unaccepted stage.
 
-Before completion, run a final assembled affected-surface regression pass and integration pass after all material implementation/refactoring/cleanup changes that could affect behavior.
+A tiny atomic change may use its final pass as its stage pass. A stage that genuinely cannot be exercised independently may be combined with the nearest executable integration stage, but record that dependency rather than silently deferring all regression to the end.
+
+Intermediate regression is required for material behavior-changing stages because it limits defect propagation and preserves fault localization; it is not optional merely because a final suite will run later.
+
+### Final assembled acceptance
+
+Before completion:
+
+1. re-derive the affected behavioral surface from the **final assembled implementation**, because implementation/refactoring may have broadened impact beyond the initial plan;
+2. account for every identified affected path with executed regression coverage, a repository-required broader suite, or an explicit unavailable/blocking check;
+3. rerun the complete affected-surface regression on the final candidate after all material executable refactoring/cleanup/package changes;
+4. run the required integration/end-to-end path(s) on that same assembled candidate.
 
 Optimize test **cost**, not required **coverage**. Use small deterministic fixtures, bounded datasets, reduced epochs/iterations, synthetic inputs, and representative workloads when they exercise the same behavioral contracts.
 
@@ -89,6 +100,8 @@ Full production qualification assumes functional regression and integration acce
 Do not run full production qualification by default during implementation or between implementation stages. Run it only when explicitly requested, project/release policy requires it, or the material scale/resource/performance/hardware claim cannot be established otherwise.
 
 Bounded performance benchmarks, accelerator smoke tests, CPU/GPU/reference equivalence checks, and representative resource sanity checks remain normal implementation validation when affected code requires them. Do not claim unavailable target-hardware results.
+
+A successful production run never substitutes for missing focused/regression/integration coverage, and bounded functional tests do not prove production-scale performance/resource qualification.
 
 ## Resource safety and performance evidence
 
@@ -106,22 +119,31 @@ Update durable public/specification/architecture/user documentation when its own
 
 Delete obsolete helpers, experimental paths, stale compatibility layers, generated scratch, and superseded product machinery when safe. Do not treat useful tests or validation infrastructure as product complexity to be removed merely because they lengthen the engineering process.
 
+## Supporting references
+
+Read the packaged references when their surface is material:
+
+- `references/workflow-and-workplans.md` — lifecycle, gates, stage acceptance, and workplans;
+- `references/testing-and-validation.md` — regression/integration contract and qualification boundary;
+- `references/protocol-versioning-and-compatibility.md` — protocol/candidate/evidence compatibility;
+- `references/architecture-and-design.md` — redesign, ownership, and product-complexity decisions;
+- `references/debugging-and-state-recovery.md` — failures, fixes, durable state, and recovery;
+- `references/specification-and-implementation.md` — API/schema/persistence/scientific contracts;
+- `references/configuration-and-policy.md` — configuration resolution and semantic identity;
+- `references/concurrency-and-orchestration.md` — workers, retries, cancellation, publication, and deterministic aggregation;
+- `references/security-and-trust-boundaries.md` — untrusted inputs, credentials, subprocess/network/archive/model boundaries;
+- `references/performance-and-parallelism.md` — scaling, CPU/GPU, resource budgets, and benchmarking;
+- `references/storage-and-io.md` — storage, cache/checkpoint, I/O, crash consistency, and recovery;
+- `references/scientific-software.md` — numerical/scientific invariants and reference equivalence;
+- `references/repository-intake.md` — progressive repository inspection and change surface;
+- `references/git-and-version-control.md` — Git safety, concurrent work, and authorization boundaries;
+- `references/release-and-distribution.md` — built/installed artifact validation;
+- `references/documentation-and-evidence.md` — durable documentation ownership and evidence.
+
 ## Completion
 
-Report:
+Report what materially changed and the evidence needed to interpret acceptance. For executable changes include the final affected surface, focused tests, stage-local regression results for each material behavior-changing stage, final affected-surface regression results, integration path(s), repository-required broader checks, and unavailable/blocking functional checks.
 
-- what materially changed;
-- functionality/correctness/scientific behavior established;
-- affected behavioral surface identified;
-- focused tests added/run;
-- intermediate regression checks actually run where material;
-- final affected-surface regression results;
-- integration path(s) exercised;
-- benchmarks/target-hardware checks actually run;
-- any unavailable required functional checks;
-- production qualification performed, explicitly deferred, or unnecessary and why;
-- product complexity added/removed/consolidated;
-- affected durable documentation reconciled;
-- unresolved material risks.
+Report benchmarks/target-hardware checks and production qualification only when materially relevant, requested, required, performed, or intentionally deferred. Also report significant product complexity added/removed/consolidated, affected durable documentation reconciled, and unresolved material risks.
 
-Keep the report proportional to the work, but do not call an executable change functionally complete while required regression or integration checks are failing or unexecuted.
+Do not call an executable change functionally complete while required stage-local/final regression, repository-required checks, or integration checks are failing or unexecuted.
