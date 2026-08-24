@@ -31,6 +31,24 @@ The affected surface is broader than the diff when behavior propagates. Include 
 
 Inspect progressively. Expand scope when evidence shows broader ownership or impact; do not inventory unrelated areas merely for ceremony. When impact cannot be bounded confidently, assume the broader plausible surface until evidence narrows it.
 
+## Governing workplan authority
+
+When an **accepted workplan** exists, treat its material target decisions as the implementation contract. Do not reopen a frozen architecture, ownership, algorithm, invariant, non-goal, or acceptance decision merely because another plausible design exists.
+
+The accepted workplan remains subordinate to higher-priority explicit user/task requirements, safety/platform constraints, applicable project instructions, and governed contracts outside the authorized change scope. Existing specifications/contracts remain authoritative except where the workplan explicitly defines their intended change.
+
+Repository evidence describes actual state. When current code/tests differ from the accepted target, that difference is not by itself permission to abandon the workplan. Reconcile repository reality with the target and escalate only when the mismatch invalidates a frozen material assumption.
+
+Use three deviation levels:
+
+1. **Implementation realization** — local mechanics such as factoring, naming, fixture construction, or exact placement where the workplan intentionally leaves discretion. Proceed without reopening design when frozen semantics are preserved.
+2. **Local reconciliation** — adapt superficial plan/repository mismatch while preserving the frozen target. Record a material reason when interpretation depends on it; do not create a design cycle for ordinary realization details.
+3. **Material redesign** — a frozen architecture/ownership/algorithm/product-semantics/resource/persistence/compatibility decision must change. Stop dependent implementation and reopen design.
+
+A material redesign requires evidence: an unreconcilable repository-authority conflict, inability to meet a material requirement, representative measurement that invalidates a material premise, an explicit redesign trigger, or repeated local fixes exposing a structural defect.
+
+When redesign is required, identify the invalidated decision, preserve unrelated accepted work/evidence, reopen only the affected design surface, reconcile the workplan, invalidate evidence only where the changed decision can plausibly affect its claim, and resume from the **earliest materially affected** stage. Do not restart unrelated accepted work.
+
 ## Implement for engineering fitness
 
 Choose implementation techniques according to the actual workload and hardware. Prefer, in material order, eliminating redundant work/I/O, improving algorithmic scaling, improving representation/layout/reuse/data movement, batching/allocation behavior, compiled/vectorized kernels, locality/copy reduction, appropriate CPU concurrency, accelerator execution when justified, and custom native kernels only when remaining benefit is material.
@@ -51,7 +69,7 @@ Retain intentional duplication when it has a distinct material role such as an i
 
 For a clear local defect, make the clean owning-layer fix that restores the material contract without degrading engineering fitness. The implementation may be small; the validation coverage still follows the affected behavioral surface.
 
-Escalate to refactor/redesign when repeated fixes target the same mechanism, another patch would add structural debt, ownership is wrong, state/functionality is duplicated, exceptional paths proliferate, resource behavior is unacceptable, or the current algorithm cannot meet material scale/reliability/performance requirements cleanly.
+Escalate to refactor/redesign when repeated fixes target the same mechanism, another patch would add structural debt, ownership is wrong, state/functionality is duplicated, exceptional paths proliferate, resource behavior is unacceptable, or the current algorithm cannot meet material scale/reliability/performance requirements cleanly. If an accepted workplan governs the change, use the bounded material-redesign rule above rather than silently replacing frozen design.
 
 ## Mandatory functional testing
 

@@ -4,7 +4,6 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "source"
 
 
 def read(path: str) -> str:
@@ -20,9 +19,10 @@ class ProtocolContractTests(unittest.TestCase):
 
     def test_engineering_fitness_precedes_product_simplicity(self) -> None:
         text = read("source/roles/software-design/SKILL.md").lower()
-        self.assertIn("material engineering requirements", text)
+        self.assertIn("product engineering fitness", text)
         self.assertIn("product/system complexity", text)
         self.assertIn("do not weaken a material requirement", text)
+        self.assertIn("development economy", text)
 
     def test_stage_local_and_final_functional_acceptance_remain_required(self) -> None:
         implementation = read("source/roles/software-implementation/SKILL.md").lower()
@@ -51,6 +51,24 @@ class ProtocolContractTests(unittest.TestCase):
         text = read("source/README.md").lower()
         self.assertIn("optional specialists", text)
         self.assertIn("not lifecycle roles", text)
+
+    def test_accepted_workplan_governs_without_blind_obedience(self) -> None:
+        design = read("source/roles/software-design/SKILL.md").lower()
+        implementation = read("source/roles/software-implementation/SKILL.md").lower()
+        workflow = read("source/shared/references/workflow-and-workplans.md").lower()
+        for text in (design, implementation, workflow):
+            self.assertIn("accepted workplan", text)
+            self.assertIn("reopen", text)
+        self.assertIn("repository evidence", implementation)
+        self.assertIn("higher-priority", implementation)
+
+    def test_material_redesign_is_bounded_to_invalidated_surface(self) -> None:
+        implementation = read("source/roles/software-implementation/SKILL.md").lower()
+        architecture = read("source/shared/references/architecture-and-design.md").lower()
+        self.assertIn("local reconciliation", implementation)
+        self.assertIn("material redesign", implementation)
+        self.assertIn("earliest materially affected", implementation)
+        self.assertIn("reopen only the affected", architecture)
 
 
 if __name__ == "__main__":

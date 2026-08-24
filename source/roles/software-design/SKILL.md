@@ -56,6 +56,14 @@ Freeze what implementation must not invent:
 
 Optimize the whole product rather than one local property. A larger implementation may be globally simpler or better when it removes duplicated authorities or materially improves scaling, data movement, resource use, recovery, or hardware effectiveness.
 
+## Accepted-workplan authority
+
+When design produces or accepts a governing workplan, distinguish what is **frozen**, what is **delegated to implementation**, and what may be **reopened only on evidence**. The workplan is a compressed implementation contract, not an invitation for the implementation agent to repeat the full design search.
+
+An accepted workplan remains subordinate to explicit user/task requirements, safety and project instructions, and governed contracts outside the change scope. Existing specifications/contracts remain authoritative except where the workplan explicitly defines their intended change. Repository code/tests are evidence of actual state; they do not automatically override an accepted target design merely because current behavior differs.
+
+Implementation may perform local realization and local reconciliation that preserve frozen semantics. Reopen design when repository evidence, measurement, or a stated redesign trigger shows that a frozen material decision cannot be realized while satisfying the engineering envelope. Reopen only the affected design surface and preserve unrelated accepted decisions/evidence where still valid.
+
 ## Product complexity regression
 
 For substantial changes or repeated work in one subsystem, inspect the affected area for duplicated functionality/state, multiple authorities, stale wrappers/fallbacks/compatibility paths, superseded mechanisms, and opportunities for semantic reuse, consolidation, refactoring, or deletion.

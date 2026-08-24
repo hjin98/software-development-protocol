@@ -12,7 +12,7 @@ Reject designs that cannot satisfy this envelope cleanly enough for the actual p
 
 Among designs that satisfy the material engineering requirements, prefer the one with the lowest justified **total product/system complexity**: fewer unnecessary components, states, interfaces, dependencies, synchronization points, duplicated authorities, compatibility paths, runtime/operational stages, special cases, and maintenance burdens.
 
-This complexity objective describes the engineered product/system. It does **not** require the engineering process itself to have the fewest design steps, tests, reviews, gates, or iterations. Process activities are justified by the confidence, risk reduction, fault localization, or engineering efficiency they provide.
+Development economy is subordinate to engineering fitness and product simplicity. Process activities should be eliminated when they add no material information, confidence, or risk reduction, but never when their removal weakens the product or required acceptance.
 
 Necessary specialization remains valid when it protects correctness, scientific fidelity, performance, hardware effectiveness, recovery, compatibility, portability, security, or another material requirement. A trusted reference implementation plus an optimized backend, or separate CPU/GPU kernels, may be globally better than forcing distinct responsibilities through one abstraction.
 
@@ -21,6 +21,16 @@ Necessary specialization remains valid when it protects correctness, scientific 
 For nontrivial work, define what materially matters: root cause/objective, scope/non-goals, acceptance-critical behavior, invariants/conventions, authoritative state/ownership, algorithm/data flow/scaling, representation/data movement, resource/hardware/parallelism behavior, interfaces/dependencies, failure/recovery/security behavior, important alternatives/tradeoffs, justified specialization/complexity, affected behavioral surface, and genuine redesign triggers.
 
 Reject a design when it violates a hard invariant, cannot meet material scale/resource/reliability/performance requirements, creates unclear ownership, duplicates authoritative state without need, or adds product complexity without material engineering benefit.
+
+## Accepted design and implementation authority
+
+Once a substantial design is accepted into a governing workplan, implementation should not repeat the entire architecture search. The workplan should identify frozen material decisions, delegated implementation mechanics, and assumptions/redesign triggers that may reopen design.
+
+Repository evidence may reveal that a frozen assumption is false. Treat that as a design-invalidation question rather than silently changing the target or blindly forcing the plan onto incompatible reality.
+
+A local realization or **local reconciliation** that preserves frozen architecture, ownership, algorithms, and semantics remains implementation work. A **material redesign** changes one of those frozen decisions and requires reopening design.
+
+When redesign is required, **reopen only the affected** design surface. Preserve unrelated accepted design, implementation stages, and evidence whose claims remain valid. Resume implementation from the earliest materially affected dependency rather than restarting the whole workplan.
 
 ## Complexity regression and consolidation review
 
@@ -31,6 +41,8 @@ Prefer semantic reuse and consolidation rather than textual DRY. A new canonical
 ## Redesign boundary
 
 A local bug with a local cause should receive a clean local owning-layer fix. Redesign when repeated fixes accumulate around the same mechanism, ownership is wrong, duplicated state/logic causes failures, compatibility/fallback layers proliferate, testing requires parallel reconstruction of production behavior, resource failures repeat, or the current algorithm cannot meet material requirements cleanly.
+
+For accepted workplans, require evidence before reopening frozen design: an irreconcilable ownership/contract mismatch, material engineering infeasibility, representative measurement that invalidates a premise, or an explicit redesign trigger. Do not reopen settled design merely because another plausible architecture exists.
 
 ## Architecture documentation
 

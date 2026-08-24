@@ -14,6 +14,15 @@ For nontrivial failures:
 
 A reduced reproducer is a diagnostic aid, not a reason to narrow final regression coverage.
 
+## Accepted workplans and unexpected evidence
+
+When debugging occurs under an accepted workplan, distinguish an implementation defect from evidence that invalidates a frozen design assumption.
+
+- If the frozen target remains valid and the defect is local, fix or locally reconcile the implementation without reopening design.
+- If the failure shows that a frozen ownership, algorithm, persistence, compatibility, resource, or semantic decision cannot satisfy the material contract, classify it as a material redesign trigger.
+- Do not silently rewrite the workplan to fit a local patch and do not blindly force a demonstrably invalid plan onto the repository.
+- When redesign is required, preserve unrelated accepted work/evidence and reopen only the affected design surface before resuming from the earliest materially affected stage.
+
 ## Complexity as a diagnostic signal
 
 Repeated failures in the same area can indicate product/design debt rather than independent bugs. Reconsider the design when fixes increasingly require wrappers, adapters, retries, compatibility shims, duplicate state, translation layers, broad exception handling, or test-only reconstruction of production behavior.
