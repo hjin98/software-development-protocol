@@ -99,6 +99,18 @@ class ProtocolContractTests(unittest.TestCase):
         self.assertIn("coherent behavior/risk boundary", workflow)
         self.assertIn("final assembled affected-surface regression", workflow)
 
+    def test_lifecycle_entrypoints_route_references_by_material_surface(self) -> None:
+        design = read("source/roles/software-design/SKILL.md").lower()
+        implementation = read("source/roles/software-implementation/SKILL.md").lower()
+        for text in (design, implementation):
+            self.assertIn("reference routing", text)
+            self.assertIn("packaging a reference does not make reading it mandatory", text)
+            self.assertIn("material surface", text)
+            self.assertIn("references/testing-and-validation.md", text)
+            self.assertIn("references/repository-intake.md", text)
+        self.assertIn("references/git-and-version-control.md", implementation)
+        self.assertNotIn("references/git-and-version-control.md", design)
+
 
 if __name__ == "__main__":
     unittest.main()
