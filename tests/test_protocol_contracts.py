@@ -50,7 +50,7 @@ class ProtocolContractTests(unittest.TestCase):
     def test_optional_specialists_do_not_become_lifecycle_gates(self) -> None:
         text = read("source/README.md").lower()
         self.assertIn("optional specialists", text)
-        self.assertIn("not lifecycle roles", text)
+        self.assertIn("not approval gates", text)
 
     def test_accepted_workplan_governs_without_blind_obedience(self) -> None:
         design = read("source/roles/software-design/SKILL.md").lower()
@@ -117,6 +117,17 @@ class ProtocolContractTests(unittest.TestCase):
         self.assertIn("not acceptance of the implementation agent's summary", design)
         self.assertIn("do not automatically replay the original architecture search", design)
         self.assertIn("retains authority to inspect any surface", design)
+
+    def test_protocol_54_identity_and_specialist_hierarchy_are_reconciled(self) -> None:
+        self.assertEqual("5.4.0", read("source/PROTOCOL_VERSION").strip())
+        source_readme = read("source/README.md")
+        root_readme = read("README.md")
+        docs = read("source/specialists/software-documentation/SKILL.md").lower()
+        self.assertIn("Software Development Protocol 5.4", source_readme)
+        self.assertIn("Protocol 5.4 preserves the two-role lifecycle", source_readme)
+        self.assertIn("Protocol 5.4 preserves the two-role lifecycle", root_readme)
+        self.assertIn("product engineering fitness first", docs)
+        self.assertIn("development economy third", docs)
 
 
 if __name__ == "__main__":

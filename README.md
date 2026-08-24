@@ -12,27 +12,39 @@ The hierarchy is lexicographic:
 product engineering fitness > minimum justified product/system complexity > development economy
 ```
 
-Product engineering fitness includes functionality and capability, correctness and scientific/domain fidelity, reliability, recovery, safety, security, required compatibility, CPU/RAM/VRAM/storage/I/O/wall-time feasibility, target-scale behavior, effective hardware use, and materially important end-to-end performance. These material requirements define the feasible solution space.
+Product engineering fitness includes functionality/capability, correctness and scientific/domain fidelity, reliability/recovery/safety/security/compatibility, CPU/RAM/VRAM/storage/I/O/wall-time feasibility, target-scale behavior, hardware effectiveness, and materially important end-to-end performance. These requirements define the feasible product space.
 
-Simplicity applies primarily to the **engineering target: the software/system being produced**. Among engineering-sufficient solutions, minimize unnecessary product mechanisms, duplicated authorities, states, abstractions, interfaces, dependencies, synchronization points, compatibility paths, runtime/operational stages, special cases, and maintenance surface. Necessary specialization remains valid when it buys a material capability or prevents a material failure.
+Among engineering-sufficient solutions, minimize unnecessary product mechanisms, duplicated authorities, states, abstractions, interfaces, dependencies, synchronization points, compatibility paths, runtime/operational stages, special cases, and maintenance surface. Necessary specialization remains valid when it buys a material capability or prevents a material failure.
 
-Development economy is subordinate to both engineering fitness and product simplicity. Once the required product and acceptance confidence are preserved, avoid redundant reasoning, rediscovery, low-information inspection, invalid reruns, repeated boilerplate, unnecessary tool/compute work, and other development waste. Never save development cost by weakening a material requirement, required validation, or the accepted product.
+Development economy is subordinate to engineering fitness and product simplicity. Once the required product and acceptance confidence are preserved, avoid redundant reasoning, rediscovery, low-information inspection, invalid reruns, repeated boilerplate, unnecessary tool/compute work, and other process waste. Never save development cost by weakening a material requirement, required validation, or the accepted product.
 
-Do **not** turn product simplicity or development economy into a requirement to minimize the number of engineering steps. Use the design, implementation staging, regression testing, integration testing, review, benchmarking, and validation needed to establish the required result.
+## Lifecycle
 
-Protocol 5.3 keeps the same two-role lifecycle:
+Protocol 5.4 preserves the two-role lifecycle:
 
 ```text
 software-design -> software-implementation
 ```
 
-- `software-design` diagnoses root causes, defines the material engineering envelope, chooses the globally justified product design, controls product complexity, defines validation obligations, and performs independent review when useful.
-- `software-implementation` implements/refactors the product, performs mandatory stage-local and final affected-surface regression plus integration testing for executable changes, benchmarks and validates material claims, cleans up superseded product machinery, and delivers the result.
+- `software-design` diagnoses root causes, defines the material engineering envelope, chooses the globally justified product design, freezes material implementation authority, controls product complexity, defines validation obligations, and performs independent evidence-directed review when useful.
+- `software-implementation` realizes/refactors the accepted product design, reconciles repository reality without silently reopening frozen design, performs mandatory stage-local and final affected-surface regression plus integration testing for executable changes, benchmarks/validates material claims, and delivers the result.
 
 Optional specialists remain supporting capabilities, not approval gates:
 
 - `software-documentation` — reconcile and improve durable documentation;
 - `repository-hygiene` — conservative post-stage repository cleanup.
+
+## Workplans and implementation authority
+
+A substantial accepted workplan is a compressed implementation contract. It should distinguish:
+
+- **Frozen** material requirements/design/ownership/algorithm decisions;
+- **Delegated** implementation-local mechanics;
+- **Reopen only on evidence** assumptions or redesign triggers.
+
+Implementation does not repeat settled architecture merely because alternatives exist. It may locally realize/reconcile the plan while preserving frozen semantics. If evidence invalidates a frozen material decision, reopen only the affected design surface, preserve unrelated accepted work/evidence, and resume from the earliest materially affected dependency.
+
+Workplans inherit generic protocol obligations from the version declared in their `protocol_version`; later protocol releases do not silently reinterpret older active/completed plans.
 
 ## Functional acceptance versus production qualification
 
@@ -41,20 +53,38 @@ For executable product changes, functional acceptance requires:
 1. focused checks for new/modified mechanisms as appropriate;
 2. affected regression after each material behavior-changing implementation stage before dependent work proceeds;
 3. re-deriving the affected behavioral surface from the final assembled implementation;
-4. final regression coverage across that complete surface, including affected existing and new code;
+4. final regression coverage across that complete surface;
 5. integration testing through the assembled affected product path and real consumer/interface boundaries;
 6. repository/project-required checks, using the broader/full available suite when impact cannot be bounded confidently.
 
-Use bounded fixtures/workloads where they preserve required behavioral coverage. Optimize test cost without narrowing required coverage. A tiny atomic change can share its stage and final pass; a genuinely non-executable intermediate may carry validation to the nearest executable stage when that dependency is explicit.
+Define stages by coherent behavior/risk boundaries rather than individual file/helper edits. Run cheap high-signal focused checks before the required affected regression. Reuse still-valid intermediate evidence until a changed dimension can plausibly invalidate it; final assembled affected-surface regression/integration remains a fresh acceptance boundary.
 
-Full production qualification is distinct. It uses real, long, data-heavy, target-machine/target-hardware runs to characterize an already functionally accepted candidate for production-scale wall time, throughput, RAM/VRAM/storage/I/O, accelerator utilization, recovery cost, and similar environment-specific properties. It is not a substitute for regression/integration testing and is not run by default during implementation unless explicitly requested, required by project/release policy, or necessary to establish a material scale/resource/performance claim.
+Use bounded fixtures/workloads where they preserve required behavioral coverage. Optimize test cost without narrowing required coverage.
 
-There is no separate qualification or verification lifecycle. These are engineering activities within the two-role lifecycle.
+Full production qualification is distinct. It uses real, long, data-heavy, target-machine/target-hardware runs to characterize an already functionally accepted candidate for production-scale performance/resources/scaling/recovery/hardware behavior. It is not a substitute for regression/integration testing and is not run by default unless explicitly requested, required by project/release policy, or necessary to establish a material production-scale claim.
 
-## Process proportionality
+## Context and reference economy
 
-Use a workflow sufficient for the material engineering risks and acceptance requirements. Small work may be short; substantial work may need staged implementation, repeated regression checks, integration tests, and review. Required stage-local regression is part of functional acceptance, not optional process ceremony.
+Repository inspection is progressive and evidence-driven. Prefer the lowest-cost high-information inspection/test that resolves a material uncertainty; reuse established facts; avoid rereading unchanged material without a new question; bound large logs/file reads to the smallest sufficient relevant portion without hiding failures or affected behavior.
 
-Workplans and gates are instrumental, not ceremonial. Use them when they reduce ambiguity, rediscovery, sequencing risk, or wasted downstream work. Do not add them merely because a template can represent them, and do not remove useful ones merely to reduce process length.
+Skill references are loaded by material surface rather than merely because they are packaged. Domain-specific security, scientific, concurrency, storage, Git, configuration, packaging, and performance guidance remains fully authoritative when its surface is material.
 
-`source/` is canonical. `dist/` contains generated ready-to-install skill packages and is committed for distribution. Whenever canonical source changes, build once from canonical source, validate the generated packages as shipped artifacts, run protocol regression tests, and verify semantic parity with committed `dist/` before completion.
+## Independent review
+
+Independent review remains independent. Start from explicit requirements, accepted workplan, final implementation/diff, final affected surface, acceptance evidence, deviations, and unresolved risks. Challenge the highest-risk assumptions first. Do not automatically replay the entire original design search when evidence does not challenge accepted premises, but broaden without restriction when a premise, deviation, complexity regression, redesign trigger, or unresolved risk warrants it.
+
+## Build and repository acceptance
+
+`source/` is canonical. `dist/` contains generated ready-to-install skill packages and is committed for distribution.
+
+Before a protocol revision is complete:
+
+```bash
+python -m unittest discover -s tests -v
+python source/build_skills.py --output /tmp/protocol-dist
+python source/validate_packages.py --dist /tmp/protocol-dist
+python source/check_dist.py --expected /tmp/protocol-dist --committed dist
+git diff --check
+```
+
+All commands must succeed on the assembled candidate. Package validation checks shipped structure; source-to-dist parity detects stale committed generated output.
