@@ -26,6 +26,21 @@ Prefer small deterministic fixtures, bounded datasets, reduced iterations/epochs
 
 Do not interpret “small,” “focused,” or “representative” as permission to omit affected modules, consumers, interfaces, or integration boundaries.
 
+## Coherent stage granularity and fail-cheap-first order
+
+A material implementation stage is a coherent behavior-changing unit. It may include several tightly coupled helper/caller/fixture edits whose behavior is only meaningful as one assembled stage. Do not create a separate stage-local regression gate for every file/function edit unless it independently changes executable behavior or forms a useful risk boundary.
+
+Within a material stage, prefer this order:
+
+```text
+coherent implementation edits
+    -> cheapest high-signal focused checks
+    -> required affected regression subset
+    -> stage accepted
+```
+
+Cheap focused checks prevent spending broader test cost on obvious local defects. They do not substitute for the affected regression required before dependent implementation proceeds.
+
 ## Stage-local regression
 
 After **each material implementation stage that changes executable behavior**, run focused checks and the affected regression subset relevant to that stage before dependent implementation proceeds. Resolve newly introduced hard failures and affected regressions at the stage that introduced them.
@@ -33,6 +48,19 @@ After **each material implementation stage that changes executable behavior**, r
 A tiny atomic change may use the final pass as its stage pass. A genuinely non-executable intermediate stage may combine validation with the nearest executable integration stage when that dependency is explicit. Do not defer all regression to final completion merely because a later suite will eventually exercise the code.
 
 This requirement preserves fault localization and prevents defect accumulation; it is not optional based only on whether an agent predicts that intermediate testing will be useful.
+
+## Evidence reuse and invalidation
+
+Reuse still-valid intermediate evidence instead of rerunning it merely because time passed, a new agent session began, or unrelated files changed.
+
+Rerun a check when a changed dimension can plausibly alter the result or interpretation. Examples:
+
+- documentation-only wording does not invalidate an unrelated numerical regression result;
+- executable refactoring invalidates regression evidence for behavior that could be affected;
+- serialization changes invalidate relevant persistence/compatibility evidence but not an unrelated mathematical oracle;
+- GPU execution-policy changes invalidate affected GPU equivalence/performance evidence without automatically invalidating an unchanged CPU reference result.
+
+Evidence reuse is an intermediate development-economy optimization. It never removes final assembled acceptance requirements and never turns an unexecuted required check into a pass.
 
 ## Final assembled acceptance
 

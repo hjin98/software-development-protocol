@@ -12,11 +12,11 @@ software-design -> software-implementation
 
 Testing is not a separate authority. Production qualification is not a separate lifecycle role.
 
-## Product simplicity versus process proportionality
+## Product simplicity versus development economy
 
-The protocol's simplicity doctrine targets the engineered product/system. Among solutions that satisfy the material engineering requirements, prefer the product with the lowest justified total system complexity.
+Material engineering requirements define the feasible product space. Among engineering-sufficient solutions, prefer the product with the lowest justified total product/system complexity. Only after the required product and acceptance confidence are preserved should the development process optimize human/model/context/tool/compute/I/O/wall-time cost.
 
-The engineering process has a different objective: use a sufficient, efficient workflow that reaches and establishes the right product with appropriate confidence. Avoid redundant, ceremonial, duplicative, or low-information work; do not omit materially useful design, testing, review, or validation merely because a shorter workflow exists.
+Avoid redundant, ceremonial, duplicative, rediscovery-heavy, or low-information work. Do not omit materially useful design, testing, review, or validation merely because a shorter or cheaper workflow exists.
 
 ## Typical workflows
 
@@ -39,7 +39,7 @@ design
 
 Production qualification is appended only when explicitly requested, required by project/release policy, or necessary to establish a material production-scale/resource/performance/hardware claim.
 
-These are patterns, not fixed gate counts. Add or remove process activities according to engineering value, but do not omit required stage-local/final functional acceptance merely to reduce process length.
+These are patterns, not fixed gate counts. Add or remove process activities according to engineering value, but do not omit required stage-local/final functional acceptance merely to reduce process length or cost.
 
 ## Workplans
 
@@ -62,13 +62,43 @@ A useful substantial-work plan contains:
 
 Do not make administrative provenance, evidence filenames, report schemas, or optional telemetry acceptance requirements unless the project independently needs them.
 
+## Accepted-workplan authority
+
+An **accepted workplan** is a compressed implementation contract. It should make clear which material decisions are frozen, which implementation mechanics are delegated, and which assumptions or redesign triggers may reopen design.
+
+Precedence is:
+
+```text
+explicit user/task requirements + safety/project instructions
+    -> material product requirements and governed contracts
+    -> accepted workplan target decisions
+    -> repository evidence about actual state
+    -> implementation-local discretion
+```
+
+This is not blind-plan obedience. Current code/tests provide evidence of actual state; they do not automatically override an accepted target simply because the target intentionally changes current behavior. Existing contracts remain authoritative except where the accepted plan explicitly changes them.
+
+Implementation may locally realize or reconcile the plan while preserving frozen semantics. Reopen design only when evidence shows that a frozen material decision cannot satisfy the engineering envelope, conflicts irreconcilably with actual ownership/contracts, is invalidated by representative measurement, or reaches a stated redesign trigger.
+
+When reopening is necessary, identify the invalidated decision, stop dependent work, preserve unrelated accepted stages/evidence, **reopen only the affected** design surface, update/reconcile the plan, invalidate evidence only where the changed decision can plausibly affect it, and resume from the earliest materially affected stage.
+
+## Compact working state for long gated work
+
+For long gated sessions, carry forward enough **compact task-local state** to avoid rediscovering accepted decisions and evidence. Keep, conceptually, the accepted frozen decisions, accepted stages, current affected-surface deltas, still-valid evidence, invalidated evidence, and unresolved material risks or redesign triggers. Reason from the delta since the last accepted stage rather than re-deriving unchanged state.
+
+This working state is **not a required persistent artifact**. Do not create a ledger, database, manifest, JSON schema, or parallel evidence system solely for protocol compliance. Persist task state only when the project independently needs recovery, auditability, handoff durability, or another material capability. Final acceptance still re-derives the complete affected surface independently from the assembled candidate.
+
 ## Gates
 
 Gates are value-based. Architecture/release/project gates remain optional unless project policy requires them, but a material behavior-changing implementation stage is not accepted until its relevant focused/regression checks pass or its explicitly non-executable validation dependency is carried to the nearest executable stage.
 
+Define a material stage by a coherent behavior/risk boundary, not by individual files or helper edits. Several tightly coupled edits may close under one stage regression when they jointly establish one executable behavior. Within the stage, run the cheapest high-signal focused checks before the required affected regression so obvious local failures do not waste broader test cost.
+
+Reuse still-valid intermediate evidence until a changed dimension can plausibly invalidate its claim. Do not rerun a check solely because a new agent/session began or unrelated material changed. Final assembled affected-surface regression and integration remain fresh acceptance boundaries after all material executable edits.
+
 Use additional gates when validating a boundary before proceeding materially reduces risk or wasted downstream work, such as architecture/algorithm decisions, irreversible migration, expensive execution prerequisites, scientific semantics, or security boundaries.
 
-Do not create G0/G1/G2 merely because a template can represent them. Do not remove a useful gate merely to make the process shorter.
+Do not create G0/G1/G2 merely because a template can represent them. Do not remove a useful gate merely to make the process shorter or cheaper.
 
 ## Functional acceptance
 

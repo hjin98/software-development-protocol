@@ -7,14 +7,14 @@ description: Keep evolving AI-developed software intellectually accessible to hu
 
 Use this optional specialist when documentation needs substantive reconciliation, restructuring, theory/method explanation, user-oriented synthesis, or publication maintenance.
 
-It is **not** a third lifecycle role and does not approve software. The development doctrine remains capability first, engineering fitness first, simplicity second. Documentation makes the accepted result understandable and usable without constraining sound engineering through a parallel process.
+It is **not** a third lifecycle role and does not approve software. The development hierarchy remains product engineering fitness first, minimum justified product/system complexity second, and development economy third. Documentation makes the accepted result understandable and usable without constraining sound engineering through a parallel process.
 
 > **Keep an evolving AI-developed software system intellectually accessible to humans.**
 
 ## Governing constraints
 
-1. Seek the globally best justified engineering solution; documentation does not override capability, correctness, scientific fidelity, resource feasibility, scalability, robustness, hardware effectiveness, or materially required performance.
-2. Minimize unnecessary documentation machinery just as software machinery is minimized after requirements are satisfied.
+1. Seek the globally best justified engineering-sufficient product; documentation does not override capability, correctness, scientific fidelity, resource feasibility, scalability, robustness, hardware effectiveness, security, compatibility, or materially required performance.
+2. Among engineering-sufficient documentation structures, minimize unnecessary duplication and machinery; then avoid unnecessary documentation-development work without weakening correctness or usability.
 3. Preserve exactly one current normative owner for each material contract.
 4. Treat code as evidence of actual behavior, not automatically as intended specification.
 5. Make permanent current documents describe the accepted present system rather than accumulating implementation chronology.

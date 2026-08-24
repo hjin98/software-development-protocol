@@ -12,6 +12,20 @@ Build enough context to make the requested change safely and to bound its affect
 
 Use progressive inspection rather than exhaustive reconnaissance. Process efficiency means avoiding unrelated inspection, not stopping before plausible transitive impact has been understood.
 
+## Information gain and context economy
+
+Choose the lowest-cost next inspection, search, test, benchmark, or other read-only action that most strongly resolves a material uncertainty or establishes required acceptance evidence.
+
+- Prefer targeted symbol/search/range inspection before loading an entire large file when the bounded view is sufficient.
+- Reuse repository facts already established in the current task until later evidence invalidates them; do not reread unchanged material without a new material question.
+- Prefer an inspection or test that distinguishes among remaining materially plausible explanations over broad speculative reconnaissance.
+- Expand scope through a plausible ownership, dependency, contract, or behavioral-impact chain rather than adjacency alone.
+- When command/test/build output is large, preserve the full output when materially useful but bring the smallest sufficient summary/failing region into active reasoning context. Do not hide warnings/failures that may affect acceptance.
+- Combine closely related read-only queries when that reduces turns without broadening the investigated surface or obscuring evidence.
+- Avoid repeatedly reloading a governing workplan or reference solely to restate already-established decisions; consult it again when a new question depends on exact wording or later evidence may have invalidated an assumption.
+
+Context minimization is never permission to omit required affected behavior, material failure evidence, or a transitive dependency that can plausibly change the result.
+
 ## Change surface
 
 For substantial work, identify the material surfaces that actually apply: public API, data contracts, callers/consumers, configuration, tests, persistence, concurrency/orchestration, performance, security/trust, documentation, packaging/release, and transitive shared dependencies.
