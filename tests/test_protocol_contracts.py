@@ -99,6 +99,15 @@ class ProtocolContractTests(unittest.TestCase):
         self.assertIn("coherent behavior/risk boundary", workflow)
         self.assertIn("final assembled affected-surface regression", workflow)
 
+    def test_long_gated_work_preserves_compact_state_without_new_bureaucracy(self) -> None:
+        workflow = read("source/shared/references/workflow-and-workplans.md").lower()
+        self.assertIn("compact task-local state", workflow)
+        self.assertIn("accepted frozen decisions", workflow)
+        self.assertIn("still-valid evidence", workflow)
+        self.assertIn("not a required persistent artifact", workflow)
+        self.assertIn("do not create a ledger", workflow)
+        self.assertIn("final acceptance still re-derives", workflow)
+
     def test_lifecycle_entrypoints_route_references_by_material_surface(self) -> None:
         design = read("source/roles/software-design/SKILL.md").lower()
         implementation = read("source/roles/software-implementation/SKILL.md").lower()

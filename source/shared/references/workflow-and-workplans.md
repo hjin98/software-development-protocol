@@ -82,6 +82,12 @@ Implementation may locally realize or reconcile the plan while preserving frozen
 
 When reopening is necessary, identify the invalidated decision, stop dependent work, preserve unrelated accepted stages/evidence, **reopen only the affected** design surface, update/reconcile the plan, invalidate evidence only where the changed decision can plausibly affect it, and resume from the earliest materially affected stage.
 
+## Compact working state for long gated work
+
+For long gated sessions, carry forward enough **compact task-local state** to avoid rediscovering accepted decisions and evidence. Keep, conceptually, the accepted frozen decisions, accepted stages, current affected-surface deltas, still-valid evidence, invalidated evidence, and unresolved material risks or redesign triggers. Reason from the delta since the last accepted stage rather than re-deriving unchanged state.
+
+This working state is **not a required persistent artifact**. Do not create a ledger, database, manifest, JSON schema, or parallel evidence system solely for protocol compliance. Persist task state only when the project independently needs recovery, auditability, handoff durability, or another material capability. Final acceptance still re-derives the complete affected surface independently from the assembled candidate.
+
 ## Gates
 
 Gates are value-based. Architecture/release/project gates remain optional unless project policy requires them, but a material behavior-changing implementation stage is not accepted until its relevant focused/regression checks pass or its explicitly non-executable validation dependency is carried to the nearest executable stage.
