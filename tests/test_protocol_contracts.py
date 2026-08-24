@@ -111,6 +111,13 @@ class ProtocolContractTests(unittest.TestCase):
         self.assertIn("references/git-and-version-control.md", implementation)
         self.assertNotIn("references/git-and-version-control.md", design)
 
+    def test_independent_review_is_evidence_directed_but_not_scope_limited(self) -> None:
+        design = read("source/roles/software-design/SKILL.md").lower()
+        self.assertIn("highest-information current evidence", design)
+        self.assertIn("not acceptance of the implementation agent's summary", design)
+        self.assertIn("do not automatically replay the original architecture search", design)
+        self.assertIn("retains authority to inspect any surface", design)
+
 
 if __name__ == "__main__":
     unittest.main()

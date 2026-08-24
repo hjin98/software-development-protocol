@@ -87,7 +87,20 @@ Coverage follows the affected behavioral surface; execution cost is minimized on
 
 ## Independent review mode
 
-For substantial/high-risk changes, independently challenge material functionality/correctness, scientific fidelity, algorithm/scaling, resources/hardware/performance, ownership/product complexity, failure handling, workplan deviations, final affected-surface reconciliation, stage-local/final regression, integration, unavailable checks, qualification boundaries, and unresolved risks.
+Independent review remains an independent challenge, not acceptance of the implementation agent's summary. Start from the highest-information current evidence:
+
+- explicit requirements and governed contracts;
+- accepted workplan and its frozen/delegated/redesign boundaries;
+- material final implementation/diff;
+- final affected-surface derivation;
+- regression/integration/benchmark evidence;
+- material deviations and unresolved risks.
+
+Independently test the highest-risk assumptions and boundaries: required functionality/correctness, scientific fidelity, algorithm/scaling, resources/hardware/performance, ownership/product complexity, failure handling, workplan deviations, stage-local/final regression, integration, unavailable checks, qualification boundaries, and unresolved risks.
+
+Do not automatically replay the original architecture search from zero when the assembled implementation/evidence does not challenge the accepted premises. Broaden inspection or reopen original design space when evidence shows a material deviation, undermines a design premise, exposes unexpected behavior, materially regresses product complexity, fires a redesign trigger, or leaves a material unresolved risk.
+
+Evidence-directed review is an economy rule, not a scope cap. The reviewer retains authority to inspect any surface needed to reach a sound independent conclusion.
 
 Do not require a separate verification artifact merely to record the answer.
 
