@@ -35,7 +35,7 @@ Run hygiene only when at least one of these is true:
 
 Do not perform repository-wide cleanup after every local change. Active workplans, active diagnostic branches, live checkpoints, running-work outputs, and temporary files still required for unresolved debugging are not cleanup candidates.
 
-Use the smallest useful operating mode:
+Use the fit-for-purpose operating mode; do not take broader cleanup authority than the task needs:
 
 - **audit** — inspect/classify only; make no destructive changes;
 - **closeout** — perform authorized path cleanup, archival, and clear hierarchy repair after classification;
@@ -218,9 +218,22 @@ After cleanup, inspect the repository again and verify proportionally:
 - each deleted branch had all three recorded checks and the reviewed tip matched the immediate pre-delete tip;
 - repository status is actually inspected before describing it as clean.
 
-Run the smallest relevant tests/build/index checks required by the paths moved or regenerated. A hygiene pass should not rerun an expensive scientific or production qualification unless cleanup changed an input that could plausibly invalidate it.
+Run the relevant tests/build/index checks required by the affected paths moved or regenerated. Minimize check cost only after required coverage is established. A hygiene pass should not rerun an expensive scientific or production qualification unless cleanup changed an input that could plausibly invalidate it.
 
 If only remote tracked state was inspectable, say so explicitly in the completion report and do not claim local cache/untracked/worktree cleanliness.
+
+## Supporting references
+
+Read the packaged references when their surface is material:
+
+- `references/workflow-and-workplans.md` and `references/testing-and-validation.md` — lifecycle closure and affected validation;
+- `references/protocol-versioning-and-compatibility.md` — evidence invalidation and protocol compatibility;
+- `references/git-and-version-control.md` — Git safety and authorization boundaries;
+- `references/repository-intake.md` — progressive repository inspection;
+- `references/security-and-trust-boundaries.md` — secrets, unsafe artifacts, and trust boundaries;
+- `references/storage-and-io.md` — cache/checkpoint/scratch ownership and recovery value;
+- `references/release-and-distribution.md` — tracked/generated/release artifact boundaries;
+- `references/documentation-and-evidence.md` — durable records versus disposable coordination/evidence.
 
 ## Completion report
 

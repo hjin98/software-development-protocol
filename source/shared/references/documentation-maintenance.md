@@ -2,7 +2,7 @@
 
 Documentation is a maintained information architecture for the accepted present system, not an append-only history of how the system evolved.
 
-The governing engineering doctrine remains unchanged: seek the best globally justified solution, satisfy capability/correctness/scientific/resource/performance requirements first, then minimize unnecessary complexity. Documentation makes the resulting system understandable and usable; it must not constrain sound engineering through a parallel process.
+The governing engineering doctrine remains unchanged: seek the best globally justified solution, satisfy capability/correctness/scientific/resource/performance requirements first, then minimize unnecessary product/system complexity among engineering-sufficient solutions. That simplicity target does not require minimum documentation or development-process length. Documentation makes the resulting system understandable and usable without constraining sound engineering through a parallel process.
 
 ## Purpose
 

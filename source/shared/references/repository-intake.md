@@ -1,22 +1,22 @@
 # Repository Intake
 
-Build enough context to make the requested change safely. Do not inventory the entire repository when the target path and its dependencies are already clear.
+Build enough context to make the requested change safely and to bound its affected behavioral surface with appropriate confidence. Do not inventory the entire repository when ownership, dependencies, and impact are already clear.
 
-## Start focused
+## Start focused and expand on evidence
 
 1. read applicable repository instructions;
 2. locate the requested entry point/module/feature;
-3. follow its callers, dependencies, persisted state, tests, and owning documentation only as far as needed;
-4. inspect relevant build/CI/configuration when the change touches them;
+3. follow callers, dependencies, persisted state, tests, and owning documentation until the material ownership and affected surface are understood;
+4. inspect relevant build/CI/configuration/security/release surfaces when the change touches them;
 5. preserve unrelated user changes.
 
-Use progressive inspection rather than exhaustive reconnaissance.
+Use progressive inspection rather than exhaustive reconnaissance. Process efficiency means avoiding unrelated inspection, not stopping before plausible transitive impact has been understood.
 
 ## Change surface
 
-For substantial work, identify the material surfaces that actually apply: public API, data contracts, callers, tests, persistence, performance, security/trust, documentation, packaging/release.
+For substantial work, identify the material surfaces that actually apply: public API, data contracts, callers/consumers, configuration, tests, persistence, concurrency/orchestration, performance, security/trust, documentation, packaging/release, and transitive shared dependencies.
 
-Do not create a mandatory matrix when most rows are irrelevant.
+Do not create a mandatory matrix when most rows are irrelevant. Conversely, do not equate the Git diff with the behavioral surface when shared contracts propagate beyond changed files.
 
 ## Prefer existing patterns
 
@@ -26,9 +26,9 @@ Do not split modules, introduce frameworks, or reorganize unrelated areas merely
 
 ## Generated artifacts
 
-Determine source versus generated output before editing. Edit the source of truth and regenerate only required derivatives.
+Determine source versus generated output before editing. Edit the source of truth and regenerate required derivatives.
 
-Generated scratch/build artifacts should not be committed unless repository policy makes them authoritative.
+When a generated artifact is shipped or committed by policy, validate both its consumer-facing structure/behavior and its parity with canonical source. Generated scratch/build artifacts should not be committed unless repository policy makes them authoritative.
 
 ## Repository safety
 

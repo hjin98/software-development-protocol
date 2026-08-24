@@ -1,53 +1,74 @@
 # Testing and Validation
 
-Testing exists to answer material engineering questions, not to create a parallel product.
+Testing exists to establish product behavior and engineering claims with appropriate confidence. It is not a parallel product or approval bureaucracy.
 
-## Three levels
+## Functional acceptance for executable changes
 
-Use only the levels needed:
+Every executable product change requires:
 
-1. **Focused** — unit, regression, property, numerical, boundary, or error checks for the mechanism.
-2. **Integrated** — exercise the real consumer, interface, persistence path, or state transition.
-3. **Real use** — representative real data, target hardware/environment, installed package, or production-scale execution when needed to establish the material claim.
+1. **Focused checks** appropriate to new/modified mechanisms: unit, property, numerical, boundary, error, or bug-reproducer tests.
+2. **Affected-surface regression** covering all new/modified behavior and every existing behavior that could plausibly change because of the revision.
+3. **Integration testing** through the assembled affected product path and relevant real consumer/interface/state-transition boundaries.
 
-Stop when the relevant question has been answered with adequate confidence. Do not run a fixed matrix merely because one exists.
+The affected surface is not limited to changed files. Include callers/consumers, shared utilities, public interfaces, configuration, persistence, caches/checkpoints, orchestration/concurrency paths, packaging/entry points, and transitive behavioral dependencies where the change can plausibly propagate.
+
+Do not require one test per function/file. Existing tests count when they genuinely protect the relevant contract; add coverage where they do not.
+
+Repository/project-required checks remain mandatory. If impact analysis cannot confidently bound the affected surface, run the broader/full available regression suite rather than treating unexamined consumers as unaffected.
+
+A required check that did not execute is not a pass. Newly introduced failures and failures plausibly intersecting the affected surface block functional acceptance. Demonstrably pre-existing unrelated failures may be attributed and reported rather than repaired.
+
+## Optimize test cost, not coverage
+
+Coverage breadth follows the affected behavioral surface. Then minimize execution cost while preserving that coverage.
+
+Prefer small deterministic fixtures, bounded datasets, reduced iterations/epochs, synthetic inputs, and representative workloads when they exercise the same contracts. A broad regression suite can be inexpensive if each path is tested with bounded data.
+
+Do not interpret “small,” “focused,” or “representative” as permission to omit affected modules, consumers, interfaces, or integration boundaries.
+
+## Stage-local regression
+
+After **each material implementation stage that changes executable behavior**, run focused checks and the affected regression subset relevant to that stage before dependent implementation proceeds. Resolve newly introduced hard failures and affected regressions at the stage that introduced them.
+
+A tiny atomic change may use the final pass as its stage pass. A genuinely non-executable intermediate stage may combine validation with the nearest executable integration stage when that dependency is explicit. Do not defer all regression to final completion merely because a later suite will eventually exercise the code.
+
+This requirement preserves fault localization and prevents defect accumulation; it is not optional based only on whether an agent predicts that intermediate testing will be useful.
+
+## Final assembled acceptance
+
+Before functional completion:
+
+1. re-derive the affected behavioral surface from the final assembled implementation;
+2. account for every identified affected path with executed regression coverage, a required broader suite, or an explicit unavailable/blocking check;
+3. rerun the complete affected-surface regression after all material executable edits that could invalidate earlier evidence;
+4. run integration/end-to-end tests through the assembled affected product path on the same candidate.
+
+Implementation can broaden impact beyond the initial plan, so initial impact analysis is not sufficient final evidence.
 
 ## Prefer direct testing
 
-Test through the actual implementation path whenever practical.
+Test through the actual implementation/product path whenever practical. A harness must not substantially reimplement the algorithm, state reconstruction, orchestration, or compatibility logic it is intended to test.
 
-A test harness must not substantially reimplement the algorithm, state reconstruction, orchestration, or compatibility logic it is intended to test. That creates a second implementation with its own failure modes.
+Synthetic fixtures are useful for bounded execution; they do not replace real integration boundaries when those boundaries are part of the functional claim.
 
-If the product is difficult to test, expose a smaller stable seam or refactor ownership rather than constructing a pseudo-production qualification system.
+## Production qualification
 
-Synthetic fixtures are useful when they isolate a mechanism. They should not replace the real path when the material claim depends on real integration, data, hardware, scale, or scientific behavior.
+Full production qualification is distinct from functional testing. It assumes regression and integration acceptance already passed and uses real, long, data-heavy, target-machine/target-hardware workloads to characterize production-scale wall time/throughput, RAM/VRAM/storage/I/O, scaling, accelerator utilization, recovery cost, and related environment-specific behavior.
 
-## Scale and performance
+Do not run full production qualification by default during implementation or between ordinary stages. Run it only when explicitly requested, required by project/release policy, or necessary to establish a material production-scale/resource/performance/hardware claim.
 
-Use the smallest workload that exercises the relevant algorithmic regime. Run full production scale when scale itself is the requirement, smaller execution cannot establish the claim, or a real campaign is the most direct useful test.
+Bounded benchmarks, accelerator smoke tests, reference-equivalence checks, and representative resource checks remain normal implementation validation when relevant.
 
-For performance claims, use a comparable baseline and representative material conditions. Do not build elaborate historical/counterfactual infrastructure solely to preserve a speedup percentage.
+A successful production run never substitutes for missing focused/regression/integration coverage. Bounded functional testing does not prove production-scale performance/resource qualification.
 
 ## Resource safety
 
-Do not exhaust the machine. Honor explicit CPU/RAM/VRAM/storage/wall-time constraints and add simple containment when runaway behavior is plausible.
+Honor explicit CPU/RAM/VRAM/storage/I/O/wall-time constraints. Do not exhaust the machine to prove basic functionality. Use bounded failure simulations rather than actual resource exhaustion when they establish the same behavior.
 
-Resource safety does not imply a generic calibration/admission/supervisor framework. Measure or estimate only what is needed to run safely.
+## Domain-specific tests
 
-If a test itself requires extensive checkpointing, recovery, resource discovery, state reconstruction, cleanup orchestration, or other infrastructure, ask whether the product should expose a simpler test seam or whether running the actual product is more useful.
-
-## Real failures
-
-A real production/workstation/HPC failure is high-value evidence. Diagnose it through the product path, fix the owner, and rerun the affected path when useful.
-
-Do not keep adding layers to a failing test harness. Simplify or remove it.
-
-## Broad suites
-
-Run broad tests when useful or when repository policy requires them. Attribute unrelated pre-existing failures rather than building historical machinery around them.
-
-A required check that did not execute is not a pass. Do not fabricate unavailable environment results.
+Security, persistence/recovery, concurrency, configuration, scientific/numerical, performance, packaging, and other specialized test guidance augments this protocol-wide regression/integration contract; it does not replace it.
 
 ## Evidence
 
-The command output, CI result, benchmark, or real-run log is normally enough evidence. Record additional metadata only when needed to interpret the material claim.
+Command output, CI results, benchmark output, or run logs are normally sufficient evidence. Record only metadata needed to interpret the material claim. Do not create qualification/evidence machinery merely for ceremony.

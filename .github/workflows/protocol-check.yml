@@ -17,5 +17,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Build canonical role skills
+      - name: Run protocol regression tests
+        run: python -m unittest discover -s tests -v
+      - name: Build canonical skill packages once
         run: python source/build_skills.py --output /tmp/protocol-dist
+      - name: Validate generated skill packages independently
+        run: python source/validate_packages.py --dist /tmp/protocol-dist
+      - name: Verify committed distribution parity
+        run: python source/check_dist.py --expected /tmp/protocol-dist --committed dist
+      - name: Check patch whitespace
+        run: git diff --check

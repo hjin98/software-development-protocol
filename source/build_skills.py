@@ -23,6 +23,12 @@ CORE = [
     "protocol-versioning-and-compatibility.md",
 ]
 
+CROSS_CUTTING = [
+    "configuration-and-policy.md",
+    "concurrency-and-orchestration.md",
+    "security-and-trust-boundaries.md",
+]
+
 ENGINEERING_FITNESS = [
     "performance-and-parallelism.md",
     "storage-and-io.md",
@@ -36,17 +42,22 @@ ROLE_SPECS = {
             "architecture-and-design.md",
             "documentation-and-evidence.md",
             "specification-and-implementation.md",
-        ] + ENGINEERING_FITNESS,
+            "release-and-distribution.md",
+            "repository-intake.md",
+        ] + CROSS_CUTTING + ENGINEERING_FITNESS,
         "templates": ["implementation_workplan_template.md"],
     },
     "software-implementation": {
         "role": "implementation",
         "references": CORE + [
+            "architecture-and-design.md",
             "debugging-and-state-recovery.md",
             "documentation-and-evidence.md",
             "specification-and-implementation.md",
             "release-and-distribution.md",
-        ] + ENGINEERING_FITNESS,
+            "repository-intake.md",
+            "git-and-version-control.md",
+        ] + CROSS_CUTTING + ENGINEERING_FITNESS,
         "templates": [],
     },
 }
@@ -61,6 +72,7 @@ SPECIALIST_SPECS = {
             "scientific-technical-writing.md",
             "specification-and-implementation.md",
             "release-and-distribution.md",
+            "security-and-trust-boundaries.md",
         ] + ENGINEERING_FITNESS,
         "templates": [],
     },
@@ -71,6 +83,7 @@ SPECIALIST_SPECS = {
             "documentation-and-evidence.md",
             "release-and-distribution.md",
             "repository-intake.md",
+            "security-and-trust-boundaries.md",
             "storage-and-io.md",
         ],
         "templates": [],
@@ -89,8 +102,10 @@ def skill_root(skill_name: str, kind: str) -> Path:
 
 
 def entries(skill_name: str, spec: dict, kind: str) -> list[tuple[str, Path]]:
+    skill = skill_root(skill_name, kind)
     out = [
-        ("SKILL.md", skill_root(skill_name, kind) / "SKILL.md"),
+        ("SKILL.md", skill / "SKILL.md"),
+        ("agents/openai.yaml", skill / "agents" / "openai.yaml"),
         ("PROTOCOL_VERSION", ROOT / "PROTOCOL_VERSION"),
     ]
     out += [
