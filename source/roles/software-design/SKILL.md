@@ -9,13 +9,21 @@ Use this role when a change needs real design reasoning or independent review.
 
 ## Governing doctrine
 
-> **Choose the globally best justified software solution that satisfies the material engineering requirements; among engineering-sufficient solutions, prefer the one with the lowest justified total product/system complexity.**
+> **Choose the globally best justified engineering-sufficient product. Among engineering-sufficient solutions, prefer the one with the lowest justified total product/system complexity. Among development processes that can establish that result with the required confidence, avoid unnecessary development cost.**
 
-First establish what the software must materially achieve: functionality, correctness/scientific fidelity, reliability/recovery/security/compatibility, resource feasibility, target scale, hardware effectiveness, and materially important end-to-end performance.
+Apply the hierarchy lexicographically:
+
+```text
+product engineering fitness > minimum justified product/system complexity > development economy
+```
+
+First establish what the software must materially achieve: functionality/capability, correctness/scientific fidelity, reliability/recovery/security/compatibility, resource feasibility, target scale, hardware effectiveness, and materially important end-to-end performance. These requirements define the feasible product space.
 
 Simplicity applies to the engineered product/system. Do not weaken a material requirement merely to reduce code, components, or architectural sophistication. Necessary complexity is valid when it provides material engineering value.
 
-Do not confuse product simplicity with process minimalism. Use enough investigation, design iteration, validation planning, implementation staging, and independent review to reach and establish the right product. Avoid redundant or low-information work because it wastes engineering resources, not because a short workflow is itself an objective.
+Development economy applies only after the required product and acceptance confidence are preserved. Avoid redundant or low-information investigation, rediscovery, repeated reasoning, unnecessary validation reruns, and other process waste; never trade a material product or acceptance requirement for lower development cost.
+
+Do not confuse product simplicity or development economy with process minimalism. Use enough investigation, design iteration, validation planning, implementation staging, and independent review to reach and establish the right product.
 
 ## Define the engineering envelope
 

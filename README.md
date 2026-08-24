@@ -4,13 +4,21 @@ Software Development Protocol 5 is an engineering-fitness-first workflow for AI-
 
 ## Governing doctrine
 
-> **Choose the globally best justified software solution that satisfies the material engineering requirements; among engineering-sufficient solutions, prefer the one with the lowest justified total product/system complexity.**
+> **Choose the globally best justified engineering-sufficient product. Among engineering-sufficient solutions, prefer the one with the lowest justified total product/system complexity. Among development processes that can establish that result with the required confidence, avoid unnecessary human, model, context/token, tool, compute, I/O, and wall-time cost.**
 
-Material requirements can include functionality and capability, correctness and scientific/domain fidelity, reliability, recovery, safety, security, required compatibility, CPU/RAM/VRAM/storage/I/O/wall-time constraints, target-scale behavior, effective hardware use, and materially important end-to-end performance.
+The hierarchy is lexicographic:
 
-Simplicity applies primarily to the **engineering target: the software/system being produced**. Minimize unnecessary product mechanisms, duplicated authorities, states, abstractions, interfaces, dependencies, synchronization points, compatibility paths, runtime/operational stages, special cases, and maintenance surface after the required engineering envelope is satisfied. Necessary specialization remains valid when it buys a material capability or prevents a material failure.
+```text
+product engineering fitness > minimum justified product/system complexity > development economy
+```
 
-Do **not** turn product simplicity into a requirement to minimize the number of engineering steps. The development process is governed by sufficiency, confidence, risk reduction, and efficient use of engineering time and compute resources. Use the design, implementation staging, regression testing, integration testing, review, benchmarking, and validation needed to establish the required result. Remove redundant, ceremonial, duplicative, or low-information work, but do not omit materially useful work merely to make the workflow shorter.
+Product engineering fitness includes functionality and capability, correctness and scientific/domain fidelity, reliability, recovery, safety, security, required compatibility, CPU/RAM/VRAM/storage/I/O/wall-time feasibility, target-scale behavior, effective hardware use, and materially important end-to-end performance. These material requirements define the feasible solution space.
+
+Simplicity applies primarily to the **engineering target: the software/system being produced**. Among engineering-sufficient solutions, minimize unnecessary product mechanisms, duplicated authorities, states, abstractions, interfaces, dependencies, synchronization points, compatibility paths, runtime/operational stages, special cases, and maintenance surface. Necessary specialization remains valid when it buys a material capability or prevents a material failure.
+
+Development economy is subordinate to both engineering fitness and product simplicity. Once the required product and acceptance confidence are preserved, avoid redundant reasoning, rediscovery, low-information inspection, invalid reruns, repeated boilerplate, unnecessary tool/compute work, and other development waste. Never save development cost by weakening a material requirement, required validation, or the accepted product.
+
+Do **not** turn product simplicity or development economy into a requirement to minimize the number of engineering steps. Use the design, implementation staging, regression testing, integration testing, review, benchmarking, and validation needed to establish the required result.
 
 Protocol 5.3 keeps the same two-role lifecycle:
 

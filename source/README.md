@@ -4,15 +4,25 @@ This directory is the canonical Protocol 5.3 source.
 
 ## Governing doctrine
 
-> **Choose the globally best justified software solution that satisfies the material engineering requirements; among engineering-sufficient solutions, prefer the one with the lowest justified total product/system complexity.**
+> **Choose the globally best justified engineering-sufficient product. Among engineering-sufficient solutions, prefer the one with the lowest justified total product/system complexity. Among development processes that can establish that result with the required confidence, avoid unnecessary human, model, context/token, tool, compute, I/O, and wall-time cost.**
 
-Material requirements define the feasible solution space: functionality/capability, correctness and scientific/domain fidelity, reliability/recovery/safety/security/compatibility, CPU/RAM/VRAM/storage/I/O/wall-time constraints, target scale, hardware effectiveness, and materially important end-to-end performance.
+The hierarchy is lexicographic:
+
+```text
+product engineering fitness > minimum justified product/system complexity > development economy
+```
+
+Product engineering fitness defines the feasible solution space: functionality/capability, correctness and scientific/domain fidelity, reliability/recovery/safety/security/compatibility, CPU/RAM/VRAM/storage/I/O/wall-time feasibility, target scale, hardware effectiveness, and materially important end-to-end performance.
 
 ### Product simplicity, not process minimalism
 
-Simplicity is a design objective for the engineered product/system. Minimize unnecessary components, states, interfaces, dependencies, synchronization, duplicated authorities, compatibility paths, runtime/operational stages, special cases, and maintenance surface once the material engineering envelope is satisfied. Necessary specialization is valid when it provides material engineering value.
+Among engineering-sufficient products, minimize unnecessary components, states, interfaces, dependencies, synchronization, duplicated authorities, compatibility paths, runtime/operational stages, special cases, and maintenance surface. Necessary specialization is valid when it provides material engineering value.
 
-Do not generalize this objective into a requirement to minimize engineering-process length. The development process is governed by sufficiency, confidence, risk reduction, and efficient use of human and compute resources. Use the analysis, staging, regression testing, integration testing, review, benchmarking, and validation needed to establish the required result. Eliminate redundant, ceremonial, duplicative, or low-information work, but do not omit materially useful work merely because a shorter workflow exists.
+### Development economy, after engineering sufficiency
+
+Development economy is a third-order objective. Once the required product and acceptance confidence are preserved, eliminate redundant reasoning, rediscovery, low-information inspection, invalid reruns, repeated boilerplate, unnecessary tool/compute work, and other process waste. Do not weaken a material requirement or required validation merely to reduce development cost.
+
+Do not generalize product simplicity or development economy into a requirement to minimize engineering-process length. Use the analysis, staging, regression testing, integration testing, review, benchmarking, and validation needed to establish the required result.
 
 ## Lifecycle roles
 
@@ -50,7 +60,7 @@ Do not run full production qualification by default during implementation. Run i
 
 ## Process proportionality
 
-Use a workflow sufficient for the material risks and acceptance requirements. Workplans, gates, reviews, and repeated checks are justified when they reduce ambiguity, risk, rediscovery, debugging cost, or wasted downstream work. Avoid them when they add no material engineering value. The objective is an effective engineering process, not the fewest process steps.
+Use a workflow sufficient for the material risks and acceptance requirements. Workplans, gates, reviews, and repeated checks are justified when they reduce ambiguity, risk, rediscovery, debugging cost, or wasted downstream work. Avoid them when they add no material engineering value. Development economy removes unnecessary work only after required engineering confidence is preserved.
 
 ## Build and repository acceptance
 

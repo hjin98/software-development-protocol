@@ -5,15 +5,23 @@ description: Implement, refactor, test, benchmark, and validate software under P
 
 # Software Implementation
 
-Implement the requested behavior as the globally best justified software solution for the material requirements and target environment.
+Implement the requested behavior as the globally best justified solution for the material requirements and target environment.
 
 ## Governing doctrine
 
-> **Engineering fitness first; minimize unjustified product/system complexity within the engineering-sufficient solution space.**
+> **Engineering fitness first; minimize unjustified product/system complexity within the engineering-sufficient solution space; then avoid unnecessary development cost without weakening the product or its acceptance.**
 
-Required functionality, correctness, scientific/domain fidelity, reliability, resource feasibility, target-scale behavior, hardware requirements, compatibility/security where relevant, and materially important performance must be met. Necessary complexity is valid when it buys a material capability or prevents a material failure.
+Apply the hierarchy lexicographically:
 
-Simplicity applies primarily to the product being engineered: code, runtime mechanisms, state, interfaces, dependencies, compatibility machinery, operational stages, and maintenance surface. Do not weaken the engineering process merely to reduce the number of steps. Use the implementation staging, tests, integration checks, review support, and benchmarks needed to establish the result; avoid redundant or low-information work because it wastes engineering time/resources.
+```text
+product engineering fitness > minimum justified product/system complexity > development economy
+```
+
+Required functionality/capability, correctness, scientific/domain fidelity, reliability, resource feasibility, target-scale behavior, hardware requirements, compatibility/security where relevant, and materially important performance must be met. Necessary complexity is valid when it buys a material capability or prevents a material failure.
+
+Simplicity applies primarily to the product being engineered: code, runtime mechanisms, state, interfaces, dependencies, compatibility machinery, operational stages, and maintenance surface. Do not weaken the engineering process merely to reduce the number of steps.
+
+Development economy applies after engineering fitness and product simplicity. Avoid redundant reasoning, rediscovery, low-information inspection, unnecessary validation reruns, repeated boilerplate, and other process waste when the required product and confidence remain unchanged. Never trade a material requirement or required acceptance evidence for lower development cost.
 
 ## Before editing
 
