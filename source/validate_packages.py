@@ -159,8 +159,15 @@ def validate_package(path: Path, skill_name: str, kind: str, source_root: Path) 
                     continue
                 if not source_path.is_file():
                     errors.append(f"{path.name}: packaged resource has no canonical source: {rel}")
-                elif zf.read(member) != source_path.read_bytes():
-                    errors.append(f"{path.name}: packaged resource differs from canonical source: {rel}")
+                else:
+                    expected_bytes = source_path.read_bytes().replace(
+                        b"REPLACE_WITH_SKILL_PROTOCOL_VERSION",
+                        PROTOCOL_VERSION.encode("utf-8"),
+                    )
+                    if zf.read(member) != expected_bytes:
+                        errors.append(
+                            f"{path.name}: packaged resource differs from canonical source: {rel}"
+                        )
     except (OSError, zipfile.BadZipFile) as exc:
         errors.append(f"{path.name}: invalid ZIP: {exc}")
     return errors

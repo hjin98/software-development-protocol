@@ -23,7 +23,7 @@ It is **not** a third lifecycle role and does not approve software. The developm
 
 ## Operating modes
 
-Choose the smallest useful mode; these are reasoning modes, not required commands or workflow states.
+Choose the fit-for-purpose mode; use only modes that materially serve the documentation task. These are reasoning modes, not required commands or workflow states.
 
 - **maintain** — update durable documentation affected by an accepted software change;
 - **reconcile** — resolve code/specification/architecture/guide disagreement;
@@ -187,6 +187,19 @@ This specialist may update documentation, documentation indexes, documentation g
 Do not change product behavior merely to force agreement with prose. If product code is wrong relative to the accepted contract, report the exact discrepancy and route the code change to implementation (and design when semantics are unclear), then reconcile the final documentation.
 
 Do not create a documentation approval lifecycle, universal provenance database, mandatory repository-wide audit, or extensive checker framework unless the project independently demonstrates a material need.
+
+## Supporting references
+
+Read the packaged references when their surface is material:
+
+- `references/workflow-and-workplans.md` and `references/testing-and-validation.md` — protocol workflow and functional acceptance boundaries;
+- `references/protocol-versioning-and-compatibility.md` — protocol/candidate compatibility;
+- `references/architecture-and-design.md` and `references/specification-and-implementation.md` — normative structure and contracts;
+- `references/documentation-and-evidence.md` and `references/documentation-maintenance.md` — authority, current-state writing, and evidence;
+- `references/scientific-technical-writing.md` and `references/scientific-software.md` — scientific exposition and numerical semantics;
+- `references/security-and-trust-boundaries.md` — rendering, external-resource, credential, and untrusted-input boundaries;
+- `references/performance-and-parallelism.md` and `references/storage-and-io.md` — performance/resource behavior that documentation must explain when material;
+- `references/release-and-distribution.md` — generated/shipped documentation and package boundaries.
 
 ## Completion
 
