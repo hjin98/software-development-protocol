@@ -86,6 +86,10 @@ When reopening is necessary, identify the invalidated decision, stop dependent w
 
 Gates are value-based. Architecture/release/project gates remain optional unless project policy requires them, but a material behavior-changing implementation stage is not accepted until its relevant focused/regression checks pass or its explicitly non-executable validation dependency is carried to the nearest executable stage.
 
+Define a material stage by a coherent behavior/risk boundary, not by individual files or helper edits. Several tightly coupled edits may close under one stage regression when they jointly establish one executable behavior. Within the stage, run the cheapest high-signal focused checks before the required affected regression so obvious local failures do not waste broader test cost.
+
+Reuse still-valid intermediate evidence until a changed dimension can plausibly invalidate its claim. Do not rerun a check solely because a new agent/session began or unrelated material changed. Final assembled affected-surface regression and integration remain fresh acceptance boundaries after all material executable edits.
+
 Use additional gates when validating a boundary before proceeding materially reduces risk or wasted downstream work, such as architecture/algorithm decisions, irreversible migration, expensive execution prerequisites, scientific semantics, or security boundaries.
 
 Do not create G0/G1/G2 merely because a template can represent them. Do not remove a useful gate merely to make the process shorter or cheaper.

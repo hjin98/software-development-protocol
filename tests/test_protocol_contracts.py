@@ -89,6 +89,16 @@ class ProtocolContractTests(unittest.TestCase):
         self.assertIn("targeted symbol/search/range", intake)
         self.assertIn("context minimization is never permission", intake)
 
+    def test_testing_reuses_valid_evidence_without_weakening_final_acceptance(self) -> None:
+        testing = read("source/shared/references/testing-and-validation.md").lower()
+        workflow = read("source/shared/references/workflow-and-workplans.md").lower()
+        self.assertIn("coherent stage granularity", testing)
+        self.assertIn("cheapest high-signal focused checks", testing)
+        self.assertIn("evidence reuse and invalidation", testing)
+        self.assertIn("never removes final assembled acceptance", testing)
+        self.assertIn("coherent behavior/risk boundary", workflow)
+        self.assertIn("final assembled affected-surface regression", workflow)
+
 
 if __name__ == "__main__":
     unittest.main()
