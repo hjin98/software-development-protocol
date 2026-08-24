@@ -1,0 +1,115 @@
+name: Protocol 5.4 Gate Replay
+
+on:
+  push:
+    branches:
+      - feat/protocol-5.4-development-economy
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  verify-gates:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - gate: G0
+            sha: 29b806c929a114c1c7765ce85e6baf6fb461ccda
+          - gate: G1
+            sha: 2f77788a149138cd740f65188683654c2caf2e20
+          - gate: G2
+            sha: 89497c22cdc662016ad58c8012160ce2bb4d2a25
+          - gate: G3
+            sha: 57e43321e104cc3ed5b675baf8c724b94e64c2df
+          - gate: G4
+            sha: 6ef5ec9282f88da10c87bb2bc74741d8d21baf20
+          - gate: G5
+            sha: 4b4f5ed342bb68b536664e689195aab9e79e337a
+          - gate: G6
+            sha: b02c03c2a862701f17e7710cc1d930f753e146ae
+          - gate: G7
+            sha: 68d18cd5c5895905085ab8ed6a65893228de3b4b
+          - gate: G8
+            sha: c887ce3c771c28f6671075ff62addc76d256b853
+          - gate: G9
+            sha: 5a48e65225ce7d09f86213db286071ae8fb97437
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run gate regression suite
+        run: python -m unittest discover -s tests -v
+      - name: Verify gate-specific semantic contract
+        env:
+          GATE: ${{ matrix.gate }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          gate = os.environ['GATE']
+          root = Path('.')
+          def text(path): return (root / path).read_text(encoding='utf-8').lower()
+          if gate == 'G0':
+              s = text('source/roles/software-implementation/SKILL.md')
+              assert 'stage-local regression is required' in s and 'production qualification is separate' in s
+          elif gate == 'G1':
+              s = text('source/roles/software-design/SKILL.md')
+              assert 'product engineering fitness > minimum justified product/system complexity > development economy' in s
+          elif gate == 'G2':
+              s = text('source/roles/software-implementation/SKILL.md')
+              assert all(x in s for x in ('accepted workplan', 'local reconciliation', 'material redesign', 'earliest materially affected'))
+          elif gate == 'G3':
+              v = text('source/shared/references/protocol-versioning-and-compatibility.md')
+              t = text('source/shared/templates/implementation_workplan_template.md')
+              assert 'workplan protocol binding' in v and all(x in t for x in ('### frozen', '### delegated', '### reopen only on evidence'))
+          elif gate == 'G4':
+              s = text('source/shared/references/repository-intake.md')
+              assert all(x in s for x in ('information gain and context economy', 'lowest-cost next inspection', 'context minimization is never permission'))
+          elif gate == 'G5':
+              s = text('source/shared/references/testing-and-validation.md')
+              assert all(x in s for x in ('coherent stage granularity', 'evidence reuse and invalidation', 'never removes final assembled acceptance'))
+          elif gate == 'G6':
+              d = text('source/roles/software-design/SKILL.md')
+              i = text('source/roles/software-implementation/SKILL.md')
+              assert 'reference routing' in d and 'reference routing' in i
+              assert 'packaging a reference does not make reading it mandatory' in d
+          elif gate == 'G7':
+              s = text('source/roles/software-design/SKILL.md')
+              assert all(x in s for x in ('highest-information current evidence', "not acceptance of the implementation agent's summary", 'retains authority to inspect any surface'))
+          elif gate == 'G8':
+              assert (root / 'source/PROTOCOL_VERSION').read_text().strip() == '5.4.0'
+              assert 'software development protocol 5.4' in text('source/README.md')
+              assert 'development economy third' in text('source/specialists/software-documentation/SKILL.md')
+          elif gate == 'G9':
+              assert (root / 'source/PROTOCOL_VERSION').read_text().strip() == '5.4.0'
+              assert '"protocol_version": "5.4.0"' in text('dist/BUILD_INDEX.json')
+          PY
+      - name: Run G9 full package acceptance
+        if: matrix.gate == 'G9'
+        run: |
+          python source/build_skills.py --output /tmp/protocol-dist
+          python source/validate_packages.py --dist /tmp/protocol-dist
+          python source/check_dist.py --expected /tmp/protocol-dist --committed dist
+          git diff --check
+
+  report-success:
+    needs: verify-gates
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 10,
+              body: 'Protocol 5.4 gate replay passed: G0–G9 each passed its commit-local regression suite and gate-specific semantic contract; G9 also passed canonical build, independent package validation, committed-dist semantic parity, and `git diff --check`.'
+            })
