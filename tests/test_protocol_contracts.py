@@ -81,6 +81,14 @@ class ProtocolContractTests(unittest.TestCase):
         self.assertIn("### delegated", template)
         self.assertIn("### reopen only on evidence", template)
 
+    def test_repository_intake_optimizes_information_gain_not_coverage(self) -> None:
+        intake = read("source/shared/references/repository-intake.md").lower()
+        self.assertIn("information gain and context economy", intake)
+        self.assertIn("lowest-cost next inspection", intake)
+        self.assertIn("reuse repository facts", intake)
+        self.assertIn("targeted symbol/search/range", intake)
+        self.assertIn("context minimization is never permission", intake)
+
 
 if __name__ == "__main__":
     unittest.main()
