@@ -59,7 +59,7 @@ The obligations are the minimum known contract, not a ceiling: implementation mu
 
 ## Task-specific acceptance
 
-Generic functional-acceptance requirements are inherited from the protocol version declared in `protocol_version`; later protocol releases do not silently change this workplan's meaning.
+Generic functional-acceptance requirements are inherited from the protocol version declared `protocol_version`; later protocol releases do not silently change this workplan's meaning.
 
 <Record only task-specific acceptance mappings or thresholds not already clear in the implementation obligations, including real integration boundaries, repository-required checks, structural/absence claims, and material benchmark/backend requirements. Green runtime tests alone do not prove removal/uniqueness claims that require source/structural evidence.>
 
