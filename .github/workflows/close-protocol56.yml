@@ -1,0 +1,41 @@
+name: Close Protocol 5.6 workplan
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  close:
+    if: github.event.pull_request.head.ref == 'protocol-5.6-proxy-proof-acceptance' && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Archive completed workplan and record review evidence
+        run: python .github/close_protocol56.py
+      - name: Final complete protocol regression
+        run: python -m unittest discover -s tests -v
+      - name: Build canonical packages
+        run: python source/build_skills.py --output /tmp/protocol-dist
+      - name: Validate generated packages independently
+        run: python source/validate_packages.py --dist /tmp/protocol-dist
+      - name: Verify committed distribution parity
+        run: python source/check_dist.py --expected /tmp/protocol-dist --committed dist
+      - name: Check patch whitespace
+        run: git diff --check
+      - name: Commit closeout and remove temporary automation
+        run: |
+          rm .github/close_protocol56.py .github/workflows/close-protocol56.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "complete Protocol 5.6 proxy-proof acceptance workplan"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
