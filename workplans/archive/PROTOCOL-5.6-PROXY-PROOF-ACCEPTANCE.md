@@ -3,7 +3,8 @@ kind: implementation-workplan
 workplan_id: PROTOCOL-5.6-PROXY-PROOF-ACCEPTANCE
 protocol_version: 5.5.0
 target_protocol_version: 5.6.0
-status: active
+status: completed
+completed_date: 2026-08-25
 ---
 
 # Protocol 5.6 Proxy-Proof Acceptance Workplan
@@ -331,3 +332,41 @@ If a trigger fires, reopen only the affected design surface and preserve unrelat
 ## Frozen implementation principle
 
 > **Acceptance must execute the production semantic owner whose behavior constitutes the claim; test doubles may replace expensive or external dependencies only below or outside that boundary. Evidence that could remain green while the required owner is materially broken cannot close the claim. Preserve all existing Protocol 5 doctrine and acceptance guarantees while enforcing this boundary without unnecessary process or production-scale cost.**
+
+
+## Completion record
+
+Protocol 5.6 was implemented and independently reviewed under this workplan without reopening the governing Protocol 5 doctrine or two-role lifecycle.
+
+### G0-G3 implementation evidence
+
+The gated implementation workflow applied the canonical source/test transformation and succeeded through regression, package build, package validation, source-to-dist parity, and whitespace checks before creating implementation commit `ee99ad861f62b5cac472d006abbcd3a62823ee2e`. A content-identical reviewed checkpoint used tree `dee32889ecbbed2873c4f37b8044b72f3b5cf95b` at commit `30f64fc3d1a4b972f04e2c349d7d337737a4c58a`.
+
+Implementation workflow evidence: GitHub Actions run `32887845204`, job `97932397376`, conclusion `success`.
+
+### G4 independent assembled review
+
+The final source/diff was reviewed against the accepted contract rather than the implementer's summary. The review found no material doctrine regression, no lifecycle expansion, no global anti-mock policy, no production-qualification inflation, no local-reconciliation loophole for frozen real-owner boundaries, and no authority duplication. Root `AGENTS.md` remains a short authority router rather than a second protocol manual.
+
+Scenario closure:
+
+- S1 owner mock: rejected as insufficient owner acceptance.
+- S2 below-owner fake: explicitly permitted for bounded integration while the real owner/control path executes.
+- S3 direct helper bypass: rejected when caller/restart/reconciliation/authorization detection is the claim.
+- S4 fake persistence: rejected when durable persistence/restart/recovery is the claim.
+- S5 helper-only consumer proof: rejected when assembled consumer behavior is the claim.
+- S6 unavailable real boundary: unavailable/blocking or evidence-backed design reopen; never silently proxy-passed.
+
+### G5 final repository acceptance
+
+Final closure workflow run `32888128588` executes the repository-required commands on the assembled candidate before this completion commit is created:
+
+```bash
+python -m unittest discover -s tests -v
+python source/build_skills.py --output /tmp/protocol-dist
+python source/validate_packages.py --dist /tmp/protocol-dist
+python source/check_dist.py --expected /tmp/protocol-dist --committed dist
+git diff --check
+```
+
+This workplan is archived only if every command succeeds. Production qualification remains unnecessary for this protocol/instruction revision.
