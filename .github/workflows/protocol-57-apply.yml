@@ -1,0 +1,69 @@
+name: Apply Protocol 5.7 gated implementation
+
+on:
+  push:
+    branches:
+      - protocol-5.7-engineering-stewardship
+
+permissions:
+  contents: write
+
+jobs:
+  implement:
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: G0 baseline Protocol 5.6 regression
+        run: python -m unittest discover -s tests -v
+
+      - name: Verify completed Protocol 5.5 lineage
+        run: git merge-base --is-ancestor e705d2192d522b83265c1994c22423f6c4b9c7e1 HEAD
+
+      - name: G1-G5 apply Protocol 5.7 source integration
+        run: python tools/protocol_57_apply.py
+
+      - name: G1-G4 focused stewardship and preserved-proxy contracts
+        run: |
+          python -m unittest -v tests.test_protocol_engineering_stewardship
+          python -m unittest -v tests.test_protocol_proxy_proof_acceptance
+          python -m unittest -v tests.test_protocol_contracts
+
+      - name: Stage-local complete protocol regression
+        run: python -m unittest discover -s tests -v
+
+      - name: G5 build canonical packages
+        run: |
+          rm -rf /tmp/protocol-dist
+          python source/build_skills.py --output /tmp/protocol-dist
+
+      - name: G5 validate generated packages independently
+        run: python source/validate_packages.py --dist /tmp/protocol-dist
+
+      - name: G5 materialize canonical dist
+        run: |
+          rm -rf dist
+          mkdir -p dist
+          cp -a /tmp/protocol-dist/. dist/
+
+      - name: Verify committed-distribution candidate parity
+        run: python source/check_dist.py --expected /tmp/protocol-dist --committed dist
+
+      - name: Check patch whitespace
+        run: git diff --check
+
+      - name: Commit implementation and remove temporary automation
+        run: |
+          rm -f tools/protocol_57_apply.py .github/workflows/protocol-57-apply.yml
+          git diff --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Implement Protocol 5.7 engineering stewardship"
+          git push origin HEAD:protocol-5.7-engineering-stewardship
