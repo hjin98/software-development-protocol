@@ -33,9 +33,23 @@ jobs:
 
       - name: G1-G4 focused stewardship and preserved-proxy contracts
         run: |
-          python -m unittest -v tests.test_protocol_engineering_stewardship
-          python -m unittest -v tests.test_protocol_proxy_proof_acceptance
-          python -m unittest -v tests.test_protocol_contracts
+          set +e
+          {
+            python -m unittest -v tests.test_protocol_engineering_stewardship
+            python -m unittest -v tests.test_protocol_proxy_proof_acceptance
+            python -m unittest -v tests.test_protocol_contracts
+          } > /tmp/protocol57-focused.log 2>&1
+          rc=$?
+          cat /tmp/protocol57-focused.log
+          if [ "$rc" -ne 0 ]; then
+            cp /tmp/protocol57-focused.log tools/protocol_57_failure.log
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add tools/protocol_57_failure.log
+            git commit -m "Record Protocol 5.7 focused gate failure"
+            git push origin HEAD:protocol-5.7-engineering-stewardship
+            exit "$rc"
+          fi
 
       - name: Stage-local complete protocol regression
         run: python -m unittest discover -s tests -v
@@ -62,7 +76,7 @@ jobs:
 
       - name: Commit implementation and remove temporary automation
         run: |
-          rm -f tools/protocol_57_apply.py tools/protocol_57_postfix.py tools/protocol_57_runner_note.txt tools/protocol_57_workflow_v2.yml.txt .github/workflows/protocol-57-apply.yml
+          rm -f tools/protocol_57_apply.py tools/protocol_57_postfix.py tools/protocol_57_runner_note.txt tools/protocol_57_workflow_v2.yml.txt tools/protocol_57_failure.log .github/workflows/protocol-57-apply.yml
           git diff --check
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
