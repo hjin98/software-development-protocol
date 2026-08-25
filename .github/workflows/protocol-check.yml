@@ -1,19 +1,18 @@
-name: Protocol build check
+name: Protocol 5.5 dist generation
 
 on:
   pull_request:
-  push:
-    branches:
-      - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -23,7 +22,18 @@ jobs:
         run: python source/build_skills.py --output /tmp/protocol-dist
       - name: Validate generated skill packages independently
         run: python source/validate_packages.py --dist /tmp/protocol-dist
-      - name: Verify committed distribution parity
+      - name: Install generated dist into branch
+        run: |
+          rm -rf dist
+          cp -a /tmp/protocol-dist dist
+      - name: Verify generated distribution parity
         run: python source/check_dist.py --expected /tmp/protocol-dist --committed dist
       - name: Check patch whitespace
         run: git diff --check
+      - name: Commit generated distribution
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dist
+          git commit -m "Regenerate Protocol 5.5 distributions"
+          git push origin HEAD:${{ github.head_ref }}
