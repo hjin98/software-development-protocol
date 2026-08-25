@@ -35,14 +35,14 @@ A material implementation stage is a coherent behavior-changing unit. Several ti
 
 Before dependent implementation proceeds, the stage must achieve both:
 
-1. semantic/conformance closure of the obligations assigned to that stage; and
-2. focused checks plus the relevant affected regression for executable behavior.
+1. **semantic/conformance closure** of the obligations assigned to that stage; and
+2. **functional closure** — focused checks plus the relevant affected regression for executable behavior.
 
 Use the cheapest high-information order. Cheap focused checks may precede conformance inspection when they fail faster; obvious conformance defects may be repaired before test cost is spent.
 
-## Stage-local regression
+## Stage-local affected regression
 
-After **each material implementation stage that changes executable behavior**, run focused checks and the affected regression subset relevant to that stage before dependent implementation proceeds. Resolve newly introduced hard failures and affected regressions at the stage that introduced them.
+After **each material implementation stage that changes executable behavior**, run focused checks and the required **stage-local affected regression** subset relevant to that stage before dependent implementation proceeds. Resolve newly introduced hard failures and affected regressions at the stage that introduced them.
 
 A tiny atomic change may use the final pass as its stage pass. A genuinely non-executable intermediate stage may combine validation with the nearest executable integration stage when that dependency is explicit. Do not defer all regression to final completion merely because a later suite will eventually exercise the code.
 
