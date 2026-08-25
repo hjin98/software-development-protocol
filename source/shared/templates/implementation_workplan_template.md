@@ -35,6 +35,7 @@ For each obligation record, as applicable:
 - **Required implementation consequences:** concrete consequences already determined by the accepted design.
 - **Suggested realization:** useful recommendation that may be replaced by an equivalent local realization preserving frozen semantics.
 - **Acceptance evidence:** focused/regression/integration, numerical/resource/compatibility threshold, structural/absence check, or other proof.
+- **Acceptance boundary, when material:** acceptance claim; required real owner/path; allowed test doubles below/outside that owner; forbidden substitutions; and observable evidence. Do not require this ceremony for ordinary unit tests where no material real-owner boundary is at risk.
 - **Stage/dependency:** when ordering materially reduces risk or rework.
 
 The obligations are the minimum known contract, not a ceiling: implementation must incorporate newly discovered necessary local or affected-surface consequences that preserve frozen design, and reopen design only when a frozen material decision must change.
@@ -61,7 +62,7 @@ The obligations are the minimum known contract, not a ceiling: implementation mu
 
 Generic functional-acceptance requirements are inherited from the protocol version declared `protocol_version`; later protocol releases do not silently change this workplan's meaning.
 
-<Record only task-specific acceptance mappings or thresholds not already clear in the implementation obligations, including real integration boundaries, repository-required checks, structural/absence claims, and material benchmark/backend requirements. Green runtime tests alone do not prove removal/uniqueness claims that require source/structural evidence.>
+<Record only task-specific acceptance mappings or thresholds not already clear in the implementation obligations, including material real-owner/test-double boundaries, repository-required checks, structural/absence claims, and material benchmark/backend requirements. A material owner claim must not be accepted through a mock/bypass that could remain green while that owner is broken. Green runtime tests alone do not prove removal/uniqueness claims that require source/structural evidence.>
 
 Production qualification: <required / deferred / unnecessary, with reason when materially relevant>.
 

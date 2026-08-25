@@ -68,6 +68,8 @@ For each material obligation, preserve as applicable:
 
 The format is flexible; IDs/tables/matrices and persistent traceability artifacts are not required. Do not repeat generic protocol prose merely for completeness, but do not omit a known material consequence merely to compress the plan. Do not make administrative provenance, evidence filenames, report schemas, or optional telemetry acceptance requirements unless the project independently needs them.
 
+When a material acceptance claim depends on a real production owner/consumer boundary, preserve the claim, required real owner/path, allowed test doubles, forbidden substitutions, and observable evidence to the degree needed to prevent proxy acceptance. This is task-specific contract content, not a mandatory matrix for ordinary unit tests. An explicitly frozen real-owner boundary is an acceptance decision and cannot be silently weakened as implementation-local reconciliation.
+
 Before accepting a substantial plan, Design performs handoff closure:
 
 ```text
@@ -110,7 +112,7 @@ This working state is **not a required persistent artifact**. Do not create a le
 
 Gates are value-based. Architecture/release/project gates remain optional unless project policy requires them. A material behavior-changing implementation stage is not accepted until both dimensions close:
 
-1. **semantic/conformance closure** confirms assigned obligations are implemented or legitimately reconciled, protected concerns/frozen decisions remain satisfied, newly discovered consequences are accounted for, and no unintended authority/obsolete path/material complexity regression was introduced; and
+1. **semantic/conformance closure** confirms assigned obligations are implemented or legitimately reconciled, protected concerns/frozen decisions remain satisfied, newly discovered consequences are accounted for, no unintended authority/obsolete path/material complexity regression was introduced, and material acceptance evidence has not replaced or bypassed the semantic owner whose behavior constitutes the claim; and
 2. **functional closure** completes focused checks and the relevant **stage-local affected regression** for executable behavior, or carries an explicitly non-executable validation dependency to the nearest executable stage.
 
 Define a material stage by a coherent behavior/risk boundary, not by individual files or helper edits. Several tightly coupled edits may close under one stage. Use the cheapest high-signal ordering within the stage so obvious local failures do not waste broader test cost. Semantic review never substitutes for executable regression; **green tests never prove an omitted obligation was implemented**.

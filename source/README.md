@@ -1,6 +1,6 @@
-# Software Development Protocol 5.5
+# Software Development Protocol 5.6
 
-This directory is the canonical Protocol 5.5 source.
+This directory is the canonical Protocol 5.6 source.
 
 ## Governing hierarchy
 
@@ -10,11 +10,11 @@ This directory is the canonical Protocol 5.5 source.
 product engineering fitness > minimum justified product/system complexity > development economy
 ```
 
-Protocol 5.5 does not change this doctrine. It strengthens the design -> implementation -> review integration so task-specific intent survives handoff and rework without weakening adaptive implementation or independent review.
+Protocol 5.6 preserves this doctrine and the Protocol 5.5 implementation-fidelity strengthening. It additionally makes material integration/acceptance claims proxy-proof: the production semantic owner whose behavior constitutes the claim must execute for real, while bounded test doubles remain valid below or outside that owner boundary.
 
 ## Lifecycle roles
 
-Protocol 5.5 preserves the two-role lifecycle:
+Protocol 5.6 preserves the two-role lifecycle:
 
 - `software-design` — diagnosis, engineering-envelope definition, globally justified architecture/algorithm/resource decisions, **lossless translation of accepted design into concrete implementation obligations**, validation design, product-complexity review, and independent evidence-directed review;
 - `software-implementation` — adaptive realization under accepted design authority, repository reconciliation, **semantic/conformance closure plus mandatory stage-local and final functional acceptance**, benchmarking/validation, cleanup, and delivery.
@@ -37,6 +37,10 @@ A material implementation stage closes only when both:
 - the existing focused checks and stage-local affected regression pass for executable behavior.
 
 Before handoff, Implementation reconciles the complete accepted contract against the final candidate, inspects structural/absence claims and product-complexity/ownership drift, then re-derives the final affected surface and performs fresh final affected regression, integration, and repository-required checks.
+
+## Proxy-proof acceptance
+
+For material integration/acceptance claims, the real production semantic owner/consumer boundary named by the claim must execute. Mocks/fakes remain valid below or outside that boundary for expensive computation, hardware, services, or bounded data, but evidence that could stay green while the claimed owner is broken cannot close the claim. Detailed rules live in `shared/references/testing-and-validation.md` and the role entrypoints.
 
 ## Independent review and rework
 

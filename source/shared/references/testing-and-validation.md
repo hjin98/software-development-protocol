@@ -29,6 +29,27 @@ Green tests do not prove an omitted obligation was implemented. Source/conforman
 
 For removal, uniqueness, ownership, or no-legacy-path claims, use structural/source inspection or negative/absence assertions when runtime tests cannot establish the claim directly.
 
+## Proxy-proof acceptance and test-double boundaries
+
+For a material integration or acceptance claim, identify the **semantic owner under acceptance**: the production component, state machine, consumer, validator, persistence mechanism, compatibility/migration path, authorization layer, orchestrator, or decision-maker whose real behavior materially constitutes the claim.
+
+An **allowed test-double boundary** lies below or outside that semantic owner. A dependency there may be replaced to bound cost, hardware, external services, data volume, or nondeterminism while the owner's real decision/control/state-transition path still executes. **Proxy-proof acceptance** means that a material defect in the required semantic owner would cause the evidence for that owner claim to fail.
+
+An integration or acceptance test does not establish a production-owner claim if it mocks, stubs, monkeypatches, precomputes, substantially reimplements, or bypasses the owner whose behavior is under acceptance. In particular, evidence is insufficient for the corresponding owner claim when it:
+
+- patches the owner to return the desired result;
+- directly invokes a downstream helper when production caller/orchestrator/restart/reconciliation/authorization detection is part of the claim;
+- seeds post-decision or post-transition state and skips the required production transition;
+- replaces durable/project persistence with a custom or in-memory substitute when persistence, restart, or recovery semantics are the claim;
+- reimplements production compatibility, migration, identity, scheduling, authorization, or orchestration logic in the harness;
+- proves only a helper-produced plan/result when assembled real-consumer behavior is the claim.
+
+This is **not a global ban on mocks or fakes**. Bounded deterministic fixtures remain preferred. Expensive ML/scientific training or prediction, accelerator execution, reduced scientific data, external services, network calls, and other costly dependencies may be faked or reduced when they lie below/outside the required real boundary. The generic requirement is boundary fidelity, not production-scale execution.
+
+Before relying on material acceptance evidence, ask the counterfactual: **could this evidence remain green while the required semantic owner is materially broken?** If yes, that evidence cannot close the owner claim. A direct helper call cannot prove that its production caller detects the condition and invokes it correctly.
+
+When a workplan explicitly requires a real owner/path, inability to exercise that boundary is an unavailable/blocking acceptance check or an evidence-backed design-reopen condition; do not silently downgrade it to a proxy pass. When the task names forbidden semantic-owner substitutions and a robust inexpensive structural/negative check can prevent recurrence, add that guardrail. Do not require universal AST scanning, mutation testing, one test per function, a global monkeypatch ban, or a new anti-mocking framework merely for protocol compliance.
+
 ## Optimize test cost, not coverage
 
 Coverage breadth follows the affected behavioral surface. Then minimize execution cost while preserving that coverage.
@@ -83,9 +104,9 @@ Implementation can broaden impact beyond the initial plan, so initial impact ana
 
 ## Prefer direct testing
 
-Test through the actual implementation/product path whenever practical. A harness must not substantially reimplement the algorithm, state reconstruction, orchestration, or compatibility logic it is intended to test.
+Test through the actual implementation/product path whenever practical. A harness must not substantially reimplement the algorithm, state reconstruction, orchestration, compatibility logic, or other semantic owner it is intended to test.
 
-Synthetic fixtures are useful for bounded execution; they do not replace real integration boundaries when those boundaries are part of the functional claim.
+Synthetic fixtures are useful for bounded execution; they do not replace real integration boundaries when those boundaries are part of the functional claim. Fakes below or outside the accepted semantic-owner boundary remain valid bounded-test tools.
 
 ## Production qualification
 
