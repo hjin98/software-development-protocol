@@ -107,10 +107,10 @@ class ProxyProofAcceptanceContractTests(unittest.TestCase):
 
     def test_protocol_56_versioning_is_backward_compatible_and_version_bound(self) -> None:
         versioning = read("source/shared/references/protocol-versioning-and-compatibility.md").lower()
-        self.assertEqual("5.6.0", read("source/PROTOCOL_VERSION").strip())
+        self.assertEqual("5.7.0", read("source/PROTOCOL_VERSION").strip())
         self.assertIn("protocol 5.6 is a backward-compatible", versioning)
         self.assertIn("proxy-proof acceptance", versioning)
-        self.assertIn("do not automatically adopt protocol 5.6", versioning)
+        self.assertIn("do not automatically adopt protocol 5.7", versioning)
         self.assertIn("declared version", versioning)
 
 

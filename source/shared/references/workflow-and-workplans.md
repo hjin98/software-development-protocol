@@ -2,6 +2,12 @@
 
 Protocol 5 keeps the software-development lifecycle small in role count while allowing whatever proportionate engineering work is needed to reach and establish the correct product.
 
+## Shared engineering objective
+
+Every protocol actor is a steward of the stakeholder's durable software outcome. Workplans, tests, gates, metrics, reviews, and reports define constraints or provide evidence; they are not terminal objectives. Stage or final closure is earned by the product/conformance/evidence state and must never create pressure to manufacture a pass.
+
+Long-horizon stewardship is bounded by explicit stakeholder requirements, governed contracts, the accepted engineering envelope, plausibly affected surfaces, and material maintenance/operation consequences. It does not authorize unrelated enhancements or speculative refactoring. Development economy chooses among engineering-valid product/evidence paths; it cannot justify weaker durability, hidden debt, weaker evidence, deferred known correctness work, or premature closure.
+
 ## Roles
 
 ```text
@@ -54,6 +60,8 @@ These are patterns, not fixed gate counts. The ordering of cheap focused tests v
 Use a workplan when it materially reduces rediscovery, ambiguity, sequencing risk, cross-module drift, or downstream rework.
 
 A useful substantial-work plan contains the objective/diagnosis and protected concerns, material engineering envelope, globally justified product design/ownership/complexity decisions, implementation obligations, implementation authority, initially expected affected surface, task-specific focused/regression/integration/structural acceptance, repository-required checks, final reconciliation, production-qualification disposition when material, implementation sequence where ordering matters, and material risks/redesign triggers.
+
+For substantial work, preserve the stakeholder-relevant outcome and any material durable-success criterion strongly enough that downstream actors cannot optimize individual obligations while degrading the whole product. Where a known local shortcut could satisfy wording or evidence while defeating that outcome, record a concise anti-shortcut/integrity constraint; do not create a mandatory matrix or traceability ledger.
 
 For each material obligation, preserve as applicable:
 

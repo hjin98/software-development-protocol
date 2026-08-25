@@ -204,15 +204,16 @@ class ProtocolContractTests(unittest.TestCase):
         self.assertIn("equivalent implementation preferences", design)
 
     def test_protocol_55_identity_and_specialist_hierarchy_are_reconciled(self) -> None:
-        self.assertEqual("5.6.0", read("source/PROTOCOL_VERSION").strip())
+        self.assertEqual("5.7.0", read("source/PROTOCOL_VERSION").strip())
         source_readme = read("source/README.md")
         root_readme = read("README.md")
         docs = read("source/specialists/software-documentation/SKILL.md").lower()
         versioning = read("source/shared/references/protocol-versioning-and-compatibility.md")
-        self.assertIn("Software Development Protocol 5.6", source_readme)
-        self.assertIn("Protocol 5.6 preserves the two-role lifecycle", source_readme)
-        self.assertIn("Protocol 5.6", root_readme)
+        self.assertIn("Software Development Protocol 5.7", source_readme)
+        self.assertIn("Protocol 5.7 preserves the two-role lifecycle", source_readme)
+        self.assertIn("Protocol 5.7", root_readme)
         self.assertIn("Protocol 5.6", versioning)
+        self.assertIn("Protocol 5.7", versioning)
         self.assertIn("product engineering fitness first", docs)
         self.assertIn("development economy third", docs)
 

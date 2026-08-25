@@ -2,6 +2,8 @@
 
 Architecture exists to help the software satisfy its global engineering goals: capability, correctness, scientific/domain fidelity, scalability, resource feasibility, robustness, target-hardware effectiveness, maintainability, and materially important performance.
 
+Architecture is judged over the material operational and maintenance horizon of the accepted scope. A locally convenient design is not simpler in the engineering sense when it knowingly creates avoidable ownership ambiguity, operational fragility, maintenance debt, or supported-evolution cost that materially degrades the durable product. Conversely, stewardship does not justify speculative generalization or unrelated future-proofing.
+
 ## Engineering fitness first
 
 Define the material engineering envelope before choosing architecture: required behavior, correctness/scientific invariants, reliability/recovery/security/compatibility, target workload and scaling variables, CPU/RAM/VRAM/storage/I/O/wall-time limits, hardware/portability requirements, and materially important latency/throughput.

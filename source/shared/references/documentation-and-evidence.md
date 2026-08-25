@@ -2,6 +2,8 @@
 
 Documentation exists to make software understandable and usable. It must not become a second acceptance system.
 
+Documentation and evidence serve product truth. They must not be edited, selected, or presented to manufacture apparent completion when the underlying accepted product claim is false or unestablished.
+
 ## Keep one owner for each contract
 
 Use durable documents only where they own real information:

@@ -9,6 +9,8 @@ Use this optional specialist when documentation needs substantive reconciliation
 
 It is **not** a third lifecycle role and does not approve software. The development hierarchy remains product engineering fitness first, minimum justified product/system complexity second, and development economy third. Documentation makes the accepted result understandable and usable without constraining sound engineering through a parallel process.
 
+Documentation is a stewardship activity for truthful stakeholder understanding and operation of the accepted product. Never rewrite product truth merely to legitimize defective code or create the appearance of completion; surface code/specification contradictions to the owning lifecycle role.
+
 > **Keep an evolving AI-developed software system intellectually accessible to humans.**
 
 ## Governing constraints

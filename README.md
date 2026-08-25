@@ -10,7 +10,7 @@ Software Development Protocol 5 is an engineering-fitness-first workflow for AI-
 product engineering fitness > minimum justified product/system complexity > development economy
 ```
 
-Protocol 5.6 preserves this doctrine and the two-role lifecycle:
+Protocol 5.7 preserves this doctrine and the two-role lifecycle:
 
 ```text
 software-design -> software-implementation
@@ -24,7 +24,9 @@ Independent review remains a Software Design activity, not a third lifecycle rol
 
 Executable changes still require focused checks, stage-local affected regression after every material behavior-changing stage, final affected-surface re-derivation/regression, integration, and repository/project-required checks. Semantic conformance never substitutes for executable testing, and green tests never prove a material omitted obligation was implemented. Production qualification remains separate from functional acceptance.
 
-Protocol 5.6 additionally makes material acceptance proxy-proof: the production semantic owner whose behavior constitutes the claim must execute, while bounded test doubles may replace expensive/external dependencies below or outside that real boundary. Evidence that could remain green while the claimed owner is broken cannot close the claim.
+Protocol 5.6 additionally made material acceptance proxy-proof: the production semantic owner whose behavior constitutes the claim must execute, while bounded test doubles may replace expensive/external dependencies below or outside that real boundary. Evidence that could remain green while the claimed owner is broken cannot close the claim.
+
+Protocol 5.7 adds engineering stewardship and acceptance integrity across the lifecycle: each actor optimizes for the stakeholder's durable product outcome rather than the easiest green signal. Tests, workplans, gates, metrics, and reviews are subordinate evidence/constraints; non-adversarial compliance, honest self-correction, and truthful non-closure take precedence over counterfeit completion, while stewardship remains bounded to accepted scope.
 
 Protocol 5.4 context/evidence economy also remains intact: use progressive high-information inspection, reuse still-valid facts/evidence, avoid low-information repetition, and do not create persistent ledgers or process machinery without independent engineering value.
 

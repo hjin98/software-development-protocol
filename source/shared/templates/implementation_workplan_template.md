@@ -8,7 +8,7 @@ protocol_version: REPLACE_WITH_SKILL_PROTOCOL_VERSION
 
 ## Objective
 
-<One concise product outcome.>
+<One concise stakeholder-relevant product outcome. For substantial work, include the material durable-success criterion when maintenance, operation, recovery, or supported evolution matters.>
 
 ## Diagnosis and protected concerns
 
@@ -31,6 +31,7 @@ For each obligation record, as applicable:
 - **Protected concern / rationale:** root cause, invariant, failure mode, or engineering objective.
 - **Required end state:** behavior/ownership/architecture/result that must hold.
 - **Required constraints / preservation / forbidden behavior:** what must remain unchanged or must no longer exist.
+- **Anti-shortcut / integrity constraint, when material:** a known way local compliance, evidence manipulation, or temporary workaround could appear to satisfy the obligation while defeating the whole-product outcome. Use only when it materially protects the design.
 - **Expected owning/affected surface:** components, consumers, persistence/configuration/tests/docs/packaging/transitive behavior when known usefully.
 - **Required implementation consequences:** concrete consequences already determined by the accepted design.
 - **Suggested realization:** useful recommendation that may be replaced by an equivalent local realization preserving frozen semantics.
