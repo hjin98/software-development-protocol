@@ -21,5 +21,10 @@ replace_once(
     "self.assertIn(\"do not automatically adopt protocol 5.6\", versioning)",
     "self.assertIn(\"do not automatically adopt protocol 5.7\", versioning)",
 )
+replace_once(
+    "tests/test_protocol_engineering_stewardship.py",
+    "        for text in (design, workflow, architecture):\n            self.assertIn(\"accepted scope\", text)\n        self.assertIn(\"speculative gold-plating\", design)\n        self.assertIn(\"unrelated enhancements\", workflow)\n",
+    "        self.assertIn(\"accepted scope\", design)\n        self.assertIn(\"bounded by explicit stakeholder requirements\", workflow)\n        self.assertIn(\"accepted engineering envelope\", workflow)\n        self.assertIn(\"accepted scope\", architecture)\n        self.assertIn(\"speculative gold-plating\", design)\n        self.assertIn(\"unrelated enhancements\", workflow)\n",
+)
 
 print("Protocol 5.7 stage-local test-contract reconciliation applied")
