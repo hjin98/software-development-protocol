@@ -27,7 +27,9 @@ jobs:
         run: git merge-base --is-ancestor e705d2192d522b83265c1994c22423f6c4b9c7e1 HEAD
 
       - name: G1-G5 apply Protocol 5.7 source integration
-        run: python tools/protocol_57_apply.py
+        run: |
+          python tools/protocol_57_apply.py
+          python tools/protocol_57_postfix.py
 
       - name: G1-G4 focused stewardship and preserved-proxy contracts
         run: |
@@ -60,7 +62,7 @@ jobs:
 
       - name: Commit implementation and remove temporary automation
         run: |
-          rm -f tools/protocol_57_apply.py .github/workflows/protocol-57-apply.yml
+          rm -f tools/protocol_57_apply.py tools/protocol_57_postfix.py tools/protocol_57_runner_note.txt tools/protocol_57_workflow_v2.yml.txt .github/workflows/protocol-57-apply.yml
           git diff --check
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
