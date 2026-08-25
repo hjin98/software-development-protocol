@@ -1,6 +1,6 @@
 ---
 name: software-implementation
-description: Implement accepted software designs with lossless requirement conformance, adaptive repository reconciliation, stage-local semantic plus functional closure, final regression/integration acceptance, and robust delivery under Protocol 5.
+description: Implement, refactor, test, benchmark, and validate accepted software designs under Protocol 5 with lossless requirement conformance, adaptive repository reconciliation, stage-local semantic plus functional closure, final affected-surface regression/integration, and robust delivery.
 ---
 
 # Software Implementation
@@ -11,11 +11,15 @@ Implement the requested behavior as the globally best justified realization of t
 
 > **Engineering fitness first; minimize unjustified product/system complexity within the engineering-sufficient solution space; then avoid unnecessary development cost without weakening the product or its acceptance.**
 
+Apply the hierarchy lexicographically:
+
 ```text
 product engineering fitness > minimum justified product/system complexity > development economy
 ```
 
-Required functionality/capability, correctness, scientific/domain fidelity, reliability, resource feasibility, target-scale behavior, hardware requirements, compatibility/security where relevant, and materially important performance must be met. Necessary complexity is valid when it buys material engineering value.
+Required functionality/capability, correctness, scientific/domain fidelity, reliability, resource feasibility, target-scale behavior, hardware requirements, compatibility/security where relevant, and materially important performance must be met. Necessary complexity is valid when it buys a material capability or prevents a material failure.
+
+Development economy applies only after engineering fitness and product simplicity. Avoid redundant reasoning, rediscovery, low-information inspection, invalid reruns, repeated boilerplate, and unnecessary tool/compute work when the required product and confidence remain unchanged.
 
 ## Intake the accepted contract before editing
 
@@ -32,64 +36,57 @@ When an accepted workplan exists, identify its material implementation obligatio
 
 Reconcile those obligations against actual repository ownership before material editing. Repository evidence describes actual state; it does not automatically override an accepted target or justify blindly forcing a stale mechanical suggestion.
 
-The affected surface is broader than the diff when behavior propagates: include directly changed/new code plus callers/consumers, shared utilities, public interfaces, configuration, persistence/caches/checkpoints, state transitions, orchestration/concurrency paths, packaging/entry points, documentation/contracts, and plausible transitive behavioral dependencies.
+Inspect progressively. Expand scope through evidence of ownership, dependency, contract, or behavioral impact rather than adjacency. Reuse established facts until later evidence invalidates them. Read `references/repository-intake.md` when detailed information-gain/context rules are material.
 
-Inspect progressively and reuse established facts until later evidence invalidates them. Read `references/repository-intake.md` when detailed information-gain/context rules are material.
+The affected surface is broader than the diff when behavior propagates: include directly changed/new code plus callers/consumers, shared utilities, public interfaces, configuration, persistence/caches/checkpoints, state transitions, orchestration/concurrency paths, packaging/entry points, documentation/contracts, and plausible transitive behavioral dependencies.
 
 ## Governing workplan authority and adaptive realization
 
 Treat accepted material target decisions as the implementation contract. Do not reopen frozen architecture, ownership, algorithm, invariant, non-goal, product semantics, material resource/persistence/compatibility policy, or acceptance decisions merely because another plausible design exists.
 
-The plan remains subordinate to higher-priority explicit user/task requirements, safety/platform constraints, applicable project instructions, and governed contracts outside its authorized change scope.
+The plan remains subordinate to higher-priority explicit user/task requirements, safety/platform constraints, applicable project instructions, and governed contracts outside its authorized change scope. Existing contracts remain authoritative except where the workplan explicitly defines their intended change.
 
 Use three deviation levels:
 
 1. **Implementation realization** — local mechanics that preserve frozen semantics; proceed.
 2. **Local reconciliation** — adapt a superficial plan/repository mismatch or use an equivalent local realization while preserving the protected concern and frozen target; proceed and record the material reason when interpretation depends on it.
-3. **Material redesign** — a frozen material decision must change; stop dependent implementation and reopen only the affected design surface on evidence.
+3. **Material redesign** — a frozen architecture/ownership/algorithm/product-semantics/resource/persistence/compatibility or other material decision must change; stop dependent implementation and reopen design.
 
 Material redesign requires evidence: an unreconcilable ownership/contract conflict, inability to meet a material requirement, representative measurement invalidating a premise, an explicit redesign trigger, or repeated local fixes exposing a structural defect.
 
-The accepted plan is the **minimum known contract, not a ceiling**. If implementation discovers:
+The accepted plan is the **minimum known contract, not a ceiling**. If implementation discovers a necessary local consequence that preserves frozen design, incorporate and validate it. If it discovers a newly affected behavior/test/documentation/configuration/persistence/consumer surface, add it to task-local acceptance and affected-surface reasoning. If it discovers a need to change a frozen material decision, reopen design on evidence rather than silently inventing a new target.
 
-- a necessary local consequence that preserves frozen design, incorporate and validate it;
-- a newly affected behavior/test/documentation/configuration/persistence/consumer surface, add it to task-local acceptance and affected-surface reasoning;
-- a need to change a frozen material decision, reopen design on evidence rather than silently inventing a new target.
-
-Preserve unrelated accepted work/evidence when redesign is bounded; resume from the earliest materially affected stage.
+When redesign is required, identify the invalidated decision, preserve unrelated accepted work/evidence, reopen only the affected design surface, reconcile the workplan, invalidate only evidence whose claim can plausibly change, and resume from the **earliest materially affected** stage.
 
 ## Implement for engineering fitness and clean ownership
 
-Within the accepted design, prefer direct control flow, one authoritative state, cohesive ownership, established project patterns, semantic reuse, consolidation, and deletion of obsolete paths. Do not preserve a materially inferior algorithm merely because it is simpler, and do not add sophisticated optimization/abstraction whose benefit does not justify product complexity.
+Prefer, in material order, eliminating redundant work/I/O, improving algorithmic scaling, improving representation/layout/reuse/data movement, batching/allocation behavior, compiled/vectorized kernels, locality/copy reduction, appropriate CPU concurrency, accelerator execution when justified, and custom native kernels only when remaining benefit is material.
 
-For a clear local defect, fix the owning layer. Escalate to refactor/redesign when repeated fixes target the same mechanism, ownership is wrong, duplicated state/functionality causes failures, exceptional paths proliferate, resources are unacceptable, or the accepted/current algorithm cannot meet material requirements cleanly.
+Within the engineering-sufficient accepted design, prefer direct control flow, one authoritative state, cohesive ownership, established project patterns, semantic reuse, consolidation, deletion of obsolete paths, and standard/existing mechanisms when sufficient.
+
+Do not preserve a materially inferior algorithm merely because it is simpler. Do not add sophisticated optimization/abstraction whose material benefit does not justify product complexity and maintenance cost. Retain intentional duplication when it has a distinct role such as an independent oracle, hardware-specific backend, supported migration path, or materially different lifecycle/failure semantics.
+
+For a clear local defect, fix the owning layer. Escalate to refactor/redesign when repeated fixes target the same mechanism, ownership is wrong, duplicated state/functionality causes failures, exceptional paths proliferate, resources are unacceptable, or the current algorithm cannot meet material requirements cleanly.
 
 ## Close each material implementation stage in two dimensions
 
-A coherent material behavior-changing stage is not accepted until **both** dimensions close:
+A coherent material behavior-changing stage is not accepted until **both** dimensions close.
 
 ### Semantic / conformance closure
 
-Before dependent work proceeds, establish that:
-
-- every accepted obligation assigned to the stage is implemented or legitimately reconciled;
-- its protected concerns and frozen decisions remain satisfied;
-- required consequences were not mistaken for optional advice;
-- suggested realizations were not unnecessarily frozen when an equivalent realization is used;
-- newly discovered necessary consequences and affected surfaces are accounted for;
-- no unintended alternate authority, stale superseded product path, unjustified fallback/compatibility path, or material product-complexity regression was introduced.
+Before dependent work proceeds, establish that every accepted obligation assigned to the stage is implemented or legitimately reconciled; its protected concerns and frozen decisions remain satisfied; required consequences were not mistaken for optional advice; suggested realizations were not unnecessarily frozen when an equivalent realization is used; newly discovered necessary consequences and affected surfaces are accounted for; and no unintended alternate authority, stale superseded product path, unjustified fallback/compatibility path, or material product-complexity regression was introduced.
 
 ### Functional closure
 
-For executable changes:
+Testing is part of implementation. For executable changes:
 
-1. run focused checks appropriate to the changed mechanisms;
+1. run focused checks appropriate to changed mechanisms;
 2. run the relevant **stage-local affected regression** before dependent implementation proceeds;
 3. treat an unexecuted required check as not passed and resolve newly introduced/affected failures at the stage that introduced them.
 
-Use the cheapest high-information ordering for the stage: a cheap focused test may precede conformance inspection, or obvious source nonconformance may be repaired first. Do not create a review gate for every helper/file edit. Semantic review never substitutes for executable regression, and green tests never prove that an omitted accepted obligation was implemented.
+Use the cheapest high-information ordering for the stage. A cheap focused test may precede conformance inspection, or obvious source nonconformance may be repaired first. Define stages by coherent behavior/risk boundaries rather than individual file/helper edits. Reuse still-valid intermediate evidence until a changed dimension can plausibly invalidate its claim. Semantic review never substitutes for executable regression, and green tests never prove that an omitted accepted obligation was implemented.
 
-Read `references/testing-and-validation.md` for detailed evidence reuse, stage, integration, failure-attribution, and qualification rules.
+Optimize test **cost**, not required **coverage**. Read `references/testing-and-validation.md` for detailed evidence-reuse, stage, integration, failure-attribution, and qualification rules.
 
 ## Final implementation closure before handoff
 
@@ -97,21 +94,22 @@ Before claiming implementation complete or handing it to independent review:
 
 1. **Reconcile the complete accepted contract against the assembled candidate.** Every material obligation must be satisfied, legitimately reconciled while preserving frozen intent, or blocked by a genuine redesign condition. Silent omission is not an accepted state.
 2. Inspect the assembled implementation/diff for unintended changes, retained superseded machinery, ownership drift, unnecessary fallback/compatibility paths, unjustified complexity, documentation/contract drift, and newly broadened affected surfaces.
-3. For claims about removal or uniqueness, use structural/source or negative/absence evidence when runtime tests cannot prove the claim (for example no legacy authority, hardcoded fixture, stale fallback, duplicate writer, or obsolete documented semantic remains).
-4. Re-derive the complete affected behavioral surface from the final candidate.
-5. Rerun complete affected-surface regression after all material executable edits that could invalidate earlier evidence.
-6. Run required integration/end-to-end paths through real product/consumer boundaries.
-7. Run repository/project-required checks, using the broader/full suite when impact cannot be bounded confidently.
+3. For removal or uniqueness claims, use structural/source or negative/absence evidence when runtime tests cannot prove the claim.
+4. Perform **Final assembled acceptance**: re-derive the complete affected behavioral surface from the final candidate, rerun complete affected-surface regression after all material executable edits that could invalidate earlier evidence, run required integration/end-to-end paths through real product/consumer boundaries, and run repository/project-required checks using the broader/full suite when impact cannot be bounded confidently.
 
-This final boundary establishes both **contract completeness** and **functional correctness**. Neither substitutes for the other.
+This final boundary establishes both **contract completeness** and **functional correctness**. Neither substitutes for the other. A required check that did not execute is not passed; newly introduced or affected failures block acceptance.
 
 ## Production qualification is separate
 
 Full production qualification assumes functional regression/integration acceptance already passed. It uses real, long, data-heavy, target-environment workloads to characterize production-scale performance/resources/scaling/recovery/hardware behavior.
 
-Do not run it by default during implementation or between ordinary stages. Run it only when explicitly requested, required by project/release policy, or necessary to establish a material production-scale/resource/performance/hardware claim. Bounded benchmarks, accelerator smoke tests, reference equivalence, and representative resource sanity checks remain normal implementation validation when relevant.
+Do not run it by default during implementation or between ordinary stages. Run it only when explicitly requested, required by project/release policy, or necessary to establish a material production-scale/resource/performance/hardware claim. Bounded benchmarks, accelerator smoke tests, reference-equivalence checks, and representative resource sanity checks remain normal implementation validation when relevant.
 
 A production run never substitutes for missing focused/regression/integration coverage. Never fabricate unavailable target-hardware results.
+
+## Resource/performance evidence
+
+Honor explicit CPU/RAM/VRAM/storage/I/O/wall-time constraints. When performance materially matters, measure enough to establish the claim under comparable conditions. Reuse compatible expensive baseline evidence rather than rerunning it merely because a session/date changed.
 
 ## Documentation and cleanup
 
@@ -143,5 +141,7 @@ Packaging a reference does not make reading it mandatory. Load the reference whe
 ## Completion
 
 Report material changes and enough evidence to interpret both contract completeness and functional acceptance. For executable changes include final affected surface, focused checks, stage-local regression results for material stages, final affected-surface regression, integration paths, repository-required broader checks, structural/absence checks when material, and unavailable/blocking checks.
+
+Report benchmarks/target-hardware/production qualification only when materially relevant, requested, required, performed, or intentionally deferred. Also report material product-complexity changes, documentation reconciliation, material local reconciliations/deviations, and unresolved risks.
 
 Do not call an executable change functionally complete while required semantic/conformance closure, stage-local/final regression, repository-required checks, or integration checks are failing or unexecuted.
