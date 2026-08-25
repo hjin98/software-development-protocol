@@ -1,6 +1,6 @@
-# Software Development Protocol 5.4
+# Software Development Protocol 5.5
 
-This directory is the canonical Protocol 5.4 source.
+This directory is the canonical Protocol 5.5 source.
 
 ## Governing hierarchy
 
@@ -10,63 +10,51 @@ This directory is the canonical Protocol 5.4 source.
 product engineering fitness > minimum justified product/system complexity > development economy
 ```
 
-Product engineering fitness defines the feasible solution space: functionality/capability, correctness and scientific/domain fidelity, reliability/recovery/safety/security/compatibility, CPU/RAM/VRAM/storage/I/O/wall-time feasibility, target scale, hardware effectiveness, and materially important end-to-end performance.
-
-Among engineering-sufficient products, minimize unnecessary components, states, interfaces, dependencies, synchronization, duplicated authorities, compatibility paths, runtime/operational stages, special cases, and maintenance surface. Necessary specialization is valid when it provides material engineering value.
-
-Development economy is third-order. Once the required product and acceptance confidence are preserved, eliminate redundant reasoning, rediscovery, low-information inspection, invalid reruns, repeated boilerplate, and unnecessary tool/compute work. Do not weaken a material requirement or required validation merely to reduce development cost.
+Protocol 5.5 does not change this doctrine. It strengthens the design -> implementation -> review integration so task-specific intent survives handoff and rework without weakening adaptive implementation or independent review.
 
 ## Lifecycle roles
 
-Protocol 5.4 preserves the two-role lifecycle:
+Protocol 5.5 preserves the two-role lifecycle:
 
-- `software-design` — diagnosis, engineering-envelope definition, globally justified architecture/algorithm/resource decisions, workplan authority, product-complexity review, validation design, and independent evidence-directed review;
-- `software-implementation` — implementation/refactoring under accepted design authority, mandatory stage-local and final affected-surface regression plus integration testing, benchmarking/validation of material claims, cleanup, and delivery.
+- `software-design` — diagnosis, engineering-envelope definition, globally justified architecture/algorithm/resource decisions, **lossless translation of accepted design into concrete implementation obligations**, validation design, product-complexity review, and independent evidence-directed review;
+- `software-implementation` — adaptive realization under accepted design authority, repository reconciliation, **semantic/conformance closure plus mandatory stage-local and final functional acceptance**, benchmarking/validation, cleanup, and delivery.
 
-Testing and production qualification remain engineering activities, not additional lifecycle roles. `software-documentation` and `repository-hygiene` remain optional specialists, not approval gates.
+Testing, independent review, and production qualification are engineering activities/modes rather than additional lifecycle roles. Optional specialists remain supporting capabilities, not approval gates.
 
-## Accepted workplans
+## Lossless accepted workplans
 
-A substantial accepted workplan is a compressed implementation contract. It distinguishes **Frozen**, **Delegated**, and **Reopen only on evidence** decisions. Implementation should not repeat the design search after material choices are settled. Repository evidence can trigger local reconciliation or, when a frozen assumption is materially invalid, a bounded redesign of only the affected surface.
+A substantial accepted workplan is a compressed implementation contract. It keeps `Frozen / Delegated / Reopen only on evidence` authority while preserving each material protected concern, required end state/constraint, known required implementation consequence, useful affected surface, adaptable suggestion where appropriate, and acceptance evidence.
 
-Workplans inherit generic protocol requirements from their declared `protocol_version`. A later protocol release does not silently reinterpret an older plan; adoption of a newer version is explicit and does not invalidate still-valid evidence by itself.
+Compression removes repeated generic protocol doctrine, not task-specific intent. Before handoff, Design reconciles requirements and known consequences against the implementation obligations and their acceptance evidence.
+
+The plan is the **minimum known contract, not a ceiling**. Implementation incorporates necessary consequences and affected surfaces discovered while realizing frozen design, and reopens design only when evidence shows a frozen material decision must change.
+
+## Closed-loop implementation
+
+A material implementation stage closes only when both:
+
+- semantic/conformance closure establishes that its assigned obligations and protected concerns are satisfied or legitimately reconciled; and
+- the existing focused checks and stage-local affected regression pass for executable behavior.
+
+Before handoff, Implementation reconciles the complete accepted contract against the final candidate, inspects structural/absence claims and product-complexity/ownership drift, then re-derives the final affected surface and performs fresh final affected regression, integration, and repository-required checks.
+
+## Independent review and rework
+
+Independent review remains a Software Design activity. It first challenges contract conformance, then independently challenges unplanned engineering risk. Material findings must be actionable enough for lossless rework and route separately as implementation nonconformance, workplan/design deficiency, or a genuinely new issue. Equivalent preferences without material engineering benefit do not block acceptance.
 
 ## Development context and evidence economy
 
-Use progressive repository inspection and prefer the lowest-cost next action that most strongly resolves a material uncertainty or establishes required evidence. Reuse established facts and still-valid intermediate evidence until a changed dimension can plausibly invalidate them. Bound large file/log context without hiding relevant failures or affected behavior.
-
-Load packaged references when their owned material surface is relevant; packaging alone does not make every reference mandatory for every task.
-
-## Functional acceptance
-
-Executable changes require:
-
-- focused checks appropriate to changed mechanisms;
-- affected regression after every coherent material behavior-changing implementation stage before dependent work proceeds;
-- final re-derivation of the affected behavioral surface from the assembled implementation;
-- final regression across that complete surface;
-- integration testing through the assembled affected product path;
-- repository/project-required checks, with the broader/full suite when impact cannot be bounded confidently.
-
-Within a material stage, run cheap high-signal focused checks before the required affected regression. Reuse still-valid intermediate evidence where appropriate, but final assembled affected-surface regression/integration remains a fresh acceptance boundary.
-
-Use bounded fixtures and representative workloads where they preserve required coverage. Test-cost minimization must never become coverage minimization.
+Protocol 5.4 development-economy rules remain intact: use progressive repository inspection, high-information actions, established-fact reuse, compact task-local state, and evidence invalidation/reuse without narrowing required behavior or validation.
 
 ## Production qualification
 
-Full production qualification is distinct from functional testing. It characterizes an already functionally accepted candidate with real, long, data-heavy, target-machine/target-hardware execution for production-scale performance, resource use, scaling, recovery, and similar environment-specific properties.
-
-Do not run full production qualification by default during implementation. Run it only when explicitly requested, required by project/release policy, or necessary to establish a material production-scale/resource/performance/hardware claim.
-
-## Independent review
-
-Independent review begins from the accepted requirements/workplan, final implementation/diff, final affected surface, executed evidence, deviations, and unresolved risks. It independently challenges high-risk assumptions and retains unrestricted authority to broaden. It need not replay the original architecture search from zero when no evidence challenges accepted premises.
+Full production qualification remains distinct from functional acceptance and is not run by default during ordinary implementation. A production run never substitutes for missing regression/integration coverage.
 
 ## Build and repository acceptance
 
 `source/` is canonical. `dist/` contains generated ready-to-install skill packages and is committed for distribution.
 
-Run the protocol regression suite, build skill packages once, validate them independently, compare that exact build with committed `dist/`, and check whitespace:
+Run:
 
 ```bash
 python -m unittest discover -s tests -v
@@ -76,4 +64,4 @@ python source/check_dist.py --expected /tmp/protocol-dist --committed dist
 git diff --check
 ```
 
-All commands must succeed before a protocol revision is complete. Package validation complements source-to-dist parity: parity detects stale committed output, while independent validation checks that the shipped Skill structure is itself valid.
+All commands must succeed before a protocol revision is complete.
