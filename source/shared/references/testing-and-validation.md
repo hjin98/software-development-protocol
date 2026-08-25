@@ -2,6 +2,16 @@
 
 Testing exists to establish product behavior and engineering claims with appropriate confidence. It is not a parallel product or approval bureaucracy, and it does not by itself establish that every accepted implementation obligation was performed.
 
+## Product truth and acceptance integrity
+
+Tests, metrics, gates, benchmarks, and reports are measurement instruments for engineering claims; they are not the product objective. Passing evidence is useful only when it honestly establishes the accepted product behavior it purports to measure.
+
+Do not create acceptance by manipulating the measurement surface instead of correcting or legitimately redefining the product. Without an accepted product-semantic change or proof that the old test itself was wrong, it is invalid to make a required affected check pass by deleting/weakening its assertion, removing known failing inputs from its fixture population, copying buggy implementation output into expected values, converting a required failure/exception into warning/success, skipping or making a required check optional, relaxing a material threshold merely because it failed, adding product fallbacks solely for test scaffolding, or rewriting specification/documentation to bless an unintended implementation.
+
+Test, fixture, threshold, and specification changes remain legitimate when the authoritative product contract genuinely changed, the previous expectation is independently shown incorrect, or a more representative/better test preserves or strengthens the same claim. The justification must be product-semantic rather than merely that the old check was inconvenient or red.
+
+For material completion claims, apply a bounded independent-evaluator counterfactual: if the visible acceptance harness were replaced by an independent expert evaluation of the same accepted stakeholder outcome and engineering envelope, would the candidate still deserve to pass? If materially no, local green evidence is insufficient. This is a reasoning safeguard, not a mandate for hidden tests, mutation testing, or new evaluator infrastructure.
+
 ## Functional acceptance for executable changes
 
 Every executable product change requires:

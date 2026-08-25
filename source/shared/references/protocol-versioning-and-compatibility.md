@@ -24,6 +24,8 @@ Protocol 5.5 is a backward-compatible **implementation-fidelity and workflow-int
 
 Protocol 5.6 is a backward-compatible **proxy-proof acceptance and test-double-boundary strengthening**. It preserves the Protocol 5 doctrine and all Protocol 5.3/5.4/5.5 guarantees while adding explicit semantic-owner-under-acceptance, allowed test-double boundary, proxy-proof counterfactual, real-owner handoff, and independent-review challenge rules. Material acceptance evidence may still use bounded fakes below/outside the required real owner; it may not replace or bypass that owner and then claim the owner is accepted.
 
+Protocol 5.7 is a backward-compatible **engineering-stewardship and outcome-alignment strengthening**. It preserves the exact Protocol 5 hierarchy, two-role lifecycle, and all Protocol 5.3/5.4/5.5/5.6 guarantees while making the stakeholder's intended durable product the shared optimization target across Design, Implementation, review, testing, documentation, and hygiene. Workplans, tests, gates, metrics, and reports remain subordinate constraints/evidence; acceptance-signal manipulation without a legitimate product-semantic change is nonconforming. Stewardship is bounded to accepted scope and does not authorize speculative gold-plating.
+
 The two-role lifecycle remains unchanged.
 
 ## Workplan protocol binding
@@ -52,4 +54,4 @@ Preserve software compatibility when the product contract requires it. Compatibi
 
 ## Earlier protocol versions
 
-Completed work under earlier protocol versions remains valid historical work under the version that governed it. Active older workplans do not automatically adopt Protocol 5.6 or any other later protocol release. They may continue under their declared version or explicitly adopt a newer backward-compatible version after reconciling its changed obligations. A protocol-version change alone does not require repeating still-valid evidence unless a newly adopted requirement or affected dimension invalidates the claim.
+Completed work under earlier protocol versions remains valid historical work under the version that governed it. Active older workplans do not automatically adopt Protocol 5.7 or any other later protocol release. They may continue under their declared version or explicitly adopt a newer backward-compatible version after reconciling its changed obligations. A protocol-version change alone does not require repeating still-valid evidence unless a newly adopted requirement or affected dimension invalidates the claim.

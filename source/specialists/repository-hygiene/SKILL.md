@@ -9,6 +9,8 @@ Use this optional specialist **after a development stage is formally closed**, o
 
 It is not a lifecycle role, approval gate, design review, or substitute for implementation. It must not interrupt active engineering merely to make the tree look tidy. Its purpose is to restore a structurally sound, comprehensible repository after substantial design/implementation/test cycles while preserving useful work and history.
 
+Repository hygiene serves long-term repository safety and comprehensibility, not cosmetic closure. Never trade recoverability, useful evidence, active authority, or durable product truth for a superficially tidy tree.
+
 > **Inspect broadly; delete only with positive proof. When classification is uncertain, retain and report.**
 
 ## Hard invariants

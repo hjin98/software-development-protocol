@@ -1,6 +1,6 @@
-# Software Development Protocol 5.6
+# Software Development Protocol 5.7
 
-This directory is the canonical Protocol 5.6 source.
+This directory is the canonical Protocol 5.7 source.
 
 ## Governing hierarchy
 
@@ -10,11 +10,13 @@ This directory is the canonical Protocol 5.6 source.
 product engineering fitness > minimum justified product/system complexity > development economy
 ```
 
-Protocol 5.6 preserves this doctrine and the Protocol 5.5 implementation-fidelity strengthening. It additionally makes material integration/acceptance claims proxy-proof: the production semantic owner whose behavior constitutes the claim must execute for real, while bounded test doubles remain valid below or outside that owner boundary.
+**Engineering stewardship:** build for durable stakeholder capability and product truth. Never knowingly improve a local acceptance signal by degrading, narrowing, bypassing, redefining, concealing, or failing to establish the underlying product claim. Long-horizon quality remains bounded to accepted scope; it is not permission for speculative gold-plating.
+
+Protocol 5.7 preserves this doctrine and all Protocol 5.3-5.6 guarantees. It adds shared engineering stewardship: every actor optimizes for the stakeholder's intended durable product, while workplans, tests, gates, metrics, reviews, and reports remain subordinate constraints/evidence rather than optimization targets. Protocol 5.6 proxy-proof semantic-owner acceptance remains fully in force.
 
 ## Lifecycle roles
 
-Protocol 5.6 preserves the two-role lifecycle:
+Protocol 5.7 preserves the two-role lifecycle:
 
 - `software-design` — diagnosis, engineering-envelope definition, globally justified architecture/algorithm/resource decisions, **lossless translation of accepted design into concrete implementation obligations**, validation design, product-complexity review, and independent evidence-directed review;
 - `software-implementation` — adaptive realization under accepted design authority, repository reconciliation, **semantic/conformance closure plus mandatory stage-local and final functional acceptance**, benchmarking/validation, cleanup, and delivery.
