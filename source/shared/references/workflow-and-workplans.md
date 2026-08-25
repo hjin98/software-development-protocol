@@ -84,7 +84,7 @@ A material implementation stage is a coherent behavior-changing/risk unit. It cl
 1. **semantic/conformance closure** confirms all assigned obligations are implemented or legitimately reconciled, protected concerns/frozen decisions remain satisfied, newly discovered consequences are accounted for, and no unintended authority/obsolete path/material complexity regression was introduced; and
 2. **functional closure** completes focused checks and the relevant affected regression for executable behavior.
 
-Several tightly coupled edits may close under one stage. Do not micro-gate every file/helper edit. Use the cheapest high-signal ordering within the stage. Semantic review never substitutes for executable regression; green tests never establish an omitted obligation.
+Several tightly coupled edits may close under one stage. Do not micro-gate every file/helper edit. Use the cheapest high-signal ordering within the stage. Semantic review never substitutes for executable regression; **green tests never prove an omitted obligation was implemented**.
 
 ## Final implementation closure
 
