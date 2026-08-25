@@ -26,5 +26,10 @@ replace_once(
     "        for text in (design, workflow, architecture):\n            self.assertIn(\"accepted scope\", text)\n        self.assertIn(\"speculative gold-plating\", design)\n        self.assertIn(\"unrelated enhancements\", workflow)\n",
     "        self.assertIn(\"accepted scope\", design)\n        self.assertIn(\"bounded by explicit stakeholder requirements\", workflow)\n        self.assertIn(\"accepted engineering envelope\", workflow)\n        self.assertIn(\"accepted scope\", architecture)\n        self.assertIn(\"speculative gold-plating\", design)\n        self.assertIn(\"unrelated enhancements\", workflow)\n",
 )
+replace_once(
+    "source/roles/software-design/SKILL.md",
+    "1. **Contract/outcome conformance challenge**",
+    "1. **Contract/outcome conformance challenge (preserving contract conformance)**",
+)
 
 print("Protocol 5.7 stage-local test-contract reconciliation applied")
