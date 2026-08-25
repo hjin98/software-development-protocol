@@ -95,6 +95,18 @@ explicit requirements
 
 No material requirement or known design consequence may disappear in that translation. This is a reasoning requirement, not a mandatory persistent traceability artifact.
 
+### Acceptance-boundary fidelity when material
+
+When acceptance materially depends on a real orchestration, persistence/restart/recovery, authorization, compatibility/migration, scientific/configuration identity, policy/selection, state transition, or assembled-consumer boundary, preserve enough task-specific information for implementation to recover, as applicable:
+
+- **acceptance claim** — the material behavior/result being established;
+- **required real owner/path** — the production owner(s) or consumer boundary that must actually execute;
+- **allowed test doubles** — expensive/external dependencies that may be replaced below/outside that boundary;
+- **forbidden substitutions** — owner/path that must not be mocked, bypassed, substantially reimplemented, or precomputed;
+- **observable acceptance evidence** — state, output, transition, or consumer result that proves the claim.
+
+These semantics extend the existing implementation obligation; they do not require a mandatory matrix, identifier scheme, or ceremony for ordinary unit tests. Freeze a real-owner/test-double boundary only when it is material to the claim, then make that boundary unambiguous enough that implementation does not need to reconstruct it.
+
 ## Accepted-workplan authority
 
 The workplan remains subordinate to explicit user/task requirements, safety/project instructions, and governed contracts outside the authorized change scope. Existing specifications/contracts remain authoritative except where the plan explicitly changes them. Repository code/tests are evidence of actual state; they do not automatically override an accepted target merely because current behavior differs.
@@ -124,6 +136,8 @@ Perform two complementary passes:
 
 1. **Contract conformance challenge** — independently determine whether every material obligation is satisfied, legitimately reconciled while preserving frozen intent, or blocked by a real redesign condition. Routine omitted obligations or violations of frozen design are implementation nonconformance.
 2. **Independent engineering challenge** — inspect beyond the plan for hidden functionality/correctness/scientific, algorithm/scaling, resource/hardware/performance, ownership/complexity, failure/recovery/security, affected-surface, testing, qualification-boundary, and design-premise risks.
+
+For a material production-owner acceptance claim, challenge proxy evidence explicitly: could the evidence remain green while the claimed semantic owner is materially broken? If yes, the claim is not established. If the accepted workplan already required that owner/path to execute for real, classify the proxy as implementation nonconformance. If a materially necessary real boundary was absent or misstated in the workplan, classify that omission as a workplan/design deficiency before reimplementation.
 
 A material blocking finding should be actionable enough for lossless rework: identify the violated requirement/invariant or newly discovered concern, evidence, affected surface, why it matters, required corrected end state or correction constraint, acceptance evidence, and routing when material.
 

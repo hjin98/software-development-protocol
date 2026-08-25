@@ -40,6 +40,23 @@ Inspect progressively. Expand scope through evidence of ownership, dependency, c
 
 The affected surface is broader than the diff when behavior propagates: include directly changed/new code plus callers/consumers, shared utilities, public interfaces, configuration, persistence/caches/checkpoints, state transitions, orchestration/concurrency paths, packaging/entry points, documentation/contracts, and plausible transitive behavioral dependencies.
 
+## Protect the semantic owner under acceptance
+
+For every material integration/acceptance claim whose correctness depends on a real production owner or consumer boundary, identify the **semantic owner under acceptance** and the permitted test-double boundary before treating evidence as acceptance. Read `references/testing-and-validation.md` for the normative boundary rules.
+
+Before relying on that evidence, determine:
+
+1. which production owner/path materially constitutes the claim;
+2. which functions/components on that path are mocked, stubbed, bypassed, precomputed, or otherwise replaced;
+3. whether every replacement lies below or outside the required real boundary; and
+4. whether the evidence could remain green if the required semantic owner were materially broken.
+
+If item 4 is true, that evidence cannot close the obligation. Calling a downstream helper directly does not establish that its production caller, authorization layer, restart reconciler, persistence owner, state machine, or orchestrator detects the condition and invokes it correctly. Likewise, fake persistence cannot establish durable restart/recovery semantics, and helper-only output cannot establish assembled-consumer behavior when those are the claims.
+
+Test doubles remain valid below/outside the owner boundary: expensive external computation, ML/scientific training or prediction, accelerators, external services, and bounded synthetic data may be faked where the real repository-owned decision/control/state transition still executes.
+
+When an accepted workplan explicitly freezes a required real owner/path or forbidden substitution, that acceptance boundary is not a suggested fixture mechanic and must not be weakened as local reconciliation. If the required boundary cannot be exercised, report the check as unavailable/blocking or reopen the affected design on evidence rather than silently accepting a proxy.
+
 ## Governing workplan authority and adaptive realization
 
 Treat accepted material target decisions as the implementation contract. Do not reopen frozen architecture, ownership, algorithm, invariant, non-goal, product semantics, material resource/persistence/compatibility policy, or acceptance decisions merely because another plausible design exists.
@@ -74,7 +91,7 @@ A coherent material behavior-changing stage is not accepted until **both** dimen
 
 ### Semantic / conformance closure
 
-Before dependent work proceeds, establish that every accepted obligation assigned to the stage is implemented or legitimately reconciled; its protected concerns and frozen decisions remain satisfied; required consequences were not mistaken for optional advice; suggested realizations were not unnecessarily frozen when an equivalent realization is used; newly discovered necessary consequences and affected surfaces are accounted for; and no unintended alternate authority, stale superseded product path, unjustified fallback/compatibility path, or material product-complexity regression was introduced.
+Before dependent work proceeds, establish that every accepted obligation assigned to the stage is implemented or legitimately reconciled; its protected concerns and frozen decisions remain satisfied; required consequences were not mistaken for optional advice; suggested realizations were not unnecessarily frozen when an equivalent realization is used; newly discovered necessary consequences and affected surfaces are accounted for; no unintended alternate authority, stale superseded product path, unjustified fallback/compatibility path, or material product-complexity regression was introduced; and material acceptance evidence does not replace or bypass the semantic owner whose behavior constitutes the claim.
 
 ### Functional closure
 

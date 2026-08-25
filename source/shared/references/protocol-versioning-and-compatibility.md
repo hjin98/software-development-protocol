@@ -22,6 +22,8 @@ Protocol 5.5 is a backward-compatible **implementation-fidelity and workflow-int
 6. final accepted-contract reconciliation before final affected-surface regression/integration;
 7. lossless independent-review findings and explicit rework routing for implementation nonconformance, workplan/design deficiency, and new issues.
 
+Protocol 5.6 is a backward-compatible **proxy-proof acceptance and test-double-boundary strengthening**. It preserves the Protocol 5 doctrine and all Protocol 5.3/5.4/5.5 guarantees while adding explicit semantic-owner-under-acceptance, allowed test-double boundary, proxy-proof counterfactual, real-owner handoff, and independent-review challenge rules. Material acceptance evidence may still use bounded fakes below/outside the required real owner; it may not replace or bypass that owner and then claim the owner is accepted.
+
 The two-role lifecycle remains unchanged.
 
 ## Workplan protocol binding
@@ -50,4 +52,4 @@ Preserve software compatibility when the product contract requires it. Compatibi
 
 ## Earlier protocol versions
 
-Completed work under earlier protocol versions remains valid historical work under the version that governed it. Active older workplans do not automatically adopt Protocol 5.5. They may continue under their declared version or explicitly adopt 5.5 after reconciling its implementation-fidelity obligations. A protocol-version change alone does not require repeating still-valid evidence unless a newly adopted requirement or affected dimension invalidates the claim.
+Completed work under earlier protocol versions remains valid historical work under the version that governed it. Active older workplans do not automatically adopt Protocol 5.6 or any other later protocol release. They may continue under their declared version or explicitly adopt a newer backward-compatible version after reconciling its changed obligations. A protocol-version change alone does not require repeating still-valid evidence unless a newly adopted requirement or affected dimension invalidates the claim.

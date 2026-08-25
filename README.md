@@ -10,7 +10,7 @@ Software Development Protocol 5 is an engineering-fitness-first workflow for AI-
 product engineering fitness > minimum justified product/system complexity > development economy
 ```
 
-Protocol 5.5 preserves this doctrine and the two-role lifecycle:
+Protocol 5.6 preserves this doctrine and the two-role lifecycle:
 
 ```text
 software-design -> software-implementation
@@ -23,6 +23,8 @@ The accepted workplan remains subordinate to explicit requirements and governed 
 Independent review remains a Software Design activity, not a third lifecycle role. It challenges contract conformance and then unplanned engineering risk. Material review findings should return enough evidence, corrected-end-state information, acceptance evidence, and routing to support lossless rework. Implementation nonconformance returns under the same accepted design; a workplan/design deficiency is reconciled before reimplementation; genuinely new issues are classified locally or reopened on evidence.
 
 Executable changes still require focused checks, stage-local affected regression after every material behavior-changing stage, final affected-surface re-derivation/regression, integration, and repository/project-required checks. Semantic conformance never substitutes for executable testing, and green tests never prove a material omitted obligation was implemented. Production qualification remains separate from functional acceptance.
+
+Protocol 5.6 additionally makes material acceptance proxy-proof: the production semantic owner whose behavior constitutes the claim must execute, while bounded test doubles may replace expensive/external dependencies below or outside that real boundary. Evidence that could remain green while the claimed owner is broken cannot close the claim.
 
 Protocol 5.4 context/evidence economy also remains intact: use progressive high-information inspection, reuse still-valid facts/evidence, avoid low-information repetition, and do not create persistent ledgers or process machinery without independent engineering value.
 
