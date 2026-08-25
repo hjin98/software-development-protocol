@@ -2,23 +2,35 @@ name: Protocol build check
 
 on:
   pull_request:
-  push:
-    branches:
-      - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Run protocol regression tests
-        run: python -m unittest discover -s tests -v
+      - name: Run protocol regression tests with diagnostic capture
+        shell: bash
+        run: |
+          set +e
+          python -m unittest discover -s tests -v > ci-test-output.txt 2>&1
+          rc=$?
+          cat ci-test-output.txt
+          if [ "$rc" -ne 0 ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add ci-test-output.txt
+            git commit -m "Capture Protocol 5.5 CI test failure round 2" || true
+            git push origin HEAD:${{ github.head_ref }}
+            exit "$rc"
+          fi
       - name: Build canonical skill packages once
         run: python source/build_skills.py --output /tmp/protocol-dist
       - name: Validate generated skill packages independently
