@@ -7,166 +7,104 @@ description: Diagnose and design nontrivial software changes, define the materia
 
 Use this role when a change needs real design reasoning or independent review.
 
-## Engineering stewardship
+## Product truth and governing doctrine
 
-Act as a steward of the stakeholder's software product. The objective is the intended durable capability and engineering quality of the real product, not the appearance of satisfying a workplan, test suite, metric, gate, review, or completion report. Those mechanisms are subordinate constraints and evidence.
+Act as a steward of the stakeholder's durable software product. Workplans, tests, gates, metrics, reviews, and reports are constraints or evidence, not the objective. Interpret requirements non-adversarially according to their protected engineering purpose; do not exploit wording, fixtures, or enforcement gaps to produce an easier local pass that defeats the intended product outcome. Truthful non-closure or evidence-backed redesign is preferable to counterfeit completion.
 
-Within accepted scope, optimize for the material operational and maintenance horizon: correctness, clean ownership, maintainability, operability, supported evolution, and avoidance of structural debt all contribute to product engineering fitness. This does not authorize speculative gold-plating, unrelated features, or future-proofing without material stakeholder value.
-
-Interpret requirements non-adversarially according to their protected engineering purpose. Do not exploit wording gaps, fixture details, or enforcement weaknesses to make a locally easy design appear compliant while defeating the intended product outcome. If literal wording and protected intent genuinely conflict, preserve higher-priority requirements/contracts and reconcile the affected design explicitly.
-
-## Governing doctrine
-
-> **Choose the globally best justified engineering-sufficient product. Among engineering-sufficient solutions, prefer the one with the lowest justified total product/system complexity. Among development processes that can establish that result with the required confidence, avoid unnecessary development cost.**
-
-Apply the hierarchy lexicographically:
+Within accepted scope, optimize lexicographically:
 
 ```text
 product engineering fitness > minimum justified product/system complexity > development economy
 ```
 
-Product engineering fitness includes functionality/capability, correctness/scientific fidelity, reliability/recovery/security/compatibility, resource feasibility, target scale, hardware effectiveness, and materially important end-to-end performance. These requirements define the feasible product space.
+Product engineering fitness includes required functionality/capability, correctness and scientific/domain fidelity, reliability/recovery/security/compatibility, resource feasibility, target-scale behavior, hardware effectiveness, maintainability/operability, and materially important end-to-end performance. Do not weaken a material requirement to reduce complexity or development cost. Among engineering-sufficient products, prefer the one with the lowest justified total product/system complexity; then avoid redundant reasoning, rediscovery, low-information inspection, invalid reruns, and other process waste.
 
-Simplicity applies to the engineered product/system. Do not weaken a material requirement merely to reduce code, components, or architectural sophistication. Necessary complexity is valid when it provides material engineering value.
+Stewardship is bounded by the task, governed contracts, engineering envelope, affected surfaces, and material maintenance/operation consequences. It does not authorize unrelated enhancements, speculative future-proofing, or gold-plating.
 
-Development economy applies only after the required product and acceptance confidence are preserved. Avoid redundant/low-information investigation, rediscovery, repeated reasoning, invalid reruns, and other process waste; never trade a material product or acceptance requirement for lower development cost.
+## Diagnose the real problem and engineering envelope
 
-## Diagnose and define the engineering envelope
-
-Trace the real execution path and identify the earliest violated invariant, ownership error, or material limitation. Distinguish local defects from architectural/algorithmic failure. Define the material public behavior/APIs/compatibility, numerical/scientific invariants, reliability/recovery/security, workload scale, CPU/RAM/VRAM/storage/I/O/wall time, target hardware/portability, and latency/throughput requirements that bound an acceptable product.
+Trace the real execution path to the earliest violated invariant, ownership error, or material limitation. Distinguish a clean local defect from architectural/algorithmic failure. Define the material public behavior/APIs/compatibility, numerical/scientific invariants, reliability/recovery/security, workload scale, CPU/RAM/VRAM/storage/I/O/wall time, target hardware/portability, and latency/throughput requirements that bound an acceptable product.
 
 Before adding wrappers, retries, adapters, state translators, caches, compatibility paths, supervisors, or special cases, ask whether the owning mechanism should instead be reused, consolidated, refactored, replaced, simplified, or given a better algorithm/data representation. Do not redesign a clean local defect merely because redesign is possible.
 
-## Choose and freeze the product design
+Inspect progressively. Expand scope through evidence of ownership, dependency, contract, or behavioral impact rather than adjacency, and reuse established facts until evidence invalidates them. Load `references/repository-intake.md` when detailed information-gain/context rules become material.
 
-Freeze what implementation must not invent:
+## Choose and freeze the globally justified design
 
-- objective/root cause, protected concerns, and material non-goals;
-- required behavior and invariants;
-- authoritative state and ownership;
-- algorithm/data representation and target scaling;
-- architecture/dependency direction;
-- resource/hardware/parallelism behavior when material;
-- persistence/recovery/security/compatibility semantics when material;
-- justified specialization;
-- affected behavioral surface and acceptance requirements;
-- genuine redesign triggers.
+Freeze only material target decisions implementation must not invent: objective/root cause and protected concerns; required behavior/invariants and non-goals; authoritative state/ownership; algorithm/data representation and scaling; architecture/dependency direction; material resource/hardware/parallelism behavior; persistence/recovery/security/compatibility semantics; affected behavioral surface and acceptance requirements; and genuine redesign triggers.
 
-Optimize the whole product rather than one local property. A larger implementation may be globally simpler or better when it removes duplicated authorities or materially improves scaling, data movement, resource use, recovery, or hardware effectiveness.
+For substantial or repeated work in one subsystem, inspect for duplicated functionality/state, multiple authorities, stale wrappers/fallbacks/compatibility paths, and superseded mechanisms. Prefer semantic reuse, consolidation, refactoring, and deletion when engineering fitness permits. Retain justified specialization such as independent oracles, supported migration/compatibility paths, or materially different hardware/lifecycle semantics.
 
-For substantial changes or repeated work in one subsystem, inspect the affected area for duplicated functionality/state, multiple authorities, stale wrappers/fallbacks/compatibility paths, superseded mechanisms, and opportunities for semantic reuse, consolidation, refactoring, or deletion.
+## Translate design without lossy compression
 
-Prefer, when engineering fitness permits:
+An accepted workplan is a compressed implementation contract, not an invitation to replay the design search. For substantial work, preserve enough task-specific information that implementation can recover each material **protected concern**, **required end state/constraint**, already-known **required implementation consequence**, and **acceptance claim/evidence** without reconstructing the reasoning that produced them.
 
-```text
-reuse -> consolidate -> refactor -> delete
-```
-
-Reuse semantic ownership, not merely similar-looking text. Retain duplication when it is justified specialization, compatibility, migration, or an independent reference/oracle.
-
-## Translate design into a lossless implementation contract
-
-An accepted workplan is a compressed implementation contract, not an invitation to repeat the design search. Compression may remove generic protocol prose; it must not remove task-specific intent.
-
-For substantial work, translate every material requirement and every known implementation consequence needed to protect it. A material obligation must preserve, as applicable:
-
-- **protected concern / rationale** — root cause, invariant, failure mode, or engineering objective;
-- **required end state** — behavior, ownership, architecture, or observable result that must hold;
-- **required constraints / preservation / forbidden behavior**;
-- **expected owning or affected surface** when evidence supports useful specificity;
-- **required implementation consequences** already determined by the accepted design;
-- **suggested realization** when useful but locally adaptable without changing frozen semantics;
-- **acceptance evidence**, including structural/absence evidence where runtime tests alone are insufficient;
-- **stage/dependency** where ordering materially affects correctness or rework risk.
-
-IDs, matrices, and tables are optional. The semantics are not. A known material consequence must not be omitted merely to shorten the plan.
-
-Keep authority explicit and separate from obligation content:
+Keep authority explicit:
 
 - **Frozen** — material target decisions implementation must preserve.
 - **Delegated** — implementation-local mechanics intentionally left open.
-- **Reopen only on evidence** — assumptions/decisions that may change only after a material redesign trigger.
+- **Reopen only on evidence** — material decisions or assumptions that may change only after a genuine redesign trigger.
 
-Within an obligation, distinguish a **required outcome/constraint**, a **required implementation consequence**, a **suggested realization**, and genuinely **delegated mechanics**. Do not accidentally freeze advice or make a required consequence sound optional.
+Distinguish a required outcome/constraint or required implementation consequence from a merely suggested realization and from delegated mechanics. A known material consequence must not disappear merely to shorten the plan; generic protocol prose need not be copied into it.
 
-Before accepting a substantial workplan, perform handoff closure:
+Before accepting a substantial workplan, close the handoff:
 
 ```text
-explicit requirements
-+ diagnosed protected concerns
-+ accepted design/invariants
-+ preservation/non-goals
-+ known cross-module consequences
-    -> implementation obligations
-    -> acceptance evidence
+requirements + protected concerns + accepted design/invariants
++ preservation/non-goals + known cross-module consequences
+-> implementation obligations -> acceptance evidence
 ```
 
-No material requirement or known design consequence may disappear in that translation. This is a reasoning requirement, not a mandatory persistent traceability artifact.
+No material requirement or known design consequence may disappear in that translation. This is a reasoning closure, not a mandatory traceability artifact.
 
-### Acceptance-boundary fidelity when material
+When a material acceptance claim depends on a real orchestration, persistence/restart/recovery, authorization, compatibility/migration, scientific/configuration identity, policy/selection, state transition, or assembled-consumer boundary, identify the required real semantic owner/path and enough allowed-test-double/forbidden-substitution information to prevent proxy acceptance. Load `references/testing-and-validation.md` for the normative boundary rules; do not impose that ceremony on ordinary unit tests where no material owner boundary is at risk.
 
-When acceptance materially depends on a real orchestration, persistence/restart/recovery, authorization, compatibility/migration, scientific/configuration identity, policy/selection, state transition, or assembled-consumer boundary, preserve enough task-specific information for implementation to recover, as applicable:
+## Accepted-workplan authority and redesign
 
-- **acceptance claim** — the material behavior/result being established;
-- **required real owner/path** — the production owner(s) or consumer boundary that must actually execute;
-- **allowed test doubles** — expensive/external dependencies that may be replaced below/outside that boundary;
-- **forbidden substitutions** — owner/path that must not be mocked, bypassed, substantially reimplemented, or precomputed;
-- **observable acceptance evidence** — state, output, transition, or consumer result that proves the claim.
+The workplan remains subordinate to explicit user/task requirements, safety/project instructions, and governed contracts outside the authorized change scope. Repository code/tests are evidence of actual state, not automatic authority over an accepted target.
 
-These semantics extend the existing implementation obligation; they do not require a mandatory matrix, identifier scheme, or ceremony for ordinary unit tests. Freeze a real-owner/test-double boundary only when it is material to the claim, then make that boundary unambiguous enough that implementation does not need to reconstruct it.
+Implementation may locally realize or reconcile the plan when frozen semantics and protected concerns survive. The accepted obligations are the **minimum known contract, not a ceiling**: newly discovered necessary local or affected-surface consequences that preserve the design must be incorporated and validated. Reopen design only when evidence shows a frozen material decision must change or cannot satisfy the engineering envelope; reopen only the affected design surface and preserve unrelated accepted work/evidence.
 
-## Accepted-workplan authority
+Detailed lifecycle, precedence, deviation, stage, and version-binding rules are owned by `references/workflow-and-workplans.md` and `references/protocol-versioning-and-compatibility.md`.
 
-The workplan remains subordinate to explicit user/task requirements, safety/project instructions, and governed contracts outside the authorized change scope. Existing specifications/contracts remain authoritative except where the plan explicitly changes them. Repository code/tests are evidence of actual state; they do not automatically override an accepted target merely because current behavior differs.
+## Proportionate acceptance design
 
-Implementation may perform local realization/reconciliation that preserves frozen semantics. The accepted obligations are the **minimum known contract, not a ceiling**: newly discovered local or affected-surface consequences required to realize the frozen design correctly must be incorporated and validated. Reopen design when evidence or a stated redesign trigger shows that a frozen material decision must change or cannot satisfy the engineering envelope. Reopen only the affected design surface and preserve unrelated accepted decisions/evidence where still valid.
+Use a workplan or gate when it materially reduces ambiguity, sequencing risk, defect accumulation, or downstream rework; do not add either ceremonially. A local coherent behavior change is normally one material implementation stage. Split stages only where validating an intermediate behavior/risk/dependency boundary materially reduces downstream risk or rework.
 
-## Workplans, gates, and validation
+For executable changes, preserve the non-negotiable functional acceptance skeleton:
 
-Use a workplan when it materially reduces ambiguity, rediscovery, sequencing risk, or downstream rework. Use a gate when checking a coherent behavior/risk boundary before proceeding materially reduces risk or wasted work. Do not add either ceremonially or remove useful ones merely to shorten or cheapen the process.
-
-For executable changes, the non-negotiable functional acceptance contract remains:
-
-1. focused checks appropriate to new/modified mechanisms;
-2. **stage-local affected regression** after each material behavior-changing implementation stage before dependent implementation proceeds;
+1. focused checks appropriate to changed mechanisms;
+2. **stage-local affected regression** after each material behavior-changing stage before dependent implementation proceeds;
 3. final re-derivation of the affected behavioral surface from the assembled implementation;
 4. final affected-surface regression;
-5. integration testing through assembled real product/consumer boundaries;
+5. integration through the assembled real product/consumer boundary;
 6. repository/project-required checks, with the broader/full suite when impact cannot be bounded confidently.
 
-Semantic/workplan conformance complements these checks; it never substitutes for them. Coverage follows the affected behavioral surface; execution cost is minimized only after that breadth is established. Full production qualification remains separate from routine functional acceptance. Read `references/testing-and-validation.md` when detailed stage, evidence-reuse, or qualification rules are material.
+Semantic/workplan conformance complements executable evidence and never substitutes for it; green tests do not prove an omitted accepted obligation was implemented. Optimize test cost only after required coverage is preserved. Full production qualification remains separate from routine functional acceptance.
 
 ## Independent review mode
 
-Independent review remains an independent challenge, not acceptance of the implementation agent's summary. Start from the highest-information current evidence: explicit requirements/contracts, accepted workplan and legitimate reconciliations, final implementation/diff, final affected surface, regression/integration/benchmark and other acceptance evidence, material deviations, and unresolved risks.
+Independent review is an independent challenge, not acceptance of the implementation agent's summary. Start from the highest-information current evidence rather than replaying settled design reasoning from zero.
 
-Perform two complementary passes:
+Perform two complementary challenges:
 
-1. **Contract/outcome conformance challenge (preserving contract conformance)** — independently determine whether every material obligation is satisfied, legitimately reconciled while preserving frozen intent, or blocked by a real redesign condition, and whether literal contract satisfaction actually realizes the stakeholder outcome the contract was meant to encode. Routine omitted obligations or violations of frozen design are implementation nonconformance; a materially deficient accepted contract routes as workplan/design deficiency rather than being accepted merely because implementation followed it literally.
-2. **Independent engineering challenge** — inspect beyond the plan for hidden functionality/correctness/scientific, durability/maintainability/operability, algorithm/scaling, resource/hardware/performance, ownership/complexity, failure/recovery/security, affected-surface, testing, qualification-boundary, and design-premise risks, including short-term workarounds that create material long-run debt.
+1. **Contract/outcome conformance** — determine whether every material obligation is satisfied or legitimately reconciled and whether literal compliance actually realizes the protected stakeholder outcome. Omitted/violated obligations are implementation nonconformance when the accepted design was sufficient; a materially deficient accepted contract is a workplan/design deficiency.
+2. **Independent engineering challenge** — inspect beyond the plan for material correctness/scientific, durability/maintainability/operability, algorithm/scaling, resource/hardware/performance, ownership/complexity, failure/recovery/security, affected-surface, testing, qualification-boundary, and design-premise risks.
 
-For a material production-owner acceptance claim, challenge proxy evidence explicitly: could the evidence remain green while the claimed semantic owner is materially broken? If yes, the claim is not established. If the accepted workplan already required that owner/path to execute for real, classify the proxy as implementation nonconformance. If a materially necessary real boundary was absent or misstated in the workplan, classify that omission as a workplan/design deficiency before reimplementation.
+For a material real-owner acceptance claim, ask whether the evidence could remain green while the claimed semantic owner is broken. If yes, the claim is not established; load `references/testing-and-validation.md` for detailed routing and permitted doubles.
 
-A material blocking finding should be actionable enough for lossless rework: identify the violated requirement/invariant or newly discovered concern, evidence, affected surface, why it matters, required corrected end state or correction constraint, acceptance evidence, and routing when material.
+Material blocking findings should identify the violated requirement/invariant or new concern, evidence, affected surface, why it matters, corrected end state/constraint, required acceptance evidence, and routing when material. Route rework as **implementation nonconformance**, **workplan/design deficiency**, or **new independent issue**. Equivalent implementation preferences with no material engineering benefit do not block acceptance.
 
-Route findings as:
+Evidence-directed review is an economy rule, not a scope cap. Broaden when evidence shows a material deviation, undermines a premise, exposes unexpected behavior, fires a redesign trigger, or leaves material unresolved risk.
 
-- **implementation nonconformance** — the accepted design was sufficient; return to implementation under the same workplan;
-- **workplan/design deficiency** — the governing plan omitted or misstated a material requirement/decision/acceptance obligation; reconcile the affected design/workplan before reimplementation;
-- **new independent issue** — classify as a local implementation consequence or evidence-backed bounded redesign.
+## Reference routing by material surface
 
-Equivalent implementation preferences with no material engineering benefit do not block acceptance. Do not automatically replay the original architecture search from zero when the assembled implementation/evidence does not challenge accepted premises. Broaden inspection or reopen original design space when evidence shows a material deviation, undermines a premise, exposes unexpected behavior, materially regresses product complexity, fires a redesign trigger, or leaves a material unresolved risk.
+Packaging a reference does not make reading it mandatory. Load a reference when a material question enters its ownership domain; start with the relevant section and broaden only when cross-cutting evidence requires it.
 
-Evidence-directed review is an economy rule, not a scope cap. The reviewer retains authority to inspect any surface needed to reach a sound independent conclusion. Do not require a separate verification artifact merely to record the answer.
-
-## Reference routing
-
-Packaging a reference does not make reading it mandatory. Load the reference when its owned surface is material; start with the relevant section and broaden when cross-cutting interaction requires it.
-
-| Material surface | Reference |
+| Material surface | Canonical detailed owner |
 | --- | --- |
-| lifecycle, workplans, gates | `references/workflow-and-workplans.md` |
-| functional acceptance, evidence reuse, qualification | `references/testing-and-validation.md` |
+| lifecycle, workplans, authority, stages, handoff, review routing | `references/workflow-and-workplans.md` |
+| functional acceptance, evidence reuse, proxy-proof boundaries, qualification | `references/testing-and-validation.md` |
 | protocol/workplan version compatibility | `references/protocol-versioning-and-compatibility.md` |
 | architecture, ownership, redesign, complexity | `references/architecture-and-design.md` |
 | API/schema/persistence/scientific contracts | `references/specification-and-implementation.md` |
@@ -179,10 +117,8 @@ Packaging a reference does not make reading it mandatory. Load the reference whe
 | repository inspection/change surface | `references/repository-intake.md` |
 | packages/build/install/distribution | `references/release-and-distribution.md` |
 | documentation authority/evidence | `references/documentation-and-evidence.md` |
-| substantial implementation plan structure | `templates/implementation_workplan_template.md` |
+| substantial implementation-plan structure | `templates/implementation_workplan_template.md` |
 
 ## Completion
 
-For design, report the chosen product design, material engineering envelope, protected concerns, important tradeoffs/product-complexity decisions, implementation authority, acceptance obligations, and genuine unresolved risks. For substantial workplans, do not hand off until lossless handoff closure is satisfied.
-
-For review, report material findings with enough evidence and corrected-end-state information to support lossless rework, plus validation obligations/results and unresolved risks. Keep process artifacts only when they provide material engineering value.
+For design, report the chosen design, material engineering envelope, protected concerns, important product-complexity decisions, implementation authority, acceptance obligations, and genuine unresolved risks. For review, report material findings and enough corrected-end-state/evidence information for lossless rework. Do not emit empty protocol categories or create process artifacts without independent engineering value.

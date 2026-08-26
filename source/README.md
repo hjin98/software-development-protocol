@@ -1,60 +1,48 @@
-# Software Development Protocol 5.7
+# Software Development Protocol 5.8
 
-This directory is the canonical Protocol 5.7 source.
+This directory is the canonical Protocol 5.8 source.
 
-## Governing hierarchy
-
-> **Choose the globally best justified engineering-sufficient product. Among engineering-sufficient solutions, prefer the one with the lowest justified total product/system complexity. Among development processes that can establish that result with the required confidence, avoid unnecessary human, model, context/token, tool, compute, I/O, and wall-time cost.**
+## Governing hierarchy and product truth
 
 ```text
 product engineering fitness > minimum justified product/system complexity > development economy
 ```
 
-**Engineering stewardship:** build for durable stakeholder capability and product truth. Never knowingly improve a local acceptance signal by degrading, narrowing, bypassing, redefining, concealing, or failing to establish the underlying product claim. Long-horizon quality remains bounded to accepted scope; it is not permission for speculative gold-plating.
+Build the stakeholder's intended durable product rather than optimizing for the appearance of satisfying a workplan, test, gate, metric, review, or report. Interpret requirements according to their protected engineering purpose. Do not trade material correctness, scientific fidelity, reliability, ownership, maintainability, operability, resource feasibility, target-scale behavior, hardware effectiveness, or required performance for lower complexity or development cost.
 
-Protocol 5.7 preserves this doctrine and all Protocol 5.3-5.6 guarantees. It adds shared engineering stewardship: every actor optimizes for the stakeholder's intended durable product, while workplans, tests, gates, metrics, reviews, and reports remain subordinate constraints/evidence rather than optimization targets. Protocol 5.6 proxy-proof semantic-owner acceptance remains fully in force.
+Protocol 5.8 preserves all material Protocol 5.4-5.7 guarantees while reducing control-plane duplication. High-salience invariants remain directly visible in lifecycle skills; detailed generic rules have one canonical reference owner where practical and are loaded when their material surface becomes relevant.
 
-## Lifecycle roles
+## Two-role lifecycle
 
-Protocol 5.7 preserves the two-role lifecycle:
+```text
+software-design -> software-implementation
+```
 
-- `software-design` — diagnosis, engineering-envelope definition, globally justified architecture/algorithm/resource decisions, **lossless translation of accepted design into concrete implementation obligations**, validation design, product-complexity review, and independent evidence-directed review;
-- `software-implementation` — adaptive realization under accepted design authority, repository reconciliation, **semantic/conformance closure plus mandatory stage-local and final functional acceptance**, benchmarking/validation, cleanup, and delivery.
+- `software-design` diagnoses the real problem, defines the engineering envelope, chooses and freezes the globally justified product design, translates task-specific intent losslessly, designs proportionate acceptance, and independently reviews substantial/high-risk implementations.
+- `software-implementation` realizes the accepted design against repository reality, incorporates newly discovered necessary consequences, closes coherent material stages semantically and functionally, completes final accepted-contract reconciliation plus affected-surface regression/integration, and delivers the candidate.
 
-Testing, independent review, and production qualification are engineering activities/modes rather than additional lifecycle roles. Optional specialists remain supporting capabilities, not approval gates.
+Testing and independent review are activities/modes, not extra lifecycle roles. Optional specialists remain supporting capabilities, not approval gates.
 
-## Lossless accepted workplans
+## Canonical detailed owners and progressive disclosure
 
-A substantial accepted workplan is a compressed implementation contract. It keeps `Frozen / Delegated / Reopen only on evidence` authority while preserving each material protected concern, required end state/constraint, known required implementation consequence, useful affected surface, adaptable suggestion where appropriate, and acceptance evidence.
+Lifecycle entrypoints contain the invariant, role-local decision rule, and trigger. Detailed generic semantics are owned by the relevant reference:
 
-Compression removes repeated generic protocol doctrine, not task-specific intent. Before handoff, Design reconciles requirements and known consequences against the implementation obligations and their acceptance evidence.
+- lifecycle/workplans/authority/stages/handoff/review routing -> `shared/references/workflow-and-workplans.md`;
+- regression/integration/evidence reuse/proxy-proof acceptance/qualification -> `shared/references/testing-and-validation.md`;
+- architecture/ownership/redesign/complexity -> `shared/references/architecture-and-design.md`;
+- repository inspection/context economy -> `shared/references/repository-intake.md`;
+- protocol/workplan inheritance -> `shared/references/protocol-versioning-and-compatibility.md`;
+- other domain-specific concerns -> their existing specialist references.
 
-The plan is the **minimum known contract, not a ceiling**. Implementation incorporates necessary consequences and affected surfaces discovered while realizing frozen design, and reopens design only when evidence shows a frozen material decision must change.
+Load a reference when a material question enters its ownership domain; start with the relevant section and broaden only when cross-cutting evidence requires it. Context minimization never permits omission of plausible affected behavior or material evidence.
 
-## Closed-loop implementation
+## Lossless workplans, proportionate stages, complete acceptance
 
-A material implementation stage closes only when both:
+A substantial accepted workplan is a compressed task-specific implementation contract. It preserves protected concerns, required end states/constraints, known required implementation consequences, implementation authority, affected surfaces, and acceptance claims without copying generic protocol manuals. It distinguishes `Frozen / Delegated / Reopen only on evidence` and remains a minimum known contract rather than a ceiling on necessary consequences discovered during implementation.
 
-- semantic/conformance closure establishes that its assigned obligations and protected concerns are satisfied or legitimately reconciled; and
-- the existing focused checks and stage-local affected regression pass for executable behavior.
+A local coherent behavior change is normally one material stage. Split stages only when an intermediate behavior/risk/dependency boundary materially reduces downstream risk or rework. This changes ceremony, not required coverage.
 
-Before handoff, Implementation reconciles the complete accepted contract against the final candidate, inspects structural/absence claims and product-complexity/ownership drift, then re-derives the final affected surface and performs fresh final affected regression, integration, and repository-required checks.
-
-## Proxy-proof acceptance
-
-For material integration/acceptance claims, the real production semantic owner/consumer boundary named by the claim must execute. Mocks/fakes remain valid below or outside that boundary for expensive computation, hardware, services, or bounded data, but evidence that could stay green while the claimed owner is broken cannot close the claim. Detailed rules live in `shared/references/testing-and-validation.md` and the role entrypoints.
-
-## Independent review and rework
-
-Independent review remains a Software Design activity. It first challenges contract conformance, then independently challenges unplanned engineering risk. Material findings must be actionable enough for lossless rework and route separately as implementation nonconformance, workplan/design deficiency, or a genuinely new issue. Equivalent preferences without material engineering benefit do not block acceptance.
-
-## Development context and evidence economy
-
-Protocol 5.4 development-economy rules remain intact: use progressive repository inspection, high-information actions, established-fact reuse, compact task-local state, and evidence invalidation/reuse without narrowing required behavior or validation.
-
-## Production qualification
-
-Full production qualification remains distinct from functional acceptance and is not run by default during ordinary implementation. A production run never substitutes for missing regression/integration coverage.
+Executable changes still require focused checks, stage-local affected regression for every material behavior-changing stage, final affected-surface re-derivation/regression, real-boundary integration, and repository/project-required checks. Semantic conformance never substitutes for executable testing; green tests never prove an omitted obligation was implemented. Material real-owner acceptance remains proxy-proof, while bounded fakes below/outside the owner remain valid. Full production qualification remains separate from routine functional acceptance.
 
 ## Build and repository acceptance
 
