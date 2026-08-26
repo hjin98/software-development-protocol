@@ -5,28 +5,26 @@
 `PROTOCOL_VERSION` identifies the protocol contract.
 
 - major: incompatible role/lifecycle or governing-doctrine change;
-- minor: backward-compatible capability or doctrine addition/strengthening;
+- minor: backward-compatible capability, doctrine, or control-plane strengthening;
 - patch: clarification or defect correction.
 
 Protocol 5 established the governing product doctrine: material engineering requirements define the feasible product space, and among engineering-sufficient solutions the protocol prefers the globally justified software/system design with the lowest unnecessary total complexity.
 
-Protocol 5.1 added the optional `software-documentation` specialist. Protocol 5.2 added the optional `repository-hygiene` specialist. Protocol 5.3 strengthened stage-local/final functional acceptance and separated production qualification. Protocol 5.4 added development-economy, accepted-workplan authority, bounded redesign, version-bound workplan inheritance, evidence/context reuse, and evidence-directed review.
+Protocol 5.1 added the optional `software-documentation` specialist. Protocol 5.2 added the optional `repository-hygiene` specialist. Protocol 5.3 strengthened stage-local/final functional acceptance and separated production qualification. Protocol 5.4 added development-economy, accepted-workplan authority, bounded redesign, version-bound workplan inheritance, evidence/context reuse, coherent stage granularity, and evidence-directed review.
 
-Protocol 5.5 is a backward-compatible **implementation-fidelity and workflow-integration refinement**. It preserves the Protocol 5 doctrine, two-role lifecycle, and Protocol 5.3/5.4 acceptance/economy guarantees while adding:
+Protocol 5.5 is a backward-compatible **implementation-fidelity and workflow-integration refinement**. It preserves the Protocol 5 doctrine, two-role lifecycle, and Protocol 5.3/5.4 acceptance/economy guarantees while adding lossless Design -> Implementation translation, protected-concern preservation, required-consequence versus suggestion/delegation distinctions, minimum-known-contract semantics, dual semantic/functional stage closure, final accepted-contract reconciliation, and lossless review/rework routing.
 
-1. lossless translation from accepted design into material implementation obligations;
-2. protected-concern preservation so adaptive local realization does not recreate the diagnosed failure through another mechanism;
-3. explicit distinction between required implementation consequences, suggested realizations, and delegated mechanics;
-4. accepted workplans as a minimum known contract rather than a ceiling on necessary consequences discovered during implementation;
-5. dual semantic/conformance plus functional closure for material implementation stages;
-6. final accepted-contract reconciliation before final affected-surface regression/integration;
-7. lossless independent-review findings and explicit rework routing for implementation nonconformance, workplan/design deficiency, and new issues.
+Protocol 5.6 is a backward-compatible **proxy-proof acceptance and test-double-boundary strengthening**. It preserves all earlier Protocol 5 guarantees while adding explicit semantic-owner-under-acceptance, allowed test-double boundary, proxy-proof counterfactual, real-owner handoff, and independent-review challenge rules. Material acceptance may use bounded fakes below/outside the required real owner; it may not replace or bypass that owner and then claim the owner is accepted.
 
-Protocol 5.6 is a backward-compatible **proxy-proof acceptance and test-double-boundary strengthening**. It preserves the Protocol 5 doctrine and all Protocol 5.3/5.4/5.5 guarantees while adding explicit semantic-owner-under-acceptance, allowed test-double boundary, proxy-proof counterfactual, real-owner handoff, and independent-review challenge rules. Material acceptance evidence may still use bounded fakes below/outside the required real owner; it may not replace or bypass that owner and then claim the owner is accepted.
+Protocol 5.7 is a backward-compatible **engineering-stewardship and outcome-alignment strengthening**. It preserves the exact Protocol 5 hierarchy, two-role lifecycle, and all earlier guarantees while making the stakeholder's intended durable product the shared optimization target. Workplans, tests, gates, metrics, and reports remain subordinate constraints/evidence; non-adversarial interpretation, acceptance-integrity, self-correction, and truthful non-closure take precedence over counterfeit completion. Stewardship remains bounded to accepted scope.
 
-Protocol 5.7 is a backward-compatible **engineering-stewardship and outcome-alignment strengthening**. It preserves the exact Protocol 5 hierarchy, two-role lifecycle, and all Protocol 5.3/5.4/5.5/5.6 guarantees while making the stakeholder's intended durable product the shared optimization target across Design, Implementation, review, testing, documentation, and hygiene. Workplans, tests, gates, metrics, and reports remain subordinate constraints/evidence; acceptance-signal manipulation without a legitimate product-semantic change is nonconforming. Stewardship is bounded to accepted scope and does not authorize speculative gold-plating.
+Protocol 5.8 is a backward-compatible **effective-compression and canonical-ownership refinement**. It intentionally preserves the material engineering semantics and historical failure-mode defenses of Protocols 5.4-5.7 while reducing always-loaded duplication. Lifecycle entrypoints retain high-salience invariants and role decision loops; detailed generic doctrine has one canonical owner where practical and is loaded when its material surface becomes relevant. Task workplans inherit generic protocol rules and preserve task-specific intent without copying protocol manuals. Stage proportionality reduces micro-gating ceremony without weakening affected-surface regression, semantic-owner acceptance, final assembled acceptance, or product-truth safeguards.
 
-The two-role lifecycle remains unchanged.
+The two-role lifecycle remains unchanged:
+
+```text
+software-design -> software-implementation
+```
 
 ## Workplan protocol binding
 
@@ -42,11 +40,9 @@ For a normal Git repository, the candidate commit plus absence of unintended pro
 
 ## Evidence invalidation
 
-Rerun a check when a changed dimension could plausibly alter its result or interpretation. For executable changes, stage-local evidence must correspond to the stage it accepts. Final affected-surface regression and integration checks must reflect the assembled candidate after all material executable edits that could invalidate earlier evidence.
+Rerun a check when a changed dimension could plausibly alter its result or interpretation. Stage-local evidence must correspond to the stage it accepts; final affected-surface regression and integration must reflect the assembled candidate after all material executable edits that could invalidate earlier evidence.
 
-Semantic/conformance closure and functional evidence are separate claims. A protocol-version adoption may require newly introduced conformance reasoning without automatically invalidating still-valid unrelated executable evidence.
-
-Do not rerun expensive scientific/production qualification merely because documentation wording, evidence paths, timestamps, unrelated administrative metadata, or hygiene-only movement/removal changed.
+Semantic/conformance closure and functional evidence are separate claims. A protocol-version adoption may require newly introduced conformance reasoning without automatically invalidating still-valid unrelated executable evidence. Do not rerun expensive scientific/production qualification merely because documentation wording, evidence paths, timestamps, unrelated administrative metadata, or hygiene-only movement/removal changed.
 
 ## Compatibility
 
@@ -54,4 +50,4 @@ Preserve software compatibility when the product contract requires it. Compatibi
 
 ## Earlier protocol versions
 
-Completed work under earlier protocol versions remains valid historical work under the version that governed it. Active older workplans do not automatically adopt Protocol 5.7 or any other later protocol release. They may continue under their declared version or explicitly adopt a newer backward-compatible version after reconciling its changed obligations. A protocol-version change alone does not require repeating still-valid evidence unless a newly adopted requirement or affected dimension invalidates the claim.
+Completed work under earlier protocol versions remains valid historical work under the version that governed it. Active older workplans do not automatically adopt Protocol 5.8 or any other later release. They may continue under their declared version or explicitly adopt a newer backward-compatible version after reconciling changed obligations. A protocol-version change alone does not require repeating still-valid evidence unless a newly adopted requirement or affected dimension invalidates the claim.
