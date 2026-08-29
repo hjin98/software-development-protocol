@@ -1,4 +1,3 @@
-\
 ---
 kind: implementation-workplan-amendment
 workplan_id: PROTOCOL-5.9-AGENT-PORTABLE-SKILL-ROUTING-URI-ROUTE-REWORK
