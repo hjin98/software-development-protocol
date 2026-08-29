@@ -11,14 +11,14 @@ def read(path: str) -> str:
 
 
 class ProtocolContractTests(unittest.TestCase):
-    def test_protocol_58_identity_and_two_role_lifecycle(self) -> None:
-        self.assertEqual("5.8.0", read("source/PROTOCOL_VERSION").strip())
+    def test_protocol_59_identity_and_two_role_lifecycle(self) -> None:
+        self.assertEqual("5.9.0", read("source/PROTOCOL_VERSION").strip())
         source_readme = read("source/README.md").lower()
         root_readme = read("README.md").lower()
         versioning = read("source/shared/references/protocol-versioning-and-compatibility.md").lower()
-        self.assertIn("software development protocol 5.8", source_readme)
-        self.assertIn("protocol 5.8", root_readme)
-        self.assertIn("protocol 5.8 is a backward-compatible", versioning)
+        self.assertIn("software development protocol 5.9", source_readme)
+        self.assertIn("protocol 5.9", root_readme)
+        self.assertIn("protocol 5.9 is a backward-compatible", versioning)
         for text in (source_readme, root_readme, versioning):
             self.assertIn("software-design", text)
             self.assertIn("software-implementation", text)
@@ -42,8 +42,9 @@ class ProtocolContractTests(unittest.TestCase):
         for text in (design, implementation):
             self.assertIn("inspect progressively", text)
             self.assertIn("ownership, dependency, contract, or behavioral impact", text)
-            self.assertIn("load a reference when a material question enters its ownership domain", text)
-            self.assertIn("references/repository-intake.md", text)
+            self.assertIn("## reference routing", text)
+            self.assertIn("](references/repository-intake.md)", text)
+            self.assertIn("progressive disclosure is preserved", text)
         self.assertIn("lowest-cost next inspection", intake)
         self.assertIn("reuse repository facts", intake)
         self.assertIn("context minimization is never permission", intake)

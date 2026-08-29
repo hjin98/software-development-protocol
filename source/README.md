@@ -1,6 +1,6 @@
-# Software Development Protocol 5.8
+# Software Development Protocol 5.9
 
-This directory is the canonical Protocol 5.8 source.
+This directory is the canonical Protocol 5.9 source.
 
 ## Governing hierarchy and product truth
 
@@ -10,7 +10,7 @@ product engineering fitness > minimum justified product/system complexity > deve
 
 Build the stakeholder's intended durable product rather than optimizing for the appearance of satisfying a workplan, test, gate, metric, review, or report. Interpret requirements according to their protected engineering purpose. Do not trade material correctness, scientific fidelity, reliability, ownership, maintainability, operability, resource feasibility, target-scale behavior, hardware effectiveness, or required performance for lower complexity or development cost.
 
-Protocol 5.8 preserves all material Protocol 5.4-5.7 guarantees while reducing control-plane duplication. High-salience invariants remain directly visible in lifecycle skills; detailed generic rules have one canonical reference owner where practical and are loaded when their material surface becomes relevant.
+Protocol 5.9 preserves all material Protocol 5.4-5.8 guarantees unchanged. It strengthens only routing and distribution: high-salience entrypoint triggers now link directly to exact canonical references, role-critical routes are mandatory under their named conditions, and domain references remain progressively disclosed.
 
 ## Two-role lifecycle
 
@@ -34,7 +34,7 @@ Lifecycle entrypoints contain the invariant, role-local decision rule, and trigg
 - protocol/workplan inheritance -> `shared/references/protocol-versioning-and-compatibility.md`;
 - other domain-specific concerns -> their existing specialist references.
 
-Load a reference when a material question enters its ownership domain; start with the relevant section and broaden only when cross-cutting evidence requires it. Context minimization never permits omission of plausible affected behavior or material evidence.
+Each packaged `SKILL.md` now maps material triggers directly to linked references. Role-critical routes are mandatory before the corresponding decision or closure; domain references remain conditional. Context minimization never permits omission of plausible affected behavior or material evidence.
 
 ## Lossless workplans, proportionate stages, complete acceptance
 
@@ -46,7 +46,7 @@ Executable changes still require focused checks, stage-local affected regression
 
 ## Build and repository acceptance
 
-`source/` is canonical. `dist/` contains generated ready-to-install skill packages and is committed for distribution.
+`source/` is canonical. `dist/skills/<skill-name>/` contains generated ready-to-install directory bundles; top-level ZIPs are generated from the same bundles for backward-compatible transport. `agents/openai.yaml` is a separately validated OpenAI adapter, not part of generic Agent Skill validity. See `../PORTABILITY.md` for harness installation and live routing qualification.
 
 Run:
 

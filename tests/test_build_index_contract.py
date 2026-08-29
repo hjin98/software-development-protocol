@@ -19,6 +19,7 @@ class BuildIndexContractTests(unittest.TestCase):
             dist = Path(tmp) / "dist"
             build_skills.build(dist)
             index = json.loads((dist / "BUILD_INDEX.json").read_text(encoding="utf-8"))
+            self.assertEqual("skills", index["runtime_root"])
             self.assertEqual(set(build_skills.ROLE_SPECS), set(index["lifecycle_roles"]))
             self.assertEqual(set(build_skills.SPECIALIST_SPECS), set(index["specialists"]))
             self.assertEqual(
