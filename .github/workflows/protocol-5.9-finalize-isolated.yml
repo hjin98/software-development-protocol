@@ -1,0 +1,55 @@
+name: Protocol 5.9 isolated finalizer
+
+on:
+  push:
+    branches:
+      - protocol-5.9-agent-portable-routing-finalize
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: protocol-5.9-agent-portable-routing-finalize
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Apply accepted Protocol 5.9 implementation
+        run: |
+          python tools/apply_protocol_5_9_routing.py
+          python tools/patch_protocol_5_9_contract_tests.py
+      - name: Run full protocol regression and portability suite
+        run: python -m unittest discover -s tests -v
+      - name: Regenerate committed distribution
+        run: python source/build_skills.py --output dist
+      - name: Validate committed generated bundles
+        run: python source/validate_packages.py --dist dist
+      - name: Verify fresh-build parity
+        run: |
+          python source/build_skills.py --output /tmp/protocol-dist
+          python source/validate_packages.py --dist /tmp/protocol-dist
+          python source/check_dist.py --expected /tmp/protocol-dist --committed dist
+      - name: Check patch whitespace
+        run: git diff --check
+      - name: Remove staging-only machinery
+        run: |
+          rm -f PROTOCOL_5_9_FAILURE.txt
+          rm -f tools/apply_protocol_5_9_routing.py tools/patch_protocol_5_9_contract_tests.py
+          rm -f .github/workflows/protocol-5.9-implementation.yml
+          rm -f .github/workflows/protocol-5.9-debug.yml
+          rm -f .github/workflows/protocol-5.9-finalize.yml
+          rm -f .github/workflows/protocol-5.9-finalize-isolated.yml
+          rmdir tools 2>/dev/null || true
+          git diff --check
+      - name: Commit assembled candidate
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Implement Protocol 5.9 agent-portable skill routing"
+          git push origin HEAD:protocol-5.9-agent-portable-routing-finalize
