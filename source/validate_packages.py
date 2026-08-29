@@ -21,6 +21,7 @@ MARKDOWN_LINK_RE = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 SAFE_RESOURCE_LINK_RE = re.compile(r"^(?:references|templates)/[A-Za-z0-9_.-]+\.md$")
 RESOURCE_NAMESPACE_RE = re.compile(r"(^|[\\/])(?:references|templates)(?:[\\/]|$)")
 URI_SCHEME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
+WINDOWS_ABSOLUTE_RE = re.compile(r"^[A-Za-z]:[\\/]")
 STANDARD_FRONTMATTER_KEYS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
 
 
@@ -105,10 +106,15 @@ def validate_resource_routes(body: str, files: dict[str, bytes]) -> list[str]:
     direct_links: set[str] = set()
     for raw_target in MARKDOWN_LINK_RE.findall(body):
         target = raw_target.strip()
-        if not target or target.startswith("#") or URI_SCHEME_RE.match(target):
+        if not target or target.startswith("#"):
             continue
         decoded = urllib.parse.unquote(target)
         if not RESOURCE_NAMESPACE_RE.search(decoded):
+            continue
+        if WINDOWS_ABSOLUTE_RE.match(decoded) or decoded.lower().startswith("file:"):
+            errors.append(f"unsafe or non-portable resource route: {target}")
+            continue
+        if URI_SCHEME_RE.match(decoded):
             continue
         if decoded != target:
             errors.append(f"encoded resource route is not allowed: {target}")
