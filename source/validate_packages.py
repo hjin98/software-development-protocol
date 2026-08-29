@@ -6,17 +6,21 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import urllib.parse
 import zipfile
 from pathlib import Path, PurePosixPath
+
+import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "source"
 PROTOCOL_VERSION = (SOURCE / "PROTOCOL_VERSION").read_text(encoding="utf-8").strip()
 MAX_SKILL_ZIP_BYTES = 25 * 1024 * 1024
 NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-TOP_KEY_RE = re.compile(r"^([A-Za-z0-9_-]+):(?:\s*(.*))?$")
-RESOURCE_MENTION_RE = re.compile(r"(?<![A-Za-z0-9_.-])((?:references|templates)/[A-Za-z0-9_.-]+\.md)")
-DIRECT_LINK_RE = re.compile(r"\[[^\]]+\]\(((?:references|templates)/[A-Za-z0-9_.-]+\.md)\)")
+MARKDOWN_LINK_RE = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+SAFE_RESOURCE_LINK_RE = re.compile(r"^(?:references|templates)/[A-Za-z0-9_.-]+\.md$")
+RESOURCE_NAMESPACE_RE = re.compile(r"(^|[\\/])(?:references|templates)(?:[\\/]|$)")
+URI_SCHEME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
 STANDARD_FRONTMATTER_KEYS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
 
 
@@ -31,7 +35,7 @@ def canonical_skills() -> dict[str, tuple[str, Path]]:
     return found
 
 
-def parse_frontmatter(text: str) -> tuple[dict[str, str], str]:
+def parse_frontmatter(text: str) -> tuple[dict[str, object], str]:
     lines = text.splitlines()
     if not lines or lines[0].strip() != "---":
         raise ValueError("SKILL.md must start with YAML frontmatter")
@@ -39,18 +43,16 @@ def parse_frontmatter(text: str) -> tuple[dict[str, str], str]:
         end = next(i for i in range(1, len(lines)) if lines[i].strip() == "---")
     except StopIteration as exc:
         raise ValueError("SKILL.md frontmatter is not terminated") from exc
-    values: dict[str, str] = {}
-    for line in lines[1:end]:
-        if not line.strip() or line[0].isspace():
-            continue
-        match = TOP_KEY_RE.fullmatch(line)
-        if not match:
-            raise ValueError(f"invalid top-level frontmatter line: {line!r}")
-        key, value = match.groups()
-        if key in values:
-            raise ValueError(f"duplicate frontmatter key: {key}")
-        values[key] = (value or "").strip().strip('"').strip("'")
-    return values, "\n".join(lines[end + 1 :])
+    source = "\n".join(lines[1:end])
+    try:
+        parsed = yaml.safe_load(source)
+    except yaml.YAMLError as exc:
+        raise ValueError(f"SKILL.md frontmatter is invalid YAML: {exc}") from exc
+    if not isinstance(parsed, dict):
+        raise ValueError("SKILL.md frontmatter must be a YAML mapping")
+    if not all(isinstance(key, str) for key in parsed):
+        raise ValueError("SKILL.md frontmatter keys must be strings")
+    return parsed, "\n".join(lines[end + 1 :])
 
 
 def validate_frontmatter(text: str, skill_name: str) -> tuple[list[str], str]:
@@ -62,19 +64,68 @@ def validate_frontmatter(text: str, skill_name: str) -> tuple[list[str], str]:
     unknown = set(frontmatter) - STANDARD_FRONTMATTER_KEYS
     if unknown:
         errors.append(f"unsupported non-portable frontmatter keys: {sorted(unknown)}")
-    name = frontmatter.get("name", "")
-    description = frontmatter.get("description", "")
-    if not name:
-        errors.append("frontmatter name is missing")
+    name = frontmatter.get("name")
+    if not isinstance(name, str) or not name:
+        errors.append("frontmatter name must be a non-empty string")
     elif len(name) > 64 or not NAME_RE.fullmatch(name):
         errors.append("frontmatter name violates portable kebab-case/64-character constraint")
     elif name != skill_name:
         errors.append("frontmatter name mismatch")
-    if not description:
-        errors.append("frontmatter description is empty")
+    description = frontmatter.get("description")
+    if not isinstance(description, str) or not description:
+        errors.append("frontmatter description must be a non-empty string")
     elif len(description) > 1024:
         errors.append("frontmatter description exceeds 1024 characters")
+    if "license" in frontmatter and not isinstance(frontmatter["license"], str):
+        errors.append("frontmatter license must be a string")
+    if "compatibility" in frontmatter:
+        compatibility = frontmatter["compatibility"]
+        if not isinstance(compatibility, str) or not compatibility:
+            errors.append("frontmatter compatibility must be a non-empty string")
+        elif len(compatibility) > 500:
+            errors.append("frontmatter compatibility exceeds 500 characters")
+    if "metadata" in frontmatter:
+        metadata = frontmatter["metadata"]
+        if not isinstance(metadata, dict):
+            errors.append("frontmatter metadata must be a mapping")
+        else:
+            for key, value in metadata.items():
+                if not isinstance(key, str) or not isinstance(value, str):
+                    errors.append("frontmatter metadata keys and values must be strings")
+                    break
+    if "allowed-tools" in frontmatter:
+        allowed_tools = frontmatter["allowed-tools"]
+        if not isinstance(allowed_tools, str) or not allowed_tools.strip():
+            errors.append("frontmatter allowed-tools must be a non-empty space-separated string")
     return errors, body
+
+
+def validate_resource_routes(body: str, files: dict[str, bytes]) -> list[str]:
+    errors: list[str] = []
+    direct_links: set[str] = set()
+    for raw_target in MARKDOWN_LINK_RE.findall(body):
+        target = raw_target.strip()
+        if not target or target.startswith("#") or URI_SCHEME_RE.match(target):
+            continue
+        decoded = urllib.parse.unquote(target)
+        if not RESOURCE_NAMESPACE_RE.search(decoded):
+            continue
+        if decoded != target:
+            errors.append(f"encoded resource route is not allowed: {target}")
+            continue
+        if not SAFE_RESOURCE_LINK_RE.fullmatch(target):
+            errors.append(f"unsafe or non-portable resource route: {target}")
+            continue
+        direct_links.add(target)
+        if target not in files:
+            errors.append(f"routed resource is not packaged: {target}")
+    packaged_routes = {
+        rel for rel in files
+        if (rel.startswith("references/") or rel.startswith("templates/")) and rel.endswith(".md")
+    }
+    for rel in sorted(packaged_routes - direct_links):
+        errors.append(f"packaged resource is not directly Markdown-linked from SKILL.md: {rel}")
+    return errors
 
 
 def validate_agent_yaml(text: str) -> list[str]:
@@ -177,18 +228,11 @@ def validate_core_bundle(files: dict[str, bytes], skill_name: str, kind: str, so
     if kind == "specialist" and manifest.get("kind") != "specialist":
         errors.append("specialist package missing manifest kind")
 
-    mentions = set(RESOURCE_MENTION_RE.findall(body))
-    direct_links = set(DIRECT_LINK_RE.findall(body))
-    for rel in sorted(mentions):
-        if rel not in files:
-            errors.append(f"routed resource is not packaged: {rel}")
+    errors.extend(validate_resource_routes(body, files))
     packaged_routes = {
         rel for rel in files
         if (rel.startswith("references/") or rel.startswith("templates/")) and rel.endswith(".md")
     }
-    for rel in sorted(packaged_routes - direct_links):
-        errors.append(f"packaged resource is not directly Markdown-linked from SKILL.md: {rel}")
-
     for rel in sorted(packaged_routes):
         expected = expected_canonical_bytes(rel, source_root)
         if expected is None:

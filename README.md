@@ -29,6 +29,7 @@ Independent review remains Software Design mode, not a third lifecycle role. Opt
 `source/` is canonical. `dist/skills/<skill-name>/` contains first-class ready-to-install directory bundles and the existing top-level ZIPs remain backward-compatible transport artifacts generated from the same bundle tree. See `PORTABILITY.md` for installation and real-harness routing qualification. Before a protocol revision is complete:
 
 ```bash
+python -m pip install -r source/requirements-validation.txt
 python -m unittest discover -s tests -v
 python source/build_skills.py --output /tmp/protocol-dist
 python source/validate_packages.py --dist /tmp/protocol-dist

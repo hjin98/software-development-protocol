@@ -51,6 +51,7 @@ Executable changes still require focused checks, stage-local affected regression
 Run:
 
 ```bash
+python -m pip install -r source/requirements-validation.txt
 python -m unittest discover -s tests -v
 python source/build_skills.py --output /tmp/protocol-dist
 python source/validate_packages.py --dist /tmp/protocol-dist
