@@ -3,7 +3,8 @@ kind: implementation-workplan
 workplan_id: PROTOCOL-5.8-EFFECTIVE-COMPRESSION
 protocol_version: 5.7.0
 target_protocol_version: 5.8.0
-status: active
+status: completed
+completed_date: 2026-08-29
 created_date: 2026-08-26
 base_commit: cf80643d80dd9ff667c26a8be84310874b19b15d
 ---

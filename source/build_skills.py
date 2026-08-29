@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build skill ZIP packages from canonical protocol source."""
+"""Build portable skill directory bundles and ZIPs from canonical protocol source."""
 
 from __future__ import annotations
 
@@ -7,7 +7,6 @@ import argparse
 import json
 import re
 import shutil
-import tempfile
 import zipfile
 from pathlib import Path
 
@@ -90,7 +89,7 @@ SPECIALIST_SPECS = {
     },
 }
 
-NAME_RE = re.compile(r"(?m)^name:\s*([A-Za-z0-9_.-]+)\s*$")
+NAME_RE = re.compile(r"(?m)^name:\s*([a-z0-9]+(?:-[a-z0-9]+)*)\s*$")
 
 
 def skill_root(skill_name: str, kind: str) -> Path:
@@ -196,19 +195,19 @@ def build(output: Path) -> None:
     if output.exists():
         shutil.rmtree(output)
     output.mkdir(parents=True)
+    skills_output = output / "skills"
+    skills_output.mkdir()
 
-    prefix = f"software-protocol-{PROTOCOL_VERSION}-"
-    with tempfile.TemporaryDirectory(prefix=prefix) as tmp:
-        stage = Path(tmp)
-        for skill_name, spec, kind in all_specs():
-            root = build_one(skill_name, spec, kind, stage)
-            zip_tree(root, output / f"{skill_name}.zip")
+    for skill_name, spec, kind in all_specs():
+        root = build_one(skill_name, spec, kind, skills_output)
+        zip_tree(root, output / f"{skill_name}.zip")
 
     all_names = [name for name, _, _ in all_specs()]
     (output / "BUILD_INDEX.json").write_text(
         json.dumps(
             {
                 "protocol_version": PROTOCOL_VERSION,
+                "runtime_root": "skills",
                 "skills": all_names,
                 "lifecycle_roles": list(ROLE_SPECS),
                 "specialists": list(SPECIALIST_SPECS),
@@ -220,13 +219,13 @@ def build(output: Path) -> None:
         encoding="utf-8",
     )
 
-
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, default=ROOT.parent / "dist")
     args = parser.parse_args()
     build(args.output.resolve())
     for skill_name, _, _ in all_specs():
+        print(args.output.resolve() / "skills" / skill_name)
         print(args.output.resolve() / f"{skill_name}.zip")
     return 0
 
