@@ -109,12 +109,18 @@ def validate_resource_routes(body: str, files: dict[str, bytes]) -> list[str]:
         if not target or target.startswith("#"):
             continue
         decoded = urllib.parse.unquote(target)
-        if not RESOURCE_NAMESPACE_RE.search(decoded):
-            continue
-        if WINDOWS_ABSOLUTE_RE.match(decoded) or decoded.lower().startswith("file:"):
+        normalized_for_namespace = decoded
+        if decoded.lower().startswith("file:"):
+            normalized_for_namespace = decoded[5:]
+        elif re.match(r"^[A-Za-z]:", decoded):
+            normalized_for_namespace = decoded[2:]
+        addresses_resource_namespace = bool(RESOURCE_NAMESPACE_RE.search(normalized_for_namespace))
+        if (decoded.lower().startswith("file:") or re.match(r"^[A-Za-z]:", decoded)) and addresses_resource_namespace:
             errors.append(f"unsafe or non-portable resource route: {target}")
             continue
         if URI_SCHEME_RE.match(decoded):
+            continue
+        if not addresses_resource_namespace:
             continue
         if decoded != target:
             errors.append(f"encoded resource route is not allowed: {target}")

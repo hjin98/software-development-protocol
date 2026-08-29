@@ -25,6 +25,18 @@ class ResourceRouteUriSafetyTests(unittest.TestCase):
     def test_file_uri_resource_path_is_rejected(self) -> None:
         self.assert_unsafe("file:///tmp/references/outside.md")
 
+    def test_file_scheme_relative_reference_path_is_rejected(self) -> None:
+        self.assert_unsafe("file:references/outside.md")
+
+    def test_file_scheme_relative_template_path_is_rejected(self) -> None:
+        self.assert_unsafe("file:templates/outside.md")
+
+    def test_windows_drive_relative_reference_path_is_rejected(self) -> None:
+        self.assert_unsafe("C:references/outside.md")
+
+    def test_windows_drive_relative_backslash_reference_path_is_rejected(self) -> None:
+        self.assert_unsafe(r"C:references\outside.md")
+
     def test_external_https_resource_like_path_is_not_treated_as_local_bundle_route(self) -> None:
         errors = validate_packages.validate_resource_routes(
             "Read [external](https://example.com/references/guide.md).", {}

@@ -63,3 +63,26 @@ After R4 is implemented:
 8. keep live external harness qualification explicitly unqualified unless actually executed.
 
 The expected outcome remains the same Protocol 5.9 design and semantics, with the final known false-green in static local-resource routing validation removed.
+
+## R5 — Close scheme-relative and drive-relative namespace escapes
+
+### Concern
+
+Independent review found that R4 still lets local resource targets escape when the `references`/`templates` namespace follows a local scheme or drive prefix without a slash, such as `file:references/outside.md`, `file:templates/outside.md`, `C:references/outside.md`, and `C:references\outside.md`. The namespace prefilter can discard these before local-scheme/drive classification runs.
+
+### Required end state
+
+Resource classification must recognize local `file:` and Windows drive-prefixed forms before namespace filtering can exclude them. If the remainder of such a local target addresses `references` or `templates`, validation must reject it regardless of whether the drive form is absolute (`C:/...`, `C:\\...`) or drive-relative (`C:...`). Genuine non-local external URI schemes remain outside the local bundle contract. Ordinary safe relative resource links continue to use exactly `references/<safe-name>.md` or `templates/<safe-name>.md`.
+
+### Acceptance evidence
+
+Add focused negative regressions for:
+
+```text
+file:references/outside.md
+file:templates/outside.md
+C:references/outside.md
+C:references\outside.md
+```
+
+The existing R4 absolute-path/file-URI regressions and HTTPS external-link positive control must remain green. Run the complete final acceptance sequence already defined above on the assembled candidate.
