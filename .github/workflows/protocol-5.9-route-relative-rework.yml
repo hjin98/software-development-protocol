@@ -1,0 +1,91 @@
+name: Protocol 5.9 route-relative rework
+
+on:
+  push:
+    branches:
+      - protocol-5.9-agent-portable-routing-finalize
+    paths:
+      - .github/workflows/protocol-5.9-route-relative-rework.yml
+
+permissions:
+  contents: write
+
+jobs:
+  rework:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: protocol-5.9-agent-portable-routing-finalize
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Apply route-classification closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          validator = Path("source/validate_packages.py")
+          text = validator.read_text(encoding="utf-8")
+          old = '''        decoded = urllib.parse.unquote(target)\n        if not RESOURCE_NAMESPACE_RE.search(decoded):\n            continue\n        if WINDOWS_ABSOLUTE_RE.match(decoded) or decoded.lower().startswith("file:"):\n            errors.append(f"unsafe or non-portable resource route: {target}")\n            continue\n        if URI_SCHEME_RE.match(decoded):\n            continue\n'''
+          new = '''        decoded = urllib.parse.unquote(target)\n        normalized_for_namespace = decoded\n        if decoded.lower().startswith("file:"):\n            normalized_for_namespace = decoded[5:]\n        elif re.match(r"^[A-Za-z]:", decoded):\n            normalized_for_namespace = decoded[2:]\n        addresses_resource_namespace = bool(RESOURCE_NAMESPACE_RE.search(normalized_for_namespace))\n        if (decoded.lower().startswith("file:") or re.match(r"^[A-Za-z]:", decoded)) and addresses_resource_namespace:\n            errors.append(f"unsafe or non-portable resource route: {target}")\n            continue\n        if URI_SCHEME_RE.match(decoded):\n            continue\n        if not addresses_resource_namespace:\n            continue\n'''
+          if text.count(old) != 1:
+              raise SystemExit("validator route block changed unexpectedly")
+          validator.write_text(text.replace(old, new), encoding="utf-8")
+
+          tests = Path("tests/test_protocol_59_route_uri_safety.py")
+          t = tests.read_text(encoding="utf-8")
+          marker = '''    def test_file_uri_resource_path_is_rejected(self) -> None:\n        self.assert_unsafe("file:///tmp/references/outside.md")\n\n'''
+          addition = '''    def test_file_scheme_relative_reference_path_is_rejected(self) -> None:\n        self.assert_unsafe("file:references/outside.md")\n\n    def test_file_scheme_relative_template_path_is_rejected(self) -> None:\n        self.assert_unsafe("file:templates/outside.md")\n\n    def test_windows_drive_relative_reference_path_is_rejected(self) -> None:\n        self.assert_unsafe("C:references/outside.md")\n\n    def test_windows_drive_relative_backslash_reference_path_is_rejected(self) -> None:\n        self.assert_unsafe(r"C:references\\outside.md")\n\n'''
+          if t.count(marker) != 1:
+              raise SystemExit("route test insertion point changed unexpectedly")
+          tests.write_text(t.replace(marker, marker + addition), encoding="utf-8")
+
+          plan = Path("workplans/active/PROTOCOL-5.9-AGENT-PORTABLE-SKILL-ROUTING-URI-ROUTE-REWORK.md")
+          p = plan.read_text(encoding="utf-8")
+          anchor = '''The expected outcome remains the same Protocol 5.9 design and semantics, with the final known false-green in static local-resource routing validation removed.\n'''
+          supplement = '''\n## R5 — Close scheme-relative and drive-relative namespace escapes\n\n### Concern\n\nIndependent review found that R4 still lets local resource targets escape when the `references`/`templates` namespace follows a local scheme or drive prefix without a slash, such as `file:references/outside.md`, `file:templates/outside.md`, `C:references/outside.md`, and `C:references\\outside.md`. The namespace prefilter can discard these before local-scheme/drive classification runs.\n\n### Required end state\n\nResource classification must recognize local `file:` and Windows drive-prefixed forms before namespace filtering can exclude them. If the remainder of such a local target addresses `references` or `templates`, validation must reject it regardless of whether the drive form is absolute (`C:/...`, `C:\\\\...`) or drive-relative (`C:...`). Genuine non-local external URI schemes remain outside the local bundle contract. Ordinary safe relative resource links continue to use exactly `references/<safe-name>.md` or `templates/<safe-name>.md`.\n\n### Acceptance evidence\n\nAdd focused negative regressions for:\n\n```text\nfile:references/outside.md\nfile:templates/outside.md\nC:references/outside.md\nC:references\\outside.md\n```\n\nThe existing R4 absolute-path/file-URI regressions and HTTPS external-link positive control must remain green. Run the complete final acceptance sequence already defined above on the assembled candidate.\n'''
+          if p.count(anchor) != 1:
+              raise SystemExit("R4 workplan anchor changed unexpectedly")
+          plan.write_text(p.replace(anchor, anchor + supplement), encoding="utf-8")
+          PY
+      - name: Install validation dependencies
+        run: python -m pip install -r source/requirements-validation.txt
+      - name: Run focused route regression
+        run: python -m unittest tests.test_protocol_59_route_uri_safety -v
+      - name: Run complete protocol regression suite
+        run: python -m unittest discover -s tests -v
+      - name: Build canonical skill packages
+        run: python source/build_skills.py --output-dir dist
+      - name: Validate generated packages
+        run: python source/validate_packages.py --dist dist
+      - name: Verify committed distribution parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          python source/build_skills.py --output-dir "$tmp/dist"
+          python source/check_dist.py --expected dist --actual "$tmp/dist"
+          rm -rf "$tmp"
+      - name: Verify doctrine surfaces unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code 9d916653c46cdc08c2813996ac7e688359b44ca7 -- source/roles source/specialists source/shared
+      - name: Check whitespace
+        run: git diff --check
+      - name: Commit tested rework and remove runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/protocol-5.9-route-relative-rework.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add source/validate_packages.py tests/test_protocol_59_route_uri_safety.py workplans/active/PROTOCOL-5.9-AGENT-PORTABLE-SKILL-ROUTING-URI-ROUTE-REWORK.md .github/workflows/protocol-5.9-route-relative-rework.yml
+          git diff --cached --check
+          git commit -m "Close Protocol 5.9 relative route validation gap"
+          git push origin HEAD:protocol-5.9-agent-portable-routing-finalize
