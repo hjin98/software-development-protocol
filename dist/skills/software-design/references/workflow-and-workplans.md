@@ -88,6 +88,18 @@ requirements + protected concerns + accepted design + preservation/non-goals + k
 
 No material requirement or known design consequence may disappear in that translation.
 
+### Snapshot-complete handoff
+
+Before Design -> Implementation handoff, the accepted current handoff artifact set must be **snapshot-complete** for still-binding task-specific semantics. Reconcile accepted amendments and review corrections into supplied current authority; do not leave a requirement only in Git history, prior chat/session context, PR/issue/review discussion, superseded revisions, or an external document that is not actually supplied.
+
+Current composition remains valid: a workplan may inherit generic rules from its declared `protocol_version` and may reference current protocol/specification/architecture/package documents when those authorities are explicit and included in the **supplied artifact set**. Snapshot completeness is not a single-file rule and does not require copying generic protocol doctrine into each workplan.
+
+Apply the **snapshot-loss counterfactual** before closing a substantial handoff: conceptually remove `.git`, prior conversation/review history, superseded revisions not supplied, and external links/resources not supplied. If the remaining supplied current artifacts do not recover every material task-specific requirement, decision, acceptance boundary, and redesign trigger, the handoff is not closed.
+
+Historical identifiers and links may remain provenance/navigation, but they are **not sufficient normative storage** for omitted task semantics. If Implementation discovers that a still-binding requirement depends on unavailable historical or unsupplied material, route that as a **workplan/design deficiency** rather than guessing or reconstructing a private contract from history. This does not weaken the minimum-known-contract rule for newly discovered implementation consequences.
+
+Do not create a mandatory handoff manifest, revision ledger, provenance database, evidence capsule, or semantic workplan linter solely to enforce this rule.
+
 ## Accepted-workplan authority
 
 An accepted workplan distinguishes **Frozen**, **Delegated**, and **Reopen only on evidence** decisions. Precedence is:

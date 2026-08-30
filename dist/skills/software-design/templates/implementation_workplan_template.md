@@ -71,3 +71,7 @@ explicit requirements + protected concerns + accepted design/invariants
 ```
 
 Confirm that no material requirement, protected concern, frozen design decision, known consequence, or required acceptance claim was lost in compression. This is reasoning closure, not a mandatory persistent traceability artifact.
+
+Apply the **snapshot-loss counterfactual** before final Design -> Implementation handoff: conceptually remove `.git`, prior chat/session and PR/issue/review history, superseded revisions not included in the handoff, and external links/resources not actually supplied. The remaining supplied current artifact set must still contain every still-binding task-specific requirement, decision, acceptance boundary, and redesign trigger.
+
+Consolidate accepted amendments/review corrections into supplied current authority before handoff. History-only or unsupplied-external references may remain provenance/navigation, but are not sufficient normative storage. Current protocol/specification/architecture/package composition remains valid when those authorities are current, explicit, and included in the supplied handoff artifact set; do not duplicate generic protocol doctrine merely for snapshot completeness.
