@@ -8,7 +8,7 @@ Software Development Protocol 5 is an engineering-fitness-first workflow for AI-
 product engineering fitness > minimum justified product/system complexity > development economy
 ```
 
-Protocol 5.9 preserves the complete two-role lifecycle and every material Protocol 5.4-5.8 engineering safeguard while making Protocol 5.8 progressive disclosure deterministic and portable across Agent-Skills-style harnesses:
+Protocol 5.10 preserves the complete two-role lifecycle and every material Protocol 5.4-5.9 engineering safeguard while adding snapshot-complete Design -> Implementation handoff portability:
 
 ```text
 software-design -> software-implementation
@@ -18,7 +18,7 @@ The durable stakeholder product is the objective; workplans, tests, gates, metri
 
 `software-design` diagnoses and chooses the product design, preserves task-specific intent in a lossless implementation contract, designs acceptance, and independently reviews when warranted. `software-implementation` realizes that contract adaptively, closes coherent material stages semantically and functionally, and completes final accepted-contract reconciliation plus affected-surface regression/integration.
 
-Protocol 5.9 keeps Protocol 5.8 **canonical detailed ownership + progressive disclosure** unchanged, but makes routing explicit: role-critical task triggers require exact linked references before the corresponding decision or closure, while domain references remain conditional. This changes how reliably agents reach the doctrine, not what the doctrine means.
+Protocol 5.10 preserves Protocol 5.9 **canonical detailed ownership + deterministic progressive-disclosure routing** unchanged. Role-critical task triggers still require exact linked references before the corresponding decision or closure, while domain references remain conditional. The 5.10 addition is that final accepted handoffs must carry every still-binding task-specific semantic in the supplied current artifact set rather than relying on Git history, prior conversation/review context, superseded revisions, or unsupplied external resources. Current supplied multi-document composition remains valid.
 
 Executable changes still require focused checks, stage-local affected regression for every material behavior-changing stage, final affected-surface re-derivation/regression, integration through real product/consumer boundaries, and repository/project-required checks. A local coherent behavior change is normally one stage; proportionality reduces ceremony, never coverage. Production qualification remains separate from functional acceptance.
 

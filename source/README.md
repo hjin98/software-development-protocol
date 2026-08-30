@@ -1,6 +1,6 @@
-# Software Development Protocol 5.9
+# Software Development Protocol 5.10
 
-This directory is the canonical Protocol 5.9 source.
+This directory is the canonical Protocol 5.10 source.
 
 ## Governing hierarchy and product truth
 
@@ -10,7 +10,7 @@ product engineering fitness > minimum justified product/system complexity > deve
 
 Build the stakeholder's intended durable product rather than optimizing for the appearance of satisfying a workplan, test, gate, metric, review, or report. Interpret requirements according to their protected engineering purpose. Do not trade material correctness, scientific fidelity, reliability, ownership, maintainability, operability, resource feasibility, target-scale behavior, hardware effectiveness, or required performance for lower complexity or development cost.
 
-Protocol 5.9 preserves all material Protocol 5.4-5.8 guarantees unchanged. It strengthens only routing and distribution: high-salience entrypoint triggers now link directly to exact canonical references, role-critical routes are mandatory under their named conditions, and domain references remain progressively disclosed.
+Protocol 5.10 preserves all material Protocol 5.4-5.9 guarantees unchanged. It adds snapshot-complete Design -> Implementation handoffs: every still-binding task-specific semantic must remain available from the supplied current artifact set when Git history, prior conversation/review context, superseded revisions, and unsupplied external resources are absent. Protocol 5.9 deterministic routing and distribution remain unchanged.
 
 ## Two-role lifecycle
 
@@ -34,11 +34,13 @@ Lifecycle entrypoints contain the invariant, role-local decision rule, and trigg
 - protocol/workplan inheritance -> `shared/references/protocol-versioning-and-compatibility.md`;
 - other domain-specific concerns -> their existing specialist references.
 
-Each packaged `SKILL.md` now maps material triggers directly to linked references. Role-critical routes are mandatory before the corresponding decision or closure; domain references remain conditional. Context minimization never permits omission of plausible affected behavior or material evidence.
+Each packaged `SKILL.md` maps material triggers directly to linked references. Role-critical routes are mandatory before the corresponding decision or closure; domain references remain conditional. Context minimization never permits omission of plausible affected behavior or material evidence.
 
-## Lossless workplans, proportionate stages, complete acceptance
+## Lossless workplans, snapshot-complete handoff, proportionate stages, complete acceptance
 
 A substantial accepted workplan is a compressed task-specific implementation contract. It preserves protected concerns, required end states/constraints, known required implementation consequences, implementation authority, affected surfaces, and acceptance claims without copying generic protocol manuals. It distinguishes `Frozen / Delegated / Reopen only on evidence` and remains a minimum known contract rather than a ceiling on necessary consequences discovered during implementation.
+
+Before final Design -> Implementation handoff, accepted amendments/review corrections are consolidated into supplied current authority. Historical commits, prior chat/review state, superseded revisions, and unsupplied external links may remain provenance but cannot be the only storage location for a still-binding task requirement. Current supplied protocol/specification/architecture/package composition remains valid.
 
 A local coherent behavior change is normally one material stage. Split stages only when an intermediate behavior/risk/dependency boundary materially reduces downstream risk or rework. This changes ceremony, not required coverage.
 
