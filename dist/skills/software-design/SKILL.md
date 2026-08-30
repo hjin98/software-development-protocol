@@ -76,6 +76,8 @@ requirements + protected concerns + accepted design/invariants
 
 No material requirement or known design consequence may disappear. This is reasoning closure, not a mandatory traceability artifact.
 
+The final accepted handoff must also be **snapshot-complete** for still-binding task-specific semantics: consolidate accepted amendments/review corrections into supplied current authority so loss of `.git`, prior conversation/review history, superseded revisions, or unsupplied external references cannot remove a requirement. Current supplied protocol/specification/architecture/package composition remains valid; do not duplicate generic doctrine merely for portability. The detailed artifact-set and snapshot-loss rules belong to `references/workflow-and-workplans.md`.
+
 When a material acceptance claim depends on a real orchestration, persistence/restart, authorization, compatibility/migration, scientific/configuration identity, policy/selection, state transition, or assembled consumer, identify the **required real semantic owner/path** and enough test-double constraints to prevent proxy acceptance. Evidence that **could remain green** while that owner is broken cannot establish the claim. Load `references/testing-and-validation.md` for detailed boundary rules; do not impose this ceremony on ordinary unit tests where no material owner boundary is at risk.
 
 ## Workplan authority and bounded redesign

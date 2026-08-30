@@ -23,6 +23,8 @@ Update specifications when a governed contract changes. Update architecture when
 
 Permanent current documentation describes the accepted present system. Do not turn architecture manuals, specifications, or guides into append-only development histories. When a substantial conceptual change supersedes an older explanation, rewrite and reorganize the affected current document coherently; move chronology to history/release notes rather than preserving layers of corrective prose.
 
+A **current normative document** must be semantically complete for its scope within the supplied current artifact set: readers must not need Git history, superseded revisions, prior conversation/review discussion, or an unsupplied external resource to determine what is presently true. Current cross-document composition remains valid when the referenced authority is current, explicit, and supplied with the artifact set; this is not a single-file or duplicate-everything requirement. Chronology and superseded semantics belong in history/release notes or Git history as non-current authority.
+
 Do not edit permanent manuals merely to record gate progress, temporary debugging, benchmark attempts, or implementation chronology.
 
 Protocol 5.1 provides the optional `software-documentation` specialist for substantive reconciliation, editorial refactoring, theory/method explanation, user-oriented synthesis, and publication maintenance. The specialist fills the gap between AI-driven development and human interpretation; it is not a third lifecycle role or approval authority.
