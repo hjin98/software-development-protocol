@@ -84,6 +84,23 @@ class ProtocolContractTests(unittest.TestCase):
         self.assertIn("generic functional-acceptance requirements are inherited", template)
         self.assertIn("attach only when material", template)
 
+    def test_snapshot_complete_handoff_survives_history_loss(self) -> None:
+        workflow = read("source/shared/references/workflow-and-workplans.md").lower()
+        template = read("source/shared/templates/implementation_workplan_template.md").lower()
+        for phrase in (
+            "snapshot-complete",
+            "supplied artifact set",
+            "snapshot-loss counterfactual",
+            "workplan/design deficiency",
+        ):
+            self.assertIn(phrase, workflow)
+        self.assertIn("git history", workflow)
+        self.assertIn("not sufficient normative storage", workflow)
+        self.assertIn("snapshot-loss counterfactual", template)
+        self.assertIn("supplied current artifact set", template)
+        self.assertIn("not sufficient normative storage", template)
+        self.assertIn("current protocol/specification/architecture/package composition remains valid", template)
+
     def test_stage_proportionality_preserves_dual_closure_and_regression(self) -> None:
         implementation = read("source/roles/software-implementation/SKILL.md").lower()
         workflow = read("source/shared/references/workflow-and-workplans.md").lower()
@@ -133,6 +150,7 @@ class ProtocolContractTests(unittest.TestCase):
         self.assertIn("compact task-local state", workflow)
         self.assertIn("not a required persistent artifact", workflow)
         self.assertIn("do not create a ledger", workflow)
+        self.assertIn("do not create a mandatory handoff manifest", workflow)
 
     def test_optional_specialists_remain_supporting_capabilities(self) -> None:
         source_readme = read("source/README.md").lower()
