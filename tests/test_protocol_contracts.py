@@ -87,6 +87,9 @@ class ProtocolContractTests(unittest.TestCase):
     def test_snapshot_complete_handoff_survives_history_loss(self) -> None:
         workflow = read("source/shared/references/workflow-and-workplans.md").lower()
         template = read("source/shared/templates/implementation_workplan_template.md").lower()
+        design = read("source/roles/software-design/SKILL.md").lower()
+        implementation = read("source/roles/software-implementation/SKILL.md").lower()
+        documentation = read("source/shared/references/documentation-and-evidence.md").lower()
         for phrase in (
             "snapshot-complete",
             "supplied artifact set",
@@ -100,6 +103,15 @@ class ProtocolContractTests(unittest.TestCase):
         self.assertIn("supplied current artifact set", template)
         self.assertIn("not sufficient normative storage", template)
         self.assertIn("current protocol/specification/architecture/package composition remains valid", template)
+        self.assertIn("snapshot-complete", design)
+        self.assertIn("supplied current authority", design)
+        self.assertIn("complete task-specific authority", implementation)
+        self.assertIn("workplan/design deficiency", implementation)
+        self.assertIn("not the normal source of normative task requirements", implementation)
+        self.assertIn("current normative document", documentation)
+        self.assertIn("supplied current artifact set", documentation)
+        self.assertIn("current cross-document composition remains valid", documentation)
+        self.assertIn("non-current authority", documentation)
 
     def test_stage_proportionality_preserves_dual_closure_and_regression(self) -> None:
         implementation = read("source/roles/software-implementation/SKILL.md").lower()
