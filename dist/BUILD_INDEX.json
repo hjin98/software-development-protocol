@@ -3,7 +3,7 @@
     "software-design",
     "software-implementation"
   ],
-  "protocol_version": "5.9.0",
+  "protocol_version": "5.10.0",
   "runtime_root": "skills",
   "skills": [
     "software-design",
