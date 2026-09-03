@@ -70,9 +70,10 @@ def family_identity(text: str) -> bool:
 
 
 def bounded_census(text: str) -> bool:
-    a = paragraph(text, "switch to a bounded census only when")
-    b = paragraph(text, "temporary closure maps")
-    scope = a + "\n" + b
+    trigger = paragraph(text, "switch to a bounded census only when")
+    boundary = paragraph(text, "rather than the whole repository")
+    maps = paragraph(text, "temporary closure maps")
+    scope = "\n".join((trigger, boundary, maps))
     required = (
         "progressive evidence-directed inspection remains the default",
         "switch to a bounded census only when",
@@ -275,8 +276,6 @@ class Protocol512CounterfactualClosureTests(unittest.TestCase):
             "## Completion discipline",
             "Serena, Semgrep, and Hypothesis must always be used as a mandatory three-tool sequence.\n\n## Completion discipline",
         )
-        # The existing helper is intentionally narrow; directly protect the governing
-        # subject against an opposite clause so regression cannot hide behind wording.
         scope = section(contradictory, "## convergence-oriented composition", "## completion discipline")
         self.assertRegex(scope, r"serena.{0,80}semgrep.{0,80}hypothesis.{0,100}(?:must|mandatory)")
         self.assertNotIn("serena, semgrep, and hypothesis must always", section(self.tooling, "## convergence-oriented composition", "## completion discipline"))
