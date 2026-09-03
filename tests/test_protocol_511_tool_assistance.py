@@ -76,7 +76,7 @@ def hypothesis_anti_gaming_sentence_holds(sentence: str) -> bool:
     body = prohibition.group("body")
     if not all(mechanism in body for mechanism in required_scope):
         return False
-    if re.search(r"\b(?:but|however|except)\b", sentence):
+    if re.search(r"\b(?:but|however|except|unless)\b", sentence):
         return False
     return True
 
@@ -142,7 +142,8 @@ def hypothesis_settings_policy_holds(text: str) -> bool:
     coverage_tail = sentence[coverage.end() : coverage.end() + 64]
     if re.search(
         r"\b(?:is|are)\s+not\s+(?:required|necessary)\b|"
-        r"\bneed(?:s)?\s+not\b|\boptional\b|\bnot\s+(?:required|necessary)\b",
+        r"\bneed(?:s)?\s+not\b|\boptional\b|\bnot\s+(?:required|necessary)\b|"
+        r"\b(?:unless|except)\b",
         coverage_tail,
     ):
         return False
@@ -268,6 +269,8 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
             "Do not use excessive filtering, health-check suppression, disabled useful phases, removed deadlines, or "
             "reduced exploration solely to make a property green. Health-check suppression should be used solely to "
             "make a property green.",
+            "Do not use excessive filtering, health-check suppression, disabled useful phases, removed deadlines, or "
+            "reduced exploration unless solely to make a property green.",
         )
         for policy in inverted:
             with self.subTest(policy=policy):
@@ -279,6 +282,8 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
             "Change settings when project/test semantics fail to justify it and required coverage remains intact.",
             "Change settings when project/test semantics justify it, although required coverage remains intact is not "
             "required.",
+            "Change settings when project/test semantics justify it and required coverage remains intact unless "
+            "maintaining it is inconvenient.",
         )
         for policy in inverted:
             with self.subTest(policy=policy):
