@@ -4,26 +4,27 @@ workplan_id: PROTOCOL-5.12-CONVERGENT-DEVELOPMENT
 parent_workplan: ../PROTOCOL-5.12-CONVERGENT-DEVELOPMENT.md
 protocol_version: 5.11.0
 target_protocol_version: 5.12.0
-status: active
+status: completed
+completed_date: 2026-09-03
 reviewed_date: 2026-09-03
-reviewed_candidate: dea9b7a58c1c1cba52617d94fc31745635ed18e1
-review_verdict: no-pass
+reviewed_candidate: c46c67e821a12ba44f17355854a0ff5718b66c43
+review_verdict: pass
 ---
 
-# Protocol 5.12 Convergent Development — Current Authority
+# Protocol 5.12 Convergent Development — Final Authority
 
-## Authority composition and current state
+## Authority composition and final state
 
-The current Design -> Implementation authority is the supplied set:
+The archived final authority is the supplied set:
 
-1. `workplans/active/PROTOCOL-5.12-CONVERGENT-DEVELOPMENT.md`; and
+1. `workplans/archive/PROTOCOL-5.12-CONVERGENT-DEVELOPMENT.md`; and
 2. this `AUTHORITY.md`.
 
-The parent workplan remains the substantive Protocol 5.12 implementation contract. This authority carries accepted Design refinements and the current independent implementation-review result. Where this authority is more specific, it controls.
+The parent workplan remains the substantive Protocol 5.12 implementation contract. This authority preserves the accepted Design refinements and final independent implementation-review result. Where this authority is more specific, it controls.
 
-The Protocol 5.12 **product/design target remains frozen and sound**. Candidate `dea9b7a58c1c1cba52617d94fc31745635ed18e1` is **NO-PASS** because the semantic-regression acceptance family is substantially improved but still not genuinely closed. This remains **incomplete family closure / implementation nonconformance under the existing design**, not a workplan/design deficiency and not a Mode R architecture reopen.
+The Protocol 5.12 **product/design target is frozen, implemented, and accepted**. Exact implementation candidate `c46c67e821a12ba44f17355854a0ff5718b66c43` is **PASS**. The previously open semantic-regression acceptance family is genuinely closed to the evidence-directed sufficiency required by this workplan. No source-architecture, packaging, distribution, lifecycle-role, protocol-version, product-semantics, or acceptance blocker remains.
 
-Do not create a numbered review-revision series for this rework. Git history provides provenance. Reconcile the canonical current authority in place so each new Design -> Implementation handoff remains snapshot-complete.
+The final review did not identify a post-family blocker requiring Mode R. The completed workplan is archived under the repository's normal completed-plan convention. Closure-only archival metadata does not alter the accepted executable/product candidate or invalidate its functional/package evidence.
 
 ## Frozen Protocol 5.12 convergence semantics
 
@@ -104,7 +105,7 @@ frozen target decision must change
 
 ## Binding implementation obligations retained from the frozen Design closure
 
-The parent O1-O12 obligations remain binding. In particular:
+The parent O1-O12 obligations remain the historical release contract. In particular:
 
 - **O1 workflow/workplans:** canonical convergence mechanics include anti-fragmentation/anti-overaggregation, genuine versus incomplete family closure, Design reconsideration outcomes, reviewer saturation/stopping, non-refusal review readiness, and revision economy with snapshot completeness.
 - **O2 architecture/design:** genuine post-family recurrence requires Design reconsideration; same-design structural refactor/consolidation is a valid outcome when frozen target semantics remain sound.
@@ -121,7 +122,7 @@ The parent O1-O12 obligations remain binding. In particular:
 
 ### O10 semantic regression set
 
-Regression protection must establish:
+Regression protection establishes:
 
 1. exact Protocol 5.12 version identity;
 2. unchanged two-role lifecycle;
@@ -157,96 +158,45 @@ Regression protection must establish:
 32. genuinely new still-binding task semantics are reconciled into canonical current authority before the next handoff when snapshot completeness requires it; and
 33. concrete sibling evidence already governed by explicit invariant authority need not be promoted into new normative semantics merely for provenance.
 
-Tests should protect these **semantic distinctions**, not the exact `N/F/R` labels, heading names, or this authority file's wording.
+Tests protect these **semantic distinctions**, not the exact `N/F/R` labels, heading names, or this authority file's wording.
 
-# Current implementation closure review — NO-PASS
+# Final implementation closure review — PASS
 
 ## Reviewed candidate and accepted evidence
 
-Exact reviewed branch candidate:
+Exact reviewed implementation candidate:
 
-`dea9b7a58c1c1cba52617d94fc31745635ed18e1`
+`c46c67e821a12ba44f17355854a0ff5718b66c43`
 
-Relative to the prior reviewed authority candidate `8571f374adc62817149e1f90781cf291929a2ca4`, the persistent implementation delta is confined to `tests/test_protocol_512_counterfactual_closure.py`. Temporary diagnostic workflow/log scaffolding is absent from the final tree, and no canonical Protocol 5.12 source or committed `dist/` content changed.
+Relative to the preceding Design-review authority commit `b5650ff837cea241e758c4367a7334df86df19e5`, the implementation delta is confined to:
 
-The exact candidate has genuine green repository evidence. GitHub Actions run `33784769131` completed successfully on this SHA with the complete regression suite, canonical skill-package build, independent package validation, committed-distribution parity, and `git diff --check`. That evidence is accepted for the claims it actually establishes. It does not override a semantic defect in the acceptance harness itself.
+- `tests/test_protocol_512_convergence.py`; and
+- `tests/test_protocol_512_counterfactual_closure.py`.
 
-## Blocking family: residual contradiction branches remain unproved
+No canonical Protocol 5.12 source or committed `dist/` content changed in the final repair.
 
-### Protected claim
+GitHub Actions run `33787132009` completed successfully on the exact candidate. The repository workflow executed complete unittest discovery, canonical skill-package build, independent package validation, committed-distribution parity, and `git diff --check`; every workflow step completed successfully.
 
-For polarity/relationship-sensitive Protocol 5.12 policy, retained-positive counterfactuals must actually exercise the discriminating branch: a representative forbidden semantic is added while otherwise-valid positive prerequisites remain, and the validator used for the claim must reject that contradictory policy.
+The authority-required focused Protocol 5.12 module selections are semantically subsumed by the successful complete unittest discovery on the same exact candidate: the same two modules and test methods are loaded and executed by `python -m unittest discover -s tests -v`. Requiring an additional duplicate invocation would add no distinct acceptance information and is therefore accepted as equivalent evidence under Protocol 5 evidence-economy rules.
 
-The rework successfully closes most of the previously identified family. The remaining blocker is smaller but genuine and remains within the same semantic-regression acceptance family.
+## Closure of the previously blocking semantic-regression family
 
-### Finding 1 — mandatory three-tool contradiction is not asserted through the validator
+The final bounded repair closes each residual branch identified by the preceding review:
 
-`test_tool_optional_policy_rejects_a_mandatory_pipeline` constructs an otherwise-valid tool-optionality policy and inserts:
+1. **Tool optionality / O10-18:** `tooling_optional_holds` now rejects the retained-positive mandatory Serena/Semgrep/Hypothesis pipeline regardless of the prior modal-order false-pass, and `test_tool_optional_policy_rejects_a_mandatory_pipeline` explicitly asserts rejection. Existing Protocol 5.11 polarity tests independently continue to reject mandatory-three-tool-pipeline inversions, while the canonical source still states that Serena, Semgrep, and Hypothesis are optional engineering instruments.
+2. **Family identity / O10-23:** retained-positive counterfactuals independently exercise separate-file independence, file fragmentation, broad-label family acceptance, and unrelated overaggregation. Each is rejected by the same family-identity validator while the valid positive fixture is first accepted.
+3. **Temporary maps / O10-8:** the bounded-census validator now rejects the retained-positive contradiction that temporary closure maps must be retained permanently, while preserving the valid conditional/nonpersistent source policy.
 
-`Serena, Semgrep, and Hypothesis must always be used as a mandatory three-tool sequence.`
+The earlier retained-positive counterfactual coverage for escalation, incomplete-family routing, post-family Design reconsideration, Mode R, reviewer saturation/bounds, non-refusal, broad independent review, closure horizon, unrelated issue routing, liveness, structural complementarity, mandatory regression/integration, evidence/context/stage economy, fixed-count acceptance, revision economy, current-authority reconciliation, and concrete-evidence routing remains intact.
 
-However, the test never asserts `tooling_optional_holds(contradictory) == False`. It only verifies that the contradictory text exists and that the real source does not contain one exact forbidden sentence.
+## Independent engineering challenge
 
-This is a material false-pass path, not merely missing ceremony. The current `tooling_optional_holds` forbidden regex looks for `must|required to|always` *before* `Serena|Semgrep`, while the constructed contradiction names Serena/Semgrep/Hypothesis first and places `must always` afterward. The retained-positive contradictory fixture therefore still satisfies `tooling_optional_holds`.
+The final review rechecked the exact repair diff, the three residual contradiction branches, the already-closed directional O10 family, Protocol 5.11 tool-optionality precedent, exact branch identity, and exact-candidate repository CI. The corrected tests are representative and contradiction-sensitive without becoming a general natural-language parser, universal mutation framework, semantic ledger, or mandatory analyzer pipeline.
 
-This leaves **O10-18 / O7 tool optionality** under-discriminating despite the test name claiming rejection.
+No evidence-driven reason remains to broaden the review into settled unrelated areas. No product/design premise is invalidated; no duplicate convergence authority, new lifecycle role, hard tool dependency, scope ceiling, universal census, weakened regression/integration rule, or packaging/source-parity drift was introduced by the final repair.
 
-### Finding 2 — O10-23 retained-positive proof does not exercise file fragmentation or overaggregation
+## Final verdict
 
-The new `family_identity` validator contains representative forbidden branches for textual grouping, separate-file independence, broad-label acceptance, file fragmentation, and unrelated overaggregation. But the retained-positive counterfactual test exercises only `Family membership is textual similarity.`
+**PASS.**
 
-The prior all-negative fixture remains vacuous for proving those additional branches because it removes the positive prerequisites. The current suite therefore still lacks the explicitly required retained-positive proof that:
-
-- separate files do not make same-semantic defects independent / file-based fragmentation is rejected; and
-- unrelated subsystem-wide overaggregation/broad-label grouping is rejected.
-
-The helper implementation appears capable of rejecting representative forms, so this is primarily missing durable counterfactual evidence rather than a source-policy defect.
-
-### Finding 3 — O10-8 temporary-map conditionality/non-persistence remains presence-oriented
-
-`bounded_census` now correctly protects conditional bounded census and rejects universal whole-repository census. It also requires the positive phrase that temporary closure maps are not universal persistent traceability artifacts.
-
-But the retained-positive counterfactual for this helper exercises only the whole-repository-census inversion. No retained-positive case proves the distinct O10-8 rule that temporary closure maps remain conditional/nonpersistent rather than becoming mandatory permanent process artifacts. A representative contradiction such as `Temporary closure maps must be retained permanently` can coexist with the positive prerequisites without being rejected by the current validator.
-
-This is a second unexercised directional branch in the same bounded-census/map acceptance family.
-
-### Saturation and routing
-
-The review rechecked the original helper family, the new retained-positive helper family, the explicitly named O10-13/14/15/19/21/22 directional closures, O10-18 tool optionality, O10-23 family identity, O10-8 bounded-census/map semantics, final tree delta, and exact-candidate CI. The new broad-review, closure-horizon, unrelated-issue, mandatory regression/integration, evidence-economy, fixed-count, review-saturation, review-nonrefusal, escalation, liveness, structural-complementarity, revision-economy, current-authority, and concrete-evidence counterfactuals are materially discriminating enough for this task. Further reviewer enumeration would mainly duplicate the remaining implementation repair.
-
-No independent source-architecture, packaging, distribution, lifecycle-role, protocol-version, or product-semantics blocker was found. This remains **incomplete family closure under the frozen design**. It is not genuine post-family recurrence for Mode R because the claimed family closure still contains known unexercised/false-pass branches.
-
-## Required final family-completion patch
-
-Implementation must complete this same acceptance family in one bounded patch before the next comprehensive Design review.
-
-1. **Repair tool-optionality counterfactual end to end.** Make `tooling_optional_holds` reject the representative retained-positive mandatory-pipeline fixture regardless of whether the modal (`must`/`mandatory`/equivalent representative form) appears before or after the Serena/Semgrep/Hypothesis names. In `test_tool_optional_policy_rejects_a_mandatory_pipeline`, first prove the positive fixture passes, then explicitly assert that the contradictory fixture fails the same validator. Keep this representative and bounded; do not build a general natural-language parser.
-2. **Exercise O10-23's remaining branches.** Add retained-positive counterfactuals that independently add representative separate-file/file-fragmentation and broad-label/unrelated-overaggregation contradictions and assert `family_identity` rejects them. Reuse the existing positive fixture and helper; do not add another policy framework.
-3. **Exercise O10-8 map conditionality/non-persistence.** Add a retained-positive bounded-census/map fixture plus a representative contradiction that makes temporary closure maps mandatory/permanent, and assert the same validator rejects it. Harden `bounded_census` only as needed to reject that governed representative forbidden realization while retaining the correct source policy.
-4. **Preserve the already-closed family members.** Do not weaken or remove the new retained-positive cases for escalation, review saturation/bounds, non-refusal, broad independent review, closure horizon, unrelated issue routing, liveness, structural complementarity, regression/integration mandatory status, evidence/context/stage economy, fixed-count acceptance, revision economy, current-authority reconciliation, or concrete evidence.
-5. **Keep source semantics stable.** Current canonical Protocol 5.12 policy is accepted. Do not rewrite `source/` merely to satisfy matcher wording unless the corrected tests independently expose a real source contradiction. If source remains unchanged, do not manufacture `dist/` churn.
-6. **Keep this one test-family repair.** No new lifecycle role, ledger, matrix, universal scan, mandatory analyzer sequence, or persistent diagnostic scaffold.
-
-## Required acceptance for the next candidate
-
-After task-owned changes are stable, execute on the exact candidate:
-
-```bash
-python -m unittest tests.test_protocol_512_convergence -v
-python -m unittest tests.test_protocol_512_counterfactual_closure -v
-python -m unittest discover -s tests -v
-python source/build_skills.py --output /tmp/protocol-dist
-python source/validate_packages.py --dist /tmp/protocol-dist
-python source/check_dist.py --expected /tmp/protocol-dist --committed dist
-git diff --check
-```
-
-If canonical shipped source changes, regenerate committed `dist/` before parity checking. If only tests change, do not manufacture distribution churn; still run fresh build/validation/parity checks to prove shipped artifacts remain valid.
-
-Before the next Design review, reconcile the exact candidate against O1-O12 plus this authority and verify that no temporary rework scaffolding remains.
-
-## Current verdict and next handoff
-
-**NO-PASS.**
-
-The blocking family is still implementation acceptance nonconformance. Close the three residual contradiction branches above in one bounded test-family patch, run the exact-candidate acceptance chain, and then request one comprehensive independent closure review.
+Protocol 5.12 satisfies the frozen parent workplan and final authority to evidence-directed sufficiency. The workplan is complete and archived. Further changes are new work, not continuation of this implementation closure cycle.

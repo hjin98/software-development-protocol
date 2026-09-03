@@ -3,7 +3,8 @@ kind: implementation-workplan
 workplan_id: PROTOCOL-5.12-CONVERGENT-DEVELOPMENT
 protocol_version: 5.11.0
 target_protocol_version: 5.12.0
-status: active
+status: completed
+completed_date: 2026-09-03
 created_date: 2026-09-03
 base_commit: 9cc44fc05732416bf8ca4744cf7ee68b54581ee4
 review_source: mdstats-storage-io-reset-nonconvergence-postmortem
