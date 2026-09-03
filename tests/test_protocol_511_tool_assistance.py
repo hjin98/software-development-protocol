@@ -107,8 +107,6 @@ def hypothesis_anti_gaming_policy_holds(text: str) -> bool:
         r"|^\s*(?:use|apply|employ|introduce)\b"
     )
     for sentence in governed:
-        if hypothesis_anti_gaming_sentence_holds(sentence):
-            continue
         if re.search(positive_policy, sentence):
             return False
     return True
@@ -139,11 +137,13 @@ def hypothesis_settings_policy_holds(text: str) -> bool:
     )
     if coverage is None or coverage.start() < justification.end():
         return False
-    coverage_tail = sentence[coverage.end() : coverage.end() + 64]
+    coverage_tail = sentence[coverage.end() : coverage.end() + 128]
     if re.search(
         r"\b(?:is|are)\s+not\s+(?:required|necessary)\b|"
         r"\bneed(?:s)?\s+not\b|\boptional\b|\bnot\s+(?:required|necessary)\b|"
-        r"\b(?:unless|except)\b",
+        r"\b(?:unless|except)\b|"
+        r"\b(?:required\s+)?coverage\b.{0,32}\b(?:may|can|should|must)\b.{0,32}"
+        r"\b(?:be\s+)?(?:discarded|dropped|removed|reduced|relaxed|weakened|omitted|ignored)\b",
         coverage_tail,
     ):
         return False
@@ -271,6 +271,9 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
             "make a property green.",
             "Do not use excessive filtering, health-check suppression, disabled useful phases, removed deadlines, or "
             "reduced exploration unless solely to make a property green.",
+            "Do not use excessive filtering, health-check suppression, disabled useful phases, removed deadlines, or "
+            "reduced exploration solely to make a property green; health-check suppression should be used solely to "
+            "make a property green.",
         )
         for policy in inverted:
             with self.subTest(policy=policy):
@@ -284,6 +287,8 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
             "required.",
             "Change settings when project/test semantics justify it and required coverage remains intact unless "
             "maintaining it is inconvenient.",
+            "Change settings when project/test semantics justify it and required coverage remains intact; required "
+            "coverage may then be discarded.",
         )
         for policy in inverted:
             with self.subTest(policy=policy):
