@@ -133,9 +133,25 @@ def structural_complement_holds(text: str) -> bool:
 
 def tooling_optional_holds(text: str) -> bool:
     scope = section(text, "## convergence-oriented composition", "## completion discipline") or text.lower()
-    return all(re.search(p, scope, re.DOTALL) for p in (r"optional tools", r"tool absence does not relax family closure", r"tool presence does not make.{0,100}three-tool sequence mandatory")) and not re.search(
-        r"(?:must|required to|always).{0,100}(?:serena|semgrep).{0,180}(?:hypothesis|three-tool)", scope, re.DOTALL
-    )
+    if not all(
+        re.search(p, scope, re.DOTALL)
+        for p in (
+            r"optional tools",
+            r"tool absence does not relax family closure",
+            r"tool presence does not make.{0,100}three-tool sequence mandatory",
+        )
+    ):
+        return False
+    for clause in re.split(r";\s*|(?<=[.!?])\s+", scope):
+        if not all(name in clause for name in ("serena", "semgrep", "hypothesis")):
+            continue
+        if re.search(r"\b(?:must|always|required to)\b", clause):
+            return False
+        if re.search(r"\bmandatory\b.{0,40}\b(?:three-tool|pipeline|sequence)\b", clause) and not re.search(
+            r"\b(?:not|without)\b.{0,40}\bmandatory\b", clause
+        ):
+            return False
+    return True
 
 
 def revision_economy_holds(text: str) -> bool:

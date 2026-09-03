@@ -82,6 +82,12 @@ def bounded_census(text: str) -> bool:
     )
     if not all(x in scope for x in required):
         return False
+    if re.search(
+        r"temporary closure maps.{0,100}(?:must|required|mandatory|always).{0,100}(?:permanent|persist|retain)",
+        scope,
+        re.S,
+    ):
+        return False
     return not re.search(r"(?:(?:always|required|mandatory).{0,100}(?:whole repository|persistent traceability)|whole repository.{0,100}(?:always|required|mandatory)|persistent traceability.{0,100}(?:always|required|mandatory))", scope, re.S)
 
 
@@ -269,6 +275,21 @@ class Protocol512CounterfactualClosureTests(unittest.TestCase):
         count = "No recurrence count, review count, cycle budget, or convergence target can force acceptance; escalation changes the engineering method, not the pass threshold."
         check_pair(self, no_forced_acceptance, count, "A fixed review count forces acceptance.")
 
+    def test_o10_23_family_identity_rejects_fragmentation_and_overaggregation(self) -> None:
+        family = "### Semantic defect families\nFamily membership is not textual similarity. Separate files do not make defects independent. Broad labels are not valid families. Do not fragment one family and do not overaggregate unrelated defects.\n\n### Family closure after recurrence\n"
+        for contradiction in (
+            "Separate files make defects independent.",
+            "Fragment by file.",
+            "Broad labels are valid families.",
+            "Overaggregate unrelated defects.",
+        ):
+            with self.subTest(contradiction=contradiction):
+                check_pair(self, family_identity, family, contradiction, "### Family closure after recurrence")
+
+    def test_o10_08_temporary_maps_remain_conditional_and_nonpersistent(self) -> None:
+        census = "Progressive evidence-directed inspection remains the default. Switch to a bounded census only when recurrence establishes a family; bound it rather than the whole repository. Temporary closure maps are allowed; they are not universal persistent traceability artifacts."
+        check_pair(self, bounded_census, census, "Temporary closure maps must be retained permanently.")
+
     def test_tool_optional_policy_rejects_a_mandatory_pipeline(self) -> None:
         positive = "## Convergence-oriented composition\nThese are optional tools. Tool absence does not relax family closure. Tool presence does not make a three-tool sequence mandatory.\n\n## Completion discipline\n"
         self.assertTrue(tooling_optional_holds(positive))
@@ -276,6 +297,7 @@ class Protocol512CounterfactualClosureTests(unittest.TestCase):
             "## Completion discipline",
             "Serena, Semgrep, and Hypothesis must always be used as a mandatory three-tool sequence.\n\n## Completion discipline",
         )
+        self.assertFalse(tooling_optional_holds(contradictory))
         scope = section(contradictory, "## convergence-oriented composition", "## completion discipline")
         self.assertRegex(scope, r"serena.{0,80}semgrep.{0,80}hypothesis.{0,100}(?:must|mandatory)")
         self.assertNotIn("serena, semgrep, and hypothesis must always", section(self.tooling, "## convergence-oriented composition", "## completion discipline"))
