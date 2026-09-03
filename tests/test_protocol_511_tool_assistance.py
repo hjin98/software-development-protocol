@@ -29,10 +29,14 @@ def paragraph_containing(text: str, needle: str) -> str:
     raise AssertionError(f"no paragraph contains {needle!r}")
 
 
+def sentences_in_paragraph(text: str, needle: str) -> list[str]:
+    paragraph = paragraph_containing(text, needle)
+    return re.split(r"(?<=[.!?])\s+", paragraph)
+
+
 def sentence_containing(text: str, needle: str) -> str:
     needle = needle.lower()
-    paragraph = paragraph_containing(text, needle)
-    for sentence in re.split(r"(?<=[.!?])\s+", paragraph):
+    for sentence in sentences_in_paragraph(text, needle):
         if needle in sentence:
             return sentence
     raise AssertionError(f"no sentence contains {needle!r}")
@@ -53,7 +57,7 @@ def negative_subject_policy_holds(sentence: str, subject: str) -> bool:
 
 
 def hypothesis_anti_gaming_policy_holds(text: str) -> bool:
-    sentence = sentence_containing(text, "health-check suppression")
+    sentences = sentences_in_paragraph(text, "health-check suppression")
     required_scope = (
         "filtering",
         "health-check suppression",
@@ -61,21 +65,50 @@ def hypothesis_anti_gaming_policy_holds(text: str) -> bool:
         "removed deadlines",
         "reduced exploration",
     )
-    if not all(mechanism in sentence for mechanism in required_scope):
+    purpose = r"\b(?:solely|merely)\s+to\s+(?:make|manufacture)\s+(?:a\s+)?property\s+green\b"
+    anti_gaming = next(
+        (
+            sentence
+            for sentence in sentences
+            if "health-check suppression" in sentence and re.search(purpose, sentence)
+        ),
+        None,
+    )
+    if anti_gaming is None:
         return False
-    if not re.search(r"\b(?:do not|must not|never)\b", sentence):
+    if not all(mechanism in anti_gaming for mechanism in required_scope):
         return False
-    if not re.search(
-        r"\b(?:solely|merely)\s+to\s+(?:make|manufacture)\s+(?:a\s+)?property\s+green\b",
+    if not re.search(r"\b(?:do not|must not|never)\b", anti_gaming):
+        return False
+    if re.search(r"\b(?:but|however|except)\b", anti_gaming):
+        return False
+
+    permission = r"\b(?:may|can|allow(?:ed)?|permit(?:ted)?)\b"
+    for sentence in sentences:
+        if not any(mechanism in sentence for mechanism in required_scope):
+            continue
+        if re.search(permission, sentence) and re.search(purpose, sentence):
+            return False
+    return True
+
+
+def hypothesis_settings_policy_holds(text: str) -> bool:
+    sentence = sentence_containing(text, "change settings")
+    if "required coverage remains intact" not in sentence:
+        return False
+    if not re.search(r"\bchange settings\b.{0,80}\bwhen\b", sentence):
+        return False
+
+    justification = re.search(
+        r"\bsemantics\b(?P<link>.{0,32})\bjustif(?:y|ies|ied)\b",
         sentence,
-    ):
-        return False
-    if re.search(r"\b(?:but|however|except)\b", sentence):
+    )
+    if justification is None:
         return False
     if re.search(
-        r"\b(?:allow(?:ed)?|permit(?:ted)?|may|can)\b.{0,120}\bhealth-check suppression\b"
-        r"|\bhealth-check suppression\b.{0,120}\b(?:allow(?:ed)?|permit(?:ted)?|may|can)\b",
-        sentence,
+        r"\b(?:not|never|no)\b|\bfail(?:s|ed)?\s+to\b|"
+        r"\b(?:don't|doesn't|didn't|cannot|can't)\b",
+        justification.group("link"),
     ):
         return False
     return True
@@ -182,9 +215,7 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
             self.assertIn(phrase, text)
 
         self.assertTrue(hypothesis_anti_gaming_policy_holds(text))
-        settings = sentence_containing(text, "change settings")
-        self.assertRegex(settings, r"\bchange settings\b.{0,100}\bjustify\w*\b")
-        self.assertIn("required coverage remains intact", settings)
+        self.assertTrue(hypothesis_settings_policy_holds(text))
 
     def test_hypothesis_anti_gaming_matcher_rejects_partial_inversion(self) -> None:
         inverted = (
@@ -192,10 +223,22 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
             "Disabled useful phases, removed deadlines, and reduced exploration are also prohibited.",
             "Do not use excessive filtering, disabled useful phases, removed deadlines, or reduced exploration solely "
             "to make a property green. Health-check suppression may be used solely to make a property green.",
+            "Do not use excessive filtering, health-check suppression, disabled useful phases, removed deadlines, or "
+            "reduced exploration solely to make a property green. Health-check suppression may be used solely to make "
+            "a property green when failures are inconvenient.",
         )
         for policy in inverted:
             with self.subTest(policy=policy):
                 self.assertFalse(hypothesis_anti_gaming_policy_holds(policy))
+
+    def test_hypothesis_settings_matcher_rejects_inverted_justification(self) -> None:
+        inverted = (
+            "Change settings when project/test semantics do not justify it and required coverage remains intact.",
+            "Change settings when project/test semantics fail to justify it and required coverage remains intact.",
+        )
+        for policy in inverted:
+            with self.subTest(policy=policy):
+                self.assertFalse(hypothesis_settings_policy_holds(policy))
 
     def test_external_services_require_explicit_authorization(self) -> None:
         text = read(TOOL_REFERENCE).lower()
