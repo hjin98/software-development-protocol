@@ -42,6 +42,13 @@ def paragraph_containing(text: str, needle: str) -> str:
     raise AssertionError(f"no paragraph contains {needle!r}")
 
 
+def section_between(text: str, start_heading: str, end_heading: str) -> str:
+    lowered = text.lower()
+    start = lowered.index(start_heading.lower())
+    end = lowered.index(end_heading.lower(), start)
+    return lowered[start:end]
+
+
 def policy_clauses_in_paragraph(text: str, needle: str) -> list[str]:
     paragraph = paragraph_containing(text, needle)
     return [
@@ -270,13 +277,17 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
         ):
             self.assertIn(phrase, text)
 
-        zero_findings = paragraph_containing(text, "`0 findings`")
+        negative_evidence = section_between(
+            text,
+            "### negative evidence and scan scope",
+            "### external services and generated fixes",
+        )
         for phrase in (
             "meaningful only relative to the actual scan contract",
             "target paths and languages actually scanned",
             "rule and analysis limitations that can create false negatives",
         ):
-            self.assertIn(phrase, zero_findings)
+            self.assertIn(phrase, negative_evidence)
 
         external_rules = paragraph_containing(text, "volatile network-fetched ruleset")
         self.assertIn(
