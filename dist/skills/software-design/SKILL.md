@@ -21,6 +21,7 @@ Before substantive role reasoning, apply these explicit routes. A **MUST read** 
 ### Domain-conditional routes
 
 - When repository inspection strategy or context economy becomes material, read [Repository intake](references/repository-intake.md).
+- When semantic repository navigation, static/structural analysis, or property/stateful-test design would materially improve the task, read [Tool-assisted engineering](references/tool-assisted-engineering.md).
 - When specification/API/schema ownership or implementation fidelity becomes material, read [Specification and implementation](references/specification-and-implementation.md).
 - When documentation authority or evidence communication becomes material, read [Documentation and evidence](references/documentation-and-evidence.md).
 - When packaging, installation, compatibility distribution, or release mechanics become material, read [Release and distribution](references/release-and-distribution.md).
