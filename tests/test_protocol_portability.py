@@ -13,16 +13,17 @@ EXPECTED_REFERENCES = {
     "roles/software-design": {
         "workflow-and-workplans.md", "testing-and-validation.md", "protocol-versioning-and-compatibility.md",
         "architecture-and-design.md", "documentation-and-evidence.md", "specification-and-implementation.md",
-        "release-and-distribution.md", "repository-intake.md", "configuration-and-policy.md",
-        "concurrency-and-orchestration.md", "security-and-trust-boundaries.md", "performance-and-parallelism.md",
-        "storage-and-io.md", "scientific-software.md",
+        "release-and-distribution.md", "repository-intake.md", "tool-assisted-engineering.md",
+        "configuration-and-policy.md", "concurrency-and-orchestration.md", "security-and-trust-boundaries.md",
+        "performance-and-parallelism.md", "storage-and-io.md", "scientific-software.md",
     },
     "roles/software-implementation": {
         "workflow-and-workplans.md", "testing-and-validation.md", "protocol-versioning-and-compatibility.md",
         "architecture-and-design.md", "debugging-and-state-recovery.md", "documentation-and-evidence.md",
         "specification-and-implementation.md", "release-and-distribution.md", "repository-intake.md",
-        "git-and-version-control.md", "configuration-and-policy.md", "concurrency-and-orchestration.md",
-        "security-and-trust-boundaries.md", "performance-and-parallelism.md", "storage-and-io.md", "scientific-software.md",
+        "git-and-version-control.md", "tool-assisted-engineering.md", "configuration-and-policy.md",
+        "concurrency-and-orchestration.md", "security-and-trust-boundaries.md", "performance-and-parallelism.md",
+        "storage-and-io.md", "scientific-software.md",
     },
     "specialists/software-documentation": {
         "workflow-and-workplans.md", "testing-and-validation.md", "protocol-versioning-and-compatibility.md",

@@ -71,9 +71,12 @@ class WorkplanLifecycleTests(unittest.TestCase):
         self.assertIn("completed_date: 2026-08-29", text)
         active_names = {path.name for path in (ROOT / "workplans/active").glob("*.md")}
         self.assertTrue(active_names)
-        allowed_new_plan = "PROTOCOL-5.10-SNAPSHOT-COMPLETE-HANDOFFS.md"
+        allowed_new_plans = {
+            "PROTOCOL-5.10-SNAPSHOT-COMPLETE-HANDOFFS.md",
+            "PROTOCOL-5.11-TOOL-ASSISTED-ENGINEERING.md",
+        }
         self.assertTrue(
-            all(name.startswith("PROTOCOL-5.9-") or name == allowed_new_plan for name in active_names),
+            all(name.startswith("PROTOCOL-5.9-") or name in allowed_new_plans for name in active_names),
             active_names,
         )
 

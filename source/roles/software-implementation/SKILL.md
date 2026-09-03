@@ -21,6 +21,7 @@ Before substantive implementation reasoning, apply these explicit routes. A **MU
 ### Domain-conditional routes
 
 - When repository inspection strategy or context economy becomes material, read [Repository intake](references/repository-intake.md).
+- When semantic repository navigation/editing, static/structural analysis, or property/stateful testing would materially improve the task, read [Tool-assisted engineering](references/tool-assisted-engineering.md).
 - When debugging, recovery, or state reconstruction becomes material, read [Debugging and state recovery](references/debugging-and-state-recovery.md).
 - When specification/API/schema ownership or implementation fidelity becomes material, read [Specification and implementation](references/specification-and-implementation.md).
 - When documentation authority or evidence communication becomes material, read [Documentation and evidence](references/documentation-and-evidence.md).

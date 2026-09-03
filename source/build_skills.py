@@ -43,6 +43,7 @@ ROLE_SPECS = {
             "specification-and-implementation.md",
             "release-and-distribution.md",
             "repository-intake.md",
+            "tool-assisted-engineering.md",
         ] + CROSS_CUTTING + ENGINEERING_FITNESS,
         "templates": ["implementation_workplan_template.md"],
     },
@@ -56,6 +57,7 @@ ROLE_SPECS = {
             "release-and-distribution.md",
             "repository-intake.md",
             "git-and-version-control.md",
+            "tool-assisted-engineering.md",
         ] + CROSS_CUTTING + ENGINEERING_FITNESS,
         "templates": [],
     },
@@ -218,6 +220,7 @@ def build(output: Path) -> None:
         + "\n",
         encoding="utf-8",
     )
+
 
 def main() -> int:
     parser = argparse.ArgumentParser()
