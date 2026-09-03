@@ -24,6 +24,8 @@ Protocol 5.9 is a backward-compatible **agent-portable deterministic-routing ref
 
 Protocol 5.10 is a backward-compatible **snapshot-complete handoff refinement**. It preserves the Protocol 5 hierarchy, two-role lifecycle, Protocol 5.9 deterministic routing/distribution architecture, and all Protocol 5.4-5.9 hardening semantics unchanged while requiring accepted Design -> Implementation handoff artifact sets to carry every still-binding task-specific semantic without depending on Git history, prior conversation/review context, superseded revisions, or unsupplied external resources. Current supplied multi-document composition and generic protocol inheritance remain valid; the release strengthens handoff portability and implementation intake, not prior engineering doctrine or acceptance semantics.
 
+Protocol 5.11 is a backward-compatible **tool-assisted engineering methodology and capability refinement**. It preserves the Protocol 5 hierarchy, two-role lifecycle, Protocol 5.9 routing/distribution architecture, Protocol 5.10 snapshot-complete handoffs, and all Protocol 5.4-5.10 hardening semantics unchanged while adding optional capability-aware guidance for Serena semantic repository work, Semgrep structural/variant analysis, and Hypothesis property/stateful testing. These tools remain evidence and development instruments rather than generic dependencies, lifecycle gates, normative task authority, or substitutes for affected regression and real-boundary integration.
+
 The two-role lifecycle remains unchanged:
 
 ```text
@@ -54,4 +56,4 @@ Preserve software compatibility when the product contract requires it. Compatibi
 
 ## Earlier protocol versions
 
-Completed work under earlier protocol versions remains valid historical work under the version that governed it. Active older workplans do not automatically adopt Protocol 5.10 or any other later release. They may continue under their declared version or explicitly adopt a newer backward-compatible version after reconciling changed obligations. A protocol-version change alone does not require repeating still-valid evidence unless a newly adopted requirement or affected dimension invalidates the claim.
+Completed work under earlier protocol versions remains valid historical work under the version that governed it. Active older workplans do not automatically adopt Protocol 5.11 or any other later release. They may continue under their declared version or explicitly adopt a newer backward-compatible version after reconciling changed obligations. A protocol-version change alone does not require repeating still-valid evidence unless a newly adopted requirement or affected dimension invalidates the claim.
