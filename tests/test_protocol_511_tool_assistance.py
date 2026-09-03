@@ -15,6 +15,19 @@ import build_skills  # noqa: E402
 
 REFERENCE = "tool-assisted-engineering.md"
 TOOL_REFERENCE = "source/shared/references/tool-assisted-engineering.md"
+ANTI_GAMING_MECHANISMS = (
+    "excessive filtering",
+    "assume",
+    "over-narrow strategies",
+    "exclusions",
+    "health-check suppression",
+    "disabled useful phases",
+    "removed deadlines",
+    "reduced exploration",
+)
+GREEN_PROPERTY_PURPOSE = (
+    r"\b(?:solely|merely)\s+to\s+(?:make|manufacture)\s+(?:a\s+)?property\s+green\b"
+)
 
 
 def read(path: str) -> str:
@@ -29,21 +42,17 @@ def paragraph_containing(text: str, needle: str) -> str:
     raise AssertionError(f"no paragraph contains {needle!r}")
 
 
-def sentences_in_paragraph(text: str, needle: str) -> list[str]:
+def policy_clauses_in_paragraph(text: str, needle: str) -> list[str]:
     paragraph = paragraph_containing(text, needle)
-    return re.split(r"(?<=[.!?])\s+", paragraph)
+    return [
+        clause.strip()
+        for clause in re.split(r";\s*|(?<=[.!?])\s+", paragraph)
+        if clause.strip()
+    ]
 
 
-def sentence_containing(text: str, needle: str) -> str:
-    needle = needle.lower()
-    for sentence in sentences_in_paragraph(text, needle):
-        if needle in sentence:
-            return sentence
-    raise AssertionError(f"no sentence contains {needle!r}")
-
-
-def negative_subject_policy_holds(sentence: str, subject: str) -> bool:
-    sentence = sentence.lower()
+def negative_subject_clause_holds(clause: str, subject: str) -> bool:
+    clause = clause.lower()
     subject_pattern = re.escape(subject.lower())
     article = r"(?:an?\s+)?"
     patterns = (
@@ -53,74 +62,77 @@ def negative_subject_policy_holds(sentence: str, subject: str) -> bool:
         rf"(?:(?:be|become|form|require|use)\s+)?{article}{subject_pattern}\b",
         rf"\bnever\s+(?:becomes?|forms?|requires?|uses?)\s+{article}{subject_pattern}\b",
     )
-    return any(re.search(pattern, sentence) for pattern in patterns)
+    return any(re.search(pattern, clause) for pattern in patterns)
 
 
-def hypothesis_anti_gaming_sentence_holds(sentence: str) -> bool:
-    sentence = sentence.lower()
-    required_scope = (
-        "filtering",
-        "health-check suppression",
-        "disabled useful phases",
-        "removed deadlines",
-        "reduced exploration",
+def negative_subject_policy_holds(text: str, subject: str) -> bool:
+    clauses = [
+        clause
+        for clause in policy_clauses_in_paragraph(text, subject)
+        if subject.lower() in clause
+    ]
+    return bool(clauses) and all(
+        negative_subject_clause_holds(clause, subject) for clause in clauses
     )
-    purpose = r"\b(?:solely|merely)\s+to\s+(?:make|manufacture)\s+(?:a\s+)?property\s+green\b"
+
+
+def hypothesis_anti_gaming_clause_holds(clause: str) -> bool:
+    clause = clause.lower()
+    if not re.search(GREEN_PROPERTY_PURPOSE, clause):
+        return False
+
+    present = [mechanism for mechanism in ANTI_GAMING_MECHANISMS if mechanism in clause]
+    if not present:
+        return False
+
     prohibition = re.search(
         rf"\b(?:(?:do|does)\s+not|must\s+not|never)\s+"
-        rf"(?:use|apply|employ|introduce|rely\s+on)\b(?P<body>.{{0,420}}?{purpose})",
-        sentence,
+        rf"(?:use|apply|employ|introduce|rely\s+on)\b"
+        rf"(?P<body>.{{0,520}}?{GREEN_PROPERTY_PURPOSE})",
+        clause,
     )
     if prohibition is None:
         return False
+
     body = prohibition.group("body")
-    if not all(mechanism in body for mechanism in required_scope):
+    if not all(mechanism in body for mechanism in present):
         return False
-    if re.search(r"\b(?:but|however|except|unless)\b", sentence):
+    if re.search(r"\b(?:but|however|except|unless)\b", clause):
         return False
     return True
 
 
 def hypothesis_anti_gaming_policy_holds(text: str) -> bool:
-    sentences = sentences_in_paragraph(text, "health-check suppression")
-    required_scope = (
-        "filtering",
-        "health-check suppression",
-        "disabled useful phases",
-        "removed deadlines",
-        "reduced exploration",
-    )
-    purpose = r"\b(?:solely|merely)\s+to\s+(?:make|manufacture)\s+(?:a\s+)?property\s+green\b"
+    clauses = policy_clauses_in_paragraph(text, "health-check suppression")
     governed = [
-        sentence
-        for sentence in sentences
-        if any(mechanism in sentence for mechanism in required_scope) and re.search(purpose, sentence)
+        clause
+        for clause in clauses
+        if re.search(GREEN_PROPERTY_PURPOSE, clause)
+        and any(mechanism in clause for mechanism in ANTI_GAMING_MECHANISMS)
     ]
-    if not governed or not any(hypothesis_anti_gaming_sentence_holds(sentence) for sentence in governed):
+    if not governed or not all(
+        hypothesis_anti_gaming_clause_holds(clause) for clause in governed
+    ):
         return False
 
-    positive_policy = (
-        r"\b(?:may|can|should|must|ought\s+to)\s+(?:be\s+)?"
-        r"(?:use(?:d)?|apply|applied|employ(?:ed)?|introduce(?:d)?)\b"
-        r"|\b(?:is|are)\s+(?:allowed|permitted|recommended|required|encouraged)\b"
-        r"|\b(?:allowed|permitted|recommended|required|encouraged)\s+to\b"
-        r"|^\s*(?:use|apply|employ|introduce)\b"
-    )
-    for sentence in governed:
-        if re.search(positive_policy, sentence):
-            return False
-    return True
+    covered = {
+        mechanism
+        for clause in governed
+        for mechanism in ANTI_GAMING_MECHANISMS
+        if mechanism in clause
+    }
+    return covered == set(ANTI_GAMING_MECHANISMS)
 
 
-def hypothesis_settings_policy_holds(text: str) -> bool:
-    sentence = sentence_containing(text, "change settings")
-    change_condition = re.search(r"\bchange settings\b.{0,80}\bwhen\b", sentence)
+def hypothesis_settings_clause_holds(clause: str) -> bool:
+    clause = clause.lower()
+    change_condition = re.search(r"\bchange settings\b.{0,80}\bwhen\b", clause)
     if change_condition is None:
         return False
 
     justification = re.search(
         r"\bsemantics\b(?P<link>.{0,32})\bjustif(?:y|ies|ied)\b",
-        sentence,
+        clause,
     )
     if justification is None:
         return False
@@ -133,21 +145,38 @@ def hypothesis_settings_policy_holds(text: str) -> bool:
 
     coverage = re.search(
         r"\brequired coverage\s+(?:remains?|stays?|is\s+(?:kept|preserved))\s+intact\b",
-        sentence,
+        clause,
     )
     if coverage is None or coverage.start() < justification.end():
         return False
-    coverage_tail = sentence[coverage.end() : coverage.end() + 128]
+
+    coverage_tail = clause[coverage.end() :]
     if re.search(
         r"\b(?:is|are)\s+not\s+(?:required|necessary)\b|"
         r"\bneed(?:s)?\s+not\b|\boptional\b|\bnot\s+(?:required|necessary)\b|"
-        r"\b(?:unless|except)\b|"
-        r"\b(?:required\s+)?coverage\b.{0,32}\b(?:may|can|should|must)\b.{0,32}"
-        r"\b(?:be\s+)?(?:discarded|dropped|removed|reduced|relaxed|weakened|omitted|ignored)\b",
+        r"\b(?:unless|except)\b",
         coverage_tail,
     ):
         return False
     return True
+
+
+def hypothesis_settings_policy_holds(text: str) -> bool:
+    clauses = policy_clauses_in_paragraph(text, "change settings")
+    relevant = [
+        clause
+        for clause in clauses
+        if "change settings" in clause or "required coverage" in clause
+    ]
+    governing = [clause for clause in relevant if "change settings" in clause]
+    if not governing or not all(
+        hypothesis_settings_clause_holds(clause) for clause in governing
+    ):
+        return False
+
+    # A second settings/coverage clause must not silently reopen the condition.
+    # Reject it unless it is itself another complete governing clause.
+    return len(relevant) == len(governing)
 
 
 class Protocol511ToolAssistanceTests(unittest.TestCase):
@@ -157,7 +186,11 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
             "source/roles/software-implementation/SKILL.md",
         ):
             text = read(rel)
-            line = next(line for line in text.splitlines() if "](references/tool-assisted-engineering.md)" in line)
+            line = next(
+                line
+                for line in text.splitlines()
+                if "](references/tool-assisted-engineering.md)" in line
+            )
             self.assertIn("material", line.lower(), rel)
             self.assertNotIn("MUST read", line, rel)
 
@@ -171,25 +204,30 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
             dist = Path(tmp) / "dist"
             build_skills.build(dist)
             for role in build_skills.ROLE_SPECS:
-                self.assertTrue((dist / "skills" / role / "references" / REFERENCE).is_file())
+                self.assertTrue(
+                    (dist / "skills" / role / "references" / REFERENCE).is_file()
+                )
             for specialist in build_skills.SPECIALIST_SPECS:
-                self.assertFalse((dist / "skills" / specialist / "references" / REFERENCE).exists())
+                self.assertFalse(
+                    (dist / "skills" / specialist / "references" / REFERENCE).exists()
+                )
 
     def test_source_readme_keeps_tool_method_in_one_canonical_owner(self) -> None:
         readme = read("source/README.md").lower()
         self.assertIn("shared/references/tool-assisted-engineering.md", readme)
         self.assertIn("optional capability-aware tool-assisted engineering guidance", readme)
         self.assertNotIn("## tool-assisted engineering", readme)
-        self.assertNotRegex(readme, r"(?m)^-\s+(?:\*\*)?(?:serena|semgrep|hypothesis)\b")
+        self.assertNotRegex(
+            readme,
+            r"(?m)^-\s+(?:\*\*)?(?:serena|semgrep|hypothesis)\b",
+        )
 
     def test_tool_selection_is_optional_and_composition_is_not_ceremonial(self) -> None:
         text = read(TOOL_REFERENCE).lower()
         self.assertIn("tool availability alone is not a reason", text)
         self.assertIn("tool unavailability is not an acceptance failure", text)
-        composition = sentence_containing(text, "mandatory three-tool pipeline")
         self.assertTrue(
-            negative_subject_policy_holds(composition, "mandatory three-tool pipeline"),
-            composition,
+            negative_subject_policy_holds(text, "mandatory three-tool pipeline")
         )
         self.assertIn("do not invoke another tool merely to duplicate evidence", text)
         self.assertIn("defect diagnosis and variant analysis", text)
@@ -201,11 +239,12 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
             "The tools can reinforce one another and form a mandatory three-tool pipeline.",
             "This is a mandatory three-tool pipeline. Do not duplicate evidence.",
             "The tools form a mandatory three-tool pipeline without extra ceremony.",
+            "The tools can reinforce one another without becoming a mandatory three-tool pipeline; "
+            "a mandatory three-tool pipeline is required.",
         )
         for policy in inverted:
             with self.subTest(policy=policy):
-                sentence = sentence_containing(policy, subject)
-                self.assertFalse(negative_subject_policy_holds(sentence, subject))
+                self.assertFalse(negative_subject_policy_holds(policy, subject))
 
     def test_serena_guidance_protects_backend_completeness_mutation_and_memory(self) -> None:
         text = read(TOOL_REFERENCE).lower()
@@ -232,7 +271,22 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
             self.assertIn(phrase, text)
 
         zero_findings = paragraph_containing(text, "`0 findings`")
-        self.assertIn("meaningful only relative to the actual scan contract", zero_findings)
+        for phrase in (
+            "meaningful only relative to the actual scan contract",
+            "target paths and languages actually scanned",
+            "rule and analysis limitations that can create false negatives",
+        ):
+            self.assertIn(phrase, zero_findings)
+
+        external_rules = paragraph_containing(text, "volatile network-fetched ruleset")
+        self.assertIn(
+            "acceptance-critical rules should not depend solely on a volatile network-fetched ruleset",
+            external_rules,
+        )
+        self.assertIn(
+            "pin, version, or otherwise govern that identity proportionately",
+            external_rules,
+        )
 
         autofix = paragraph_containing(text, "autofix")
         self.assertIn("ordinary implementation output", autofix)
@@ -250,10 +304,40 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
         ):
             self.assertIn(phrase, text)
 
+        resource_bounds = paragraph_containing(text, "`max_examples`")
+        for phrase in (
+            "object sizes",
+            "stateful step counts",
+            "deadlines/expensive operations",
+            "scientific workloads",
+            "preserving representative coverage",
+        ):
+            self.assertIn(phrase, resource_bounds)
+
+        database = paragraph_containing(text, "example database")
+        self.assertIn(
+            "useful cache/replay state, not durable regression authority by itself",
+            database,
+        )
+
+        durable_counterexample = paragraph_containing(text, "material minimized counterexample")
+        for phrase in (
+            "explicit ordinary regression",
+            "hypothesis `@example`",
+            "another understandable governed test input",
+            "adds stable protection",
+        ):
+            self.assertIn(phrase, durable_counterexample)
+
         self.assertTrue(hypothesis_anti_gaming_policy_holds(text))
         self.assertTrue(hypothesis_settings_policy_holds(text))
 
     def test_hypothesis_anti_gaming_matcher_rejects_partial_inversion(self) -> None:
+        complete_prohibition = (
+            "Do not use excessive filtering or assume, over-narrow strategies, exclusions, "
+            "health-check suppression, disabled useful phases, removed deadlines, or reduced "
+            "exploration solely to make a property green. "
+        )
         inverted = (
             "Do not use excessive filtering, but health-check suppression is permitted solely to make a property green. "
             "Disabled useful phases, removed deadlines, and reduced exploration are also prohibited.",
@@ -274,6 +358,12 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
             "Do not use excessive filtering, health-check suppression, disabled useful phases, removed deadlines, or "
             "reduced exploration solely to make a property green; health-check suppression should be used solely to "
             "make a property green.",
+            complete_prohibition
+            + "Health-check suppression is acceptable solely to make a property green.",
+            complete_prohibition + "Assume may be used solely to make a property green.",
+            complete_prohibition
+            + "Over-narrow strategies are allowed solely to make a property green.",
+            complete_prohibition + "Exclusions are permitted solely to make a property green.",
         )
         for policy in inverted:
             with self.subTest(policy=policy):
@@ -289,6 +379,10 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
             "maintaining it is inconvenient.",
             "Change settings when project/test semantics justify it and required coverage remains intact; required "
             "coverage may then be discarded.",
+            "Change settings when project/test semantics justify it and required coverage remains intact; required "
+            "coverage is no longer necessary.",
+            "Change settings when project/test semantics justify it and required coverage remains intact; required "
+            "coverage may be sacrificed.",
         )
         for policy in inverted:
             with self.subTest(policy=policy):
