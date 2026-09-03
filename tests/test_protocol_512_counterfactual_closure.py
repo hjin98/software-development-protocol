@@ -123,8 +123,8 @@ def broad_review(text: str) -> bool:
 
 
 def closure_horizon(text: str) -> bool:
-    scope = paragraph(text, "closure horizon")
-    if not all(x in scope for x in ("not a scope ceiling", "expand it whenever evidence establishes")):
+    scope = paragraph(text, "not a scope ceiling")
+    if not all(x in scope for x in ("closure horizon", "not a scope ceiling", "expand it whenever evidence establishes")):
         return False
     return not any("scope ceiling" in c and "not a scope ceiling" not in c or "never expand" in c for c in clauses(scope))
 
@@ -275,6 +275,8 @@ class Protocol512CounterfactualClosureTests(unittest.TestCase):
             "## Completion discipline",
             "Serena, Semgrep, and Hypothesis must always be used as a mandatory three-tool sequence.\n\n## Completion discipline",
         )
+        # The existing helper is intentionally narrow; directly protect the governing
+        # subject against an opposite clause so regression cannot hide behind wording.
         scope = section(contradictory, "## convergence-oriented composition", "## completion discipline")
         self.assertRegex(scope, r"serena.{0,80}semgrep.{0,80}hypothesis.{0,100}(?:must|mandatory)")
         self.assertNotIn("serena, semgrep, and hypothesis must always", section(self.tooling, "## convergence-oriented composition", "## completion discipline"))
