@@ -1,7 +1,7 @@
 ---
 kind: implementation-workplan
 workplan_id: REPLACE_ME
-protocol_version: 5.11.0
+protocol_version: 5.12.0
 ---
 
 # <Task> Workplan
@@ -59,6 +59,12 @@ Production qualification: <required / deferred / unnecessary, with reason when m
 <List only coherent behavior/risk stages where ordering materially reduces ambiguity or rework. A local coherent behavior change is normally one material stage; do not split tightly coupled helper/caller/test edits merely by file/function. Each executable material stage still closes semantic/conformance plus focused and affected-regression functional acceptance before dependent work proceeds.>
 
 <Material risks or evidence that should cause bounded design reconsideration.>
+
+## Conditional convergence guidance
+
+For substantial work where repeated-family risk, scope diffusion, or finite critical-site completeness is materially plausible, record only task-specific convergence information that reduces ambiguity or rework. This may include a provisional **closure horizon** of material owners/contracts/state boundaries/consumers/invariant families (it is not a scope ceiling); the semantic owner/invariant/failure-family key whose recurrence would require family-level closure; a bounded census/closure basis or temporary closure map when completeness itself is acceptance-critical; the condition under which recurrence after adequate family closure requires bounded Software Design reconsideration; and task-specific real-owner or acceptance-liveness constraints.
+
+Keep this guidance conditional. A first clean local defect does not require a family matrix, and ordinary workplans do not require IDs, ledgers, persistent closure maps, whole-repository scans, or extra review artifacts merely for protocol compliance.
 
 ## Handoff closure
 

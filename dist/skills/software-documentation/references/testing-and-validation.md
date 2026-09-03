@@ -60,6 +60,16 @@ Before relying on material acceptance evidence, ask the counterfactual: **could 
 
 When a workplan explicitly requires a real owner/path, inability to exercise that boundary is an unavailable/blocking acceptance check or an evidence-backed design-reopen condition; do not silently downgrade it to a proxy pass. When the task names forbidden semantic-owner substitutions and a robust inexpensive structural/negative check can prevent recurrence, add that guardrail. Do not require universal AST scanning, mutation testing, one test per function, a global monkeypatch ban, or a new anti-mocking framework merely for protocol compliance.
 
+## Acceptance liveness and family-closure evidence
+
+Proxy-proof acceptance also requires the intended acceptance mechanism to be live. When a material regression depends on a patched seam, failpoint, callback, hook, or similar trigger, establish that the trigger actually fired when practical; a green test that never exercised the intended boundary does not close the claim. When a production transition or decision is the claim, execute its real semantic owner and keep doubles below/outside that boundary.
+
+When cheap and meaningful, demonstrate that a bug reproducer or equivalent counterfactual can distinguish known-broken behavior from corrected behavior. This is not a universal requirement to check out historical commits, run mutation testing, or create one test per source site. For family closure, prefer owner-level properties plus representative material transition/equivalence classes when that provides stronger semantic coverage.
+
+Structural/negative scans complement runtime acceptance. If a structural rule establishes an acceptance-critical absence or bypass claim, validate the rule against representative known-positive and known-negative constructs and state its actual scan scope/limitations; zero findings outside a justified scan contract are not proof of absence.
+
+For normal final independent review, functional review readiness includes exact candidate identity, required stage-local closure, final affected-surface re-derivation, final complete affected-surface regression, real-boundary integration, repository/project-required checks, and task-required structural/absence/liveness evidence on a candidate whose relevant dimensions have not changed afterward. A required check that is missing or did not execute remains incomplete acceptance/implementation nonconformance rather than a pass or an automatic design revision. An explicitly requested review still proceeds and reports the missing evidence; review readiness is not a mechanism for refusing review.
+
 ## Optimize test cost, not coverage
 
 Coverage breadth follows the affected behavioral surface. Then minimize execution cost while preserving that coverage.

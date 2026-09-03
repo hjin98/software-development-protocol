@@ -114,6 +114,16 @@ For a real-owner claim, ask whether evidence could remain green while its semant
 
 Evidence-directed review is an economy rule, not a scope cap. Broaden when evidence shows a material deviation, undermines a premise, exposes unexpected behavior, fires a redesign trigger, or leaves material unresolved risk.
 
+## Convergence-aware independent review
+
+Final review should normally challenge a review-ready exact candidate, but do not refuse an explicitly requested review merely because Implementation omitted required closure or evidence. Inspect to the highest useful depth; missing mandatory regression/integration/structural/liveness evidence is implementation nonconformance unless it also exposes a genuine design deficiency.
+
+Group blockers by semantic invariant/owner/failure family. When a blocker implicates a family and cheap, high-information sibling inspection remains, proportionately saturate the directly implicated family in the same review instead of intentionally stopping after the first sufficient NO-PASS example. Report one family-level closure problem plus concrete evidence. Stop expanding when further discovery becomes implementation-like, expensive/unavailable, mainly duplicates the systematic family census Implementation must perform, or lacks an evidence-driven affected chain. Independent rigor is evidence-directed sufficiency, not proof of zero conceivable defects.
+
+Distinguish an incomplete family-closure claim from a genuine post-family recurrence. Incomplete/narrow/vacuous family closure routes back as implementation nonconformance to complete the family under accepted design unless separate redesign evidence exists. A same-family material blocker after an adequate family closure triggers bounded Design reconsideration before another ordinary patch cycle. Reconsideration may keep frozen target semantics and require implementation consolidation/refactoring, or reopen only the affected design decision if that frozen decision must change; it does not automatically mint a normative revision.
+
+Additional concrete sites/examples already governed by supplied invariant authority are implementation/review evidence, not new task semantics. If review discovers a genuinely new still-binding task-specific consequence, acceptance boundary, or redesign trigger not recoverable from current supplied authority, reconcile it into canonical current authority before the next handoff for snapshot completeness. Ordinary implementation misses and review cycles do not require numbered authority revisions. Keep unrelated pre-existing issues separate unless they materially interact with the active product claim.
+
 ## Completion
 
 For design, report the chosen design, material engineering envelope, protected concerns, important product-complexity decisions, implementation authority, acceptance obligations, and genuine unresolved risks. For review, report material findings and enough corrected-end-state/evidence information for lossless rework. Do not emit empty protocol categories or create process artifacts without independent engineering value.
