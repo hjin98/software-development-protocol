@@ -32,6 +32,14 @@ For substantial work, identify the material surfaces that actually apply: public
 
 Do not create a mandatory matrix when most rows are irrelevant. Conversely, do not equate the Git diff with the behavioral surface when shared contracts propagate beyond changed files.
 
+## Bounded census when completeness is itself a claim
+
+Progressive evidence-directed inspection remains the default. Switch to a bounded census only when recurrence has established a material defect family or when the product claim itself is finite and exhaustive, such as every authority-bearing transition, compatibility reader, persistence mutation, or other critical site in a defined semantic owner family satisfying one invariant.
+
+Bound the census by invariant, semantic owner/authority, transition/lifecycle class, and plausible affected chain rather than the whole repository. State the completeness basis and material blind spots of symbol/reference tools, static rules, dynamic registration/configuration, generated code, external consumers, or runtime-only behavior. Cross-check where those limitations can hide family members.
+
+If the family cannot be bounded with sufficient confidence, do not present a partial search as exhaustive. Escalate ownership/design when uncontrolled entry points are themselves the problem, or use broader executable/property/integration evidence appropriate to the claim. Temporary closure maps are allowed when they materially reduce omission risk; they are not universal persistent traceability artifacts.
+
 ## Prefer existing patterns
 
 Inspect adjacent implementation before introducing a new abstraction. Reuse an existing component when it can own the responsibility cleanly.

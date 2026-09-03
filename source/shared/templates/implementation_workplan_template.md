@@ -60,6 +60,12 @@ Production qualification: <required / deferred / unnecessary, with reason when m
 
 <Material risks or evidence that should cause bounded design reconsideration.>
 
+## Conditional convergence guidance
+
+For substantial work where repeated-family risk, scope diffusion, or finite critical-site completeness is materially plausible, record only task-specific convergence information that reduces ambiguity or rework. This may include a provisional **closure horizon** of material owners/contracts/state boundaries/consumers/invariant families (it is not a scope ceiling); the semantic owner/invariant/failure-family key whose recurrence would require family-level closure; a bounded census/closure basis or temporary closure map when completeness itself is acceptance-critical; the condition under which recurrence after adequate family closure requires bounded Software Design reconsideration; and task-specific real-owner or acceptance-liveness constraints.
+
+Keep this guidance conditional. A first clean local defect does not require a family matrix, and ordinary workplans do not require IDs, ledgers, persistent closure maps, whole-repository scans, or extra review artifacts merely for protocol compliance.
+
 ## Handoff closure
 
 Before accepting a substantial workplan, reconcile:

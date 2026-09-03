@@ -46,6 +46,14 @@ A local bug with a local cause should receive a clean local owning-layer fix. Re
 
 For accepted workplans, require evidence before reopening frozen design: an irreconcilable ownership/contract mismatch, material engineering infeasibility, representative measurement that invalidates a premise, or an explicit redesign trigger. Do not reopen settled design merely because another plausible architecture exists.
 
+## Convergence boundary for repeated defect families
+
+A first clean local defect remains a local owning-layer repair. When materially equivalent defects recur around the same invariant/authority/mechanism, establish the bounded semantic family and close it at the canonical owner, consolidating duplicate enforcement or deleting bypasses when that reduces the failure surface.
+
+After an adequate family closure has implemented the canonical realization and passed required family-level real-owner, affected-regression, integration, and structural evidence, a same-family material recurrence triggers bounded Software Design reconsideration before another ordinary sibling patch. An incomplete or artificially narrow family closure is instead implementation nonconformance that must be completed unless separate redesign evidence already exists.
+
+Design reconsideration does not automatically mean architecture churn or a new normative workplan revision. If frozen product/architecture/ownership semantics remain sound, Design may require a stronger implementation refactor, consolidation, API narrowing, or canonicalization under the same authority. Reopen current design authority only when a frozen material decision itself must change. Preserve justified specialization where distinct hardware, scientific, compatibility, lifecycle, or failure semantics make one abstraction worse.
+
 ## Architecture documentation
 
 Permanent architecture documentation describes accepted current product structure, ownership, interfaces, data/control flow, important invariants, persistence/concurrency/security/resource boundaries, target-hardware assumptions where material, and accepted algorithms. Do not turn it into a log of development-process gates or temporary benchmark attempts.

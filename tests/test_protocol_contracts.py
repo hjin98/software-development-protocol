@@ -11,17 +11,18 @@ def read(path: str) -> str:
 
 
 class ProtocolContractTests(unittest.TestCase):
-    def test_protocol_511_identity_and_two_role_lifecycle(self) -> None:
-        self.assertEqual("5.11.0", read("source/PROTOCOL_VERSION").strip())
+    def test_protocol_512_identity_and_two_role_lifecycle(self) -> None:
+        self.assertEqual("5.12.0", read("source/PROTOCOL_VERSION").strip())
         source_readme = read("source/README.md").lower()
         root_readme = read("README.md").lower()
         versioning = read("source/shared/references/protocol-versioning-and-compatibility.md").lower()
-        self.assertIn("software development protocol 5.11", source_readme)
-        self.assertIn("protocol 5.11", root_readme)
+        self.assertIn("software development protocol 5.12", source_readme)
+        self.assertIn("protocol 5.12", root_readme)
+        self.assertIn("protocol 5.12 is a backward-compatible", versioning)
         self.assertIn("protocol 5.11 is a backward-compatible", versioning)
         self.assertIn("protocol 5.10 is a backward-compatible", versioning)
         self.assertIn("protocol 5.9 is a backward-compatible", versioning)
-        self.assertIn("protocol 5.4-5.10 guarantees unchanged", source_readme)
+        self.assertIn("protocol 5.4-5.11 guarantees unchanged", source_readme)
         self.assertIn("optional capability-aware tool-assisted engineering", source_readme)
         for text in (source_readme, root_readme, versioning):
             self.assertIn("software-design", text)

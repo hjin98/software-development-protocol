@@ -74,6 +74,16 @@ For material performance/resource work, prefer eliminating redundant work/I/O, i
 
 Escalate to refactor/redesign when repeated fixes target one mechanism, ownership is wrong, duplicated state causes failures, exceptional paths proliferate, resources are unacceptable, or the design cannot meet material requirements cleanly.
 
+## Close recurring defect families before another review
+
+Keep the first clean local defect lightweight: fix the owning layer and consider plausible variants proportionately. If materially equivalent sibling behavior recurs after claimed closure, do not implement only the latest reported source site. Define the bounded semantic family by invariant/product claim, semantic owner or authority class, transition/lifecycle class, and materially equivalent failure mechanism; avoid both file-by-file fragmentation and broad subsystem labels that aggregate unrelated work.
+
+For a recurring family, establish the closure basis described in `references/workflow-and-workplans.md`: identify/disposition member sites or equivalence classes, state completeness basis and limitations, choose the canonical owner/enforcement mechanism, eliminate unjustified bypasses/fallbacks/duplicate authority, and execute required family-level focused, affected-regression, real-owner/integration, and structural/absence evidence before claiming closure.
+
+If review shows a previous family-closure claim was incomplete, artificially narrow, or supported by vacuous acceptance, complete/correct that family closure under the existing accepted design unless separate redesign evidence exists. If the same family materially fails after an adequate family closure, stop ordinary patching and route bounded Software Design reconsideration. Design may preserve the frozen target and require structural consolidation/refactoring under the same authority; a normative design revision is needed only when a frozen material decision must change.
+
+Where dependencies permit, close all blocker families identified by one comprehensive review before requesting the next comprehensive closure review. Continue focused checks during coherent editing, stage-local affected regression at material behavior boundaries, evidence reuse where valid, and final exact-candidate acceptance after material executable edits stabilize.
+
 ## Close coherent stages, not individual edits
 
 **A local coherent behavior change is normally one material implementation stage.** Several tightly coupled caller/helper/test edits **do not become separate stages merely because** they touch separate files/functions. Split only where an intermediate behavior/risk/dependency boundary materially reduces downstream risk or rework.
