@@ -8,7 +8,7 @@ Software Development Protocol 5 is an engineering-fitness-first workflow for AI-
 product engineering fitness > minimum justified product/system complexity > development economy
 ```
 
-Protocol 5.10 preserves the complete two-role lifecycle and every material Protocol 5.4-5.9 engineering safeguard while adding snapshot-complete Design -> Implementation handoff portability:
+Protocol 5.11 preserves the complete two-role lifecycle and every material Protocol 5.4-5.10 engineering safeguard while adding optional capability-aware tool-assisted engineering methodology:
 
 ```text
 software-design -> software-implementation
@@ -18,7 +18,9 @@ The durable stakeholder product is the objective; workplans, tests, gates, metri
 
 `software-design` diagnoses and chooses the product design, preserves task-specific intent in a lossless implementation contract, designs acceptance, and independently reviews when warranted. `software-implementation` realizes that contract adaptively, closes coherent material stages semantically and functionally, and completes final accepted-contract reconciliation plus affected-surface regression/integration.
 
-Protocol 5.10 preserves Protocol 5.9 **canonical detailed ownership + deterministic progressive-disclosure routing** unchanged. Role-critical task triggers still require exact linked references before the corresponding decision or closure, while domain references remain conditional. The 5.10 addition is that final accepted handoffs must carry every still-binding task-specific semantic in the supplied current artifact set rather than relying on Git history, prior conversation/review context, superseded revisions, or unsupplied external resources. Current supplied multi-document composition remains valid.
+Protocol 5.11 preserves Protocol 5.10 snapshot-complete handoffs and Protocol 5.9 **canonical detailed ownership + deterministic progressive-disclosure routing** unchanged. Role-critical task triggers still require exact linked references before the corresponding decision or closure, while domain references remain conditional. Final accepted handoffs still carry every binding task-specific semantic in the supplied current artifact set rather than depending on hidden history or conversation state.
+
+The 5.11 addition is a single canonical tool-assisted engineering reference, conditionally routed from both lifecycle roles. Serena can provide semantic repository navigation and bounded editing, Semgrep can provide structural/variant analysis, and Hypothesis can provide property/stateful testing when those capabilities materially improve the task. They are optional environment capabilities and evidence instruments—not generic skill dependencies, lifecycle gates, normative task authority, or substitutes for affected regression and real-boundary integration.
 
 Executable changes still require focused checks, stage-local affected regression for every material behavior-changing stage, final affected-surface re-derivation/regression, integration through real product/consumer boundaries, and repository/project-required checks. A local coherent behavior change is normally one stage; proportionality reduces ceremony, never coverage. Production qualification remains separate from functional acceptance.
 

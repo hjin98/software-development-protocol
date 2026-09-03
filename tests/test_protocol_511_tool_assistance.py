@@ -101,6 +101,14 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
         self.assertIn("integration", text)
         self.assertIn("re-derive the final affected surface", text)
 
+    def test_portability_keeps_external_tooling_optional(self) -> None:
+        text = read("PORTABILITY.md").lower()
+        self.assertIn("optional environment capabilities", text)
+        self.assertIn("not part of generic agent skill validity", text)
+        self.assertIn("direct-directory installation contract", text)
+        self.assertIn("protocol 5.9 routing qualification", text)
+        self.assertIn("named harness/tool configuration", text)
+
 
 if __name__ == "__main__":
     unittest.main()

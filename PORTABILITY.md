@@ -16,6 +16,14 @@ Skill activation proves only that the harness/model obtained `SKILL.md`. Protoco
 
 Static validation proves that references are packaged, directly linked, and structurally reachable. It cannot prove that a real harness/model actually performs the follow-up read, so live qualification is a separate evidence class.
 
+## Optional external development capabilities
+
+Protocol 5.11 describes Serena, Semgrep, and Hypothesis as **optional environment capabilities**. They are not part of generic Agent Skill validity, the direct-directory installation contract, or Protocol 5.9 routing qualification. A skill remains valid and usable when one or more are unavailable; the agent uses available repository/search/test mechanisms to establish the required engineering claim unless a project-specific contract explicitly requires a named tool.
+
+Generic bundles do not embed Serena MCP declarations, executable/environment paths, credentials, Semgrep service configuration, or Hypothesis installation state. Serena backend capabilities, Semgrep editions/engines, and project-specific Hypothesis settings can vary independently of skill packaging.
+
+A claim that a particular harness actually exposes Serena, executes a Semgrep configuration, or runs a Hypothesis profile requires evidence for that named harness/tool configuration. Static package validation or the routing sentinel does not establish those external-tool claims. Managed/cloud tooling that receives source, findings, or credentials remains subject to project/user authorization and the protocol security/trust rules.
+
 ## Bounded live qualification
 
 Use `qualification/reference-routing/protocol-routing-sentinel/` as a tiny independent Agent Skill. The required answer token exists only in its bundled reference; `SKILL.md` deliberately does not contain the token.
