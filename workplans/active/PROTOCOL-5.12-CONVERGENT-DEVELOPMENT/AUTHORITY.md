@@ -6,7 +6,7 @@ protocol_version: 5.11.0
 target_protocol_version: 5.12.0
 status: active
 reviewed_date: 2026-09-03
-reviewed_candidate: 9a47e492534ba990acbc03ec6dab62de3fe8178a
+reviewed_candidate: 2bca076e21aa030405e9148b026342efa5522f4e
 review_verdict: no-pass
 ---
 
@@ -19,11 +19,11 @@ The current Design -> Implementation authority is the supplied set:
 1. `workplans/active/PROTOCOL-5.12-CONVERGENT-DEVELOPMENT.md`; and
 2. this `AUTHORITY.md`.
 
-The parent workplan remains the substantive Protocol 5.12 implementation contract. This authority carries the final pre-implementation Design refinements and the current independent implementation-review result. Where this authority is more specific, it controls.
+The parent workplan remains the substantive Protocol 5.12 implementation contract. This authority carries the accepted Design refinements and the current independent implementation-review result. Where this authority is more specific, it controls.
 
-The Protocol 5.12 **product/design target remains frozen and sound**. The current implementation candidate is **NO-PASS** because its new semantic regression layer does not yet establish the required convergence-policy distinctions robustly. This is implementation nonconformance under already-binding O10 acceptance semantics, not a new product-design deficiency and not a Mode R architecture reopen.
+The Protocol 5.12 **product/design target remains frozen and sound**. Candidate `2bca076e21aa030405e9148b026342efa5522f4e` is **NO-PASS** because the semantic-regression acceptance family is materially improved but not yet genuinely closed. This is **incomplete family closure / implementation nonconformance under the existing design**, not a new product-design deficiency and not a Mode R architecture reopen.
 
-Do not create a numbered review-revision series for this rework. Git history provides provenance. The current authority is updated in place because the still-binding task state must remain snapshot-complete for the next handoff.
+Do not create a numbered review-revision series for this rework. Git history provides provenance. Current authority is reconciled in place so the next handoff remains snapshot-complete.
 
 ## Frozen Protocol 5.12 convergence semantics
 
@@ -66,16 +66,13 @@ A prior family-closure cycle counts as a **genuine family closure** for later es
 5. required focused, family-level affected regression, real-owner/integration, and structural/absence evidence actually executed as applicable; and
 6. the family was explicitly claimed closed on that evidence.
 
-A label such as `Mode F complete`, a partial caller search, a vacuous scan, missing real-owner evidence, or an artificially narrow family is not a genuine family closure.
+A label such as `Mode F complete`, a partial caller search, a vacuous scan, missing real-owner evidence, an artificially narrow family, or counterfactual evidence that never exercises the discriminating condition is not a genuine family closure.
 
 If review finds the prior family closure incomplete, narrow, or vacuous, route it as **implementation nonconformance** and complete/correct family closure under the accepted design unless separate redesign evidence exists.
 
 If a material same-family blocker survives or reappears despite a genuine family closure, or the family census itself establishes duplicated/contradictory ownership, uncontrolled entry points, proliferating exceptional paths, or another structural redesign trigger, Software Design must perform bounded ownership/architecture reconsideration before another ordinary same-family patch cycle.
 
-Mode R is a mandatory **Design reconsideration boundary**, not a predetermined architecture rewrite. Design may either:
-
-- change a frozen material target decision and reconcile current authority; or
-- preserve frozen product/design semantics and require stronger implementation consolidation/refactor/canonicalization under the same authority.
+Mode R is a mandatory **Design reconsideration boundary**, not a predetermined architecture rewrite. Design may either change a frozen material target decision and reconcile current authority, or preserve frozen product/design semantics and require stronger implementation consolidation/refactor/canonicalization under the same authority.
 
 No recurrence count, review count, cycle budget, or convergence target can force acceptance.
 
@@ -83,12 +80,7 @@ No recurrence count, review count, cycle budget, or convergence target can force
 
 When review finds a genuine blocker in an identifiable material family, the reviewer must, to the degree proportionate and practical, continue cheap/high-information read-only inspection far enough to characterize obvious sibling variants/equivalence classes rather than intentionally returning one cheap sibling per review cycle.
 
-Review must:
-
-1. identify the governing invariant/owner/failure family;
-2. characterize the directly implicated sibling space enough to distinguish isolated from systemic behavior;
-3. group concrete same-family findings into one family-level closure problem; and
-4. state whether reviewer sibling discovery appears saturated or whether systematic family closure remains Implementation's responsibility.
+Review must identify the governing invariant/owner/failure family, characterize the directly implicated sibling space enough to distinguish isolated from systemic behavior, group concrete same-family findings into one family-level closure problem, and state whether reviewer sibling discovery appears saturated or whether systematic family closure remains Implementation's responsibility.
 
 Reviewer saturation is not a second implementation census and not whole-repository exhaustiveness. Expansion may stop when the plausible low-cost sibling space is sufficiently characterized, further work would become implementation-like or expensive/unavailable, additional enumeration would mainly duplicate the required family census, or no evidence-driven ownership/contract/affected chain justifies broader search.
 
@@ -180,106 +172,98 @@ Regression protection must establish:
 
 Tests should protect these **semantic distinctions**, not the exact `N/F/R` labels, heading names, or this authority file's wording.
 
-# Implementation closure review — NO-PASS
+# Current implementation closure review — NO-PASS
 
-## Reviewed candidate
+## Reviewed candidate and accepted evidence
 
 Exact reviewed branch candidate:
 
-`9a47e492534ba990acbc03ec6dab62de3fe8178a`
+`2bca076e21aa030405e9148b026342efa5522f4e`
 
-The current branch differs from the previously validated implementation candidate only by removal of temporary branch-build/patch scaffolding. That cleanup does not invalidate prior build/package/parity evidence. The implementation review nevertheless finds a genuine acceptance blocker below.
+From the previous NO-PASS authority to this candidate, the persistent task delta is confined to `tests/test_protocol_512_convergence.py`; temporary rework workflow/log scaffolding was removed before the final candidate.
 
-## Blocking family: under-discriminating Protocol 5.12 semantic regression acceptance
+The exact candidate has genuine green repository evidence: the native protocol build check completed successfully with the complete regression suite, canonical skill-package build, independent package validation, committed-distribution parity, and whitespace check. This evidence is accepted for the claims it actually establishes. It does **not** cure semantic under-discrimination in the acceptance harness itself.
+
+## Blocking family: semantic counterfactuals do not yet prove contradiction resistance
 
 ### Protected claim
 
-Protocol 5.12's regression suite must prevent the new convergence controls from drifting into their prohibited opposites. For polarity-sensitive policy, a green test must demonstrate the required semantic relation/direction strongly enough that a contradictory or inverted policy does not pass merely because the same keywords remain present.
+For a polarity/relationship-sensitive Protocol 5.12 policy, regression evidence must distinguish the required relation from its prohibited opposite. A counterfactual test must not pass merely because its negative fixture already fails an unrelated positive precondition. Representative contradictory policy that retains the otherwise-valid positive semantics must be rejected by the same validator.
 
-### Semantic owner / affected surface
+### Primary owner and family boundary
 
 Primary owner:
 
 - `tests/test_protocol_512_convergence.py`
 
-Affected evidence/consumers:
+Family members are the Protocol 5.12 semantic validators and O10 checks whose claim depends on policy direction, relationship, boundedness, conditionality, or mandatory-versus-optional status. Exact identity facts such as `PROTOCOL_VERSION == 5.12.0` are not forced into this family merely because they live in the same file.
 
-- O10 semantics 1-33;
-- `tests/test_protocol_contracts.py` where it overlaps preservation/version assertions;
-- established counterfactual/polarity-testing patterns in `tests/test_protocol_511_tool_assistance.py` and other protocol regression tests;
-- canonical Protocol 5.12 source clauses only if stronger tests expose actual ambiguity or contradiction.
+### Finding 1 — current negative fixtures are largely vacuous with respect to the forbidden branch
 
-### Failure mechanism
+The three counterfactual test groups call each validator with a fully inverted short policy and assert `False`. For most validators, those policies omit one or more **required positive** regexes. The assertion therefore remains green even if the validator's forbidden-polarity detection is deleted or broken.
 
-The new Protocol 5.12 suite relies predominantly on whole-document `assertIn(...)` keyword/prose checks. That proves presence, but for many normative rules it does not prove polarity, relationship, exclusivity, or contradiction resistance.
+Representative examples:
 
-Representative failures of the current acceptance mechanism include:
+- the first-local negative omits the required `does not require ...` relation;
+- the recurrence negative omits the required `family closure is required ... recurs after claimed closure` relation;
+- the genuine-post-family negative omits the required `route to ... Software Design reconsideration` relation;
+- the Mode-R negative omits the required `normative design change is not predetermined` / same-design realization relation;
+- the revision-economy negative omits the required `do not require ... numbered authority revision` relation;
+- the current-authority negative omits the required canonical-reconciliation relation.
 
-- checking for `family closure after recurrence` or `triggers bounded design reconsideration` does not prove that recurrence actually **requires** those actions rather than merely discussing them;
-- checking for `trigger actually fired` can remain green if surrounding policy says the trigger need not fire;
-- checking for `proportionately saturate the directly implicated family` can remain green if a contradictory clause tells review not to do so;
-- checking for `three-tool sequence mandatory` is especially non-discriminating: the current source is correct because it says a three-tool sequence is **not mandatory**, but the assertion would also pass if the convergence-specific rule were inverted to make the sequence mandatory;
-- checking only for `concrete new sites` does not establish the required rule that already-governed concrete sibling evidence need not become new normative task semantics;
-- exact heading/prose substrings such as `family closure after recurrence` also create avoidable false failures under semantically equivalent editorial refactoring, contrary to the requirement to protect durable semantics rather than this authority's wording.
+These tests show that a wholly different policy does not satisfy the complete positive matcher. They do **not** prove that an otherwise passing policy plus a contradictory clause is rejected.
 
-The repository already contains stronger Protocol 5.11 precedent: paragraph/clause-scoped policy validators plus synthetic inverted-policy examples that prove a matcher rejects forbidden polarity. Protocol 5.12 should reuse that methodological pattern where it materially fits instead of regressing to keyword presence as the principal evidence.
+### Finding 2 — representative contradictory policies can still satisfy current validators
 
-### Reviewer saturation of this family
+The family weakness is not theoretical. Current helper structure permits representative positive-plus-contradiction false positives.
 
-The review did not stop at the first weak assertion. It inspected the 33 required semantic obligations and the new test file as one acceptance family.
+Examples include:
 
-The rework must harden, at minimum, the polarity/relationship-sensitive classes covering:
+- `family_identity_holds` checks only the required positive patterns. A section can contain all four required anti-fragmentation/anti-overaggregation sentences and also state that family membership *is* textual similarity; the validator still returns true.
+- `saturation_bounds_hold` rejects only a narrow `must|required to -> exhaustive|whole-repository|every conceivable` grammar. A passing bounded-stopping policy can also state that reviewer expansion **always** continues across the whole repository exhaustively without tripping that matcher.
+- `nonrefusal_holds` can accept its required non-refusal sentence while a later representative contradiction refers to the same review indirectly (for example, `that review is always refused`) outside its narrow forbidden grammar.
 
-- first-local-defect proportionality versus universal escalation;
-- recurrence -> family closure;
-- incomplete family closure versus automatic redesign;
-- genuine post-family recurrence -> mandatory Design reconsideration;
-- Mode R same-design structural refactor versus automatic normative revision;
-- semantic family anti-fragmentation and anti-overaggregation;
-- broad independent review and material new-issue authority;
-- reviewer family saturation versus first-blocker stopping;
-- bounded saturation/stopping versus universal exhaustiveness;
-- review-readiness non-refusal;
-- acceptance-liveness and real-owner/seam/failpoint behavior;
-- structural evidence as complement rather than replacement for runtime acceptance;
-- convergence-tool optionality, especially the non-mandatory three-tool rule;
-- ordinary implementation nonconformance versus numbered revision churn;
-- new binding semantics versus required current-authority reconciliation;
-- concrete already-governed sibling evidence versus unnecessary normative promotion;
-- preservation of evidence reuse/context economy/coherent stage granularity.
+Protocol regression tests do not need to parse unrestricted English, but they must prove the representative forbidden realizations they claim to guard rather than relying on missing positive prerequisites.
 
-This sibling search is considered **saturated enough for review routing**: the weakness is systemic across the new Protocol 5.12 semantic test layer, and further reviewer enumeration would mainly duplicate Implementation's required O10 test hardening. No independent source-architecture or distribution blocker was found that warrants a separate rework family.
+### Finding 3 — several explicitly implicated O10 classes remain presence-oriented rather than discriminating
 
-## Required one-fix rework patch
+The rework substantially hardened escalation, family identity, review saturation, liveness, tooling, and authority/revision helpers, but several polarity-sensitive/preservation classes remain primarily `assertIn(...)` checks without an equivalent relation-aware existing test demonstrated in the current suite.
 
-Implementation must close this acceptance family in one coherent patch before requesting the next comprehensive Design review.
+The next family patch must cover, at minimum, the materially directional parts of:
 
-1. **Harden `tests/test_protocol_512_convergence.py` as semantic/counterfactual acceptance.** Keep exact equality/presence checks where they genuinely establish identity facts, but do not use whole-document keyword presence as the principal proof of polarity-sensitive policy.
-2. **Use bounded semantic validators appropriate to the claim.** Paragraph/clause-scoped checks, relation-aware helpers, explicit positive/negative examples, or an equivalent low-complexity method are acceptable. Reuse the proven Protocol 5.11 polarity-testing style where practical; do not create a large generic framework solely for this task.
-3. **Add synthetic inverted/contradictory counterfactuals.** The test machinery must demonstrably reject representative forbidden policies for the material classes listed above. In particular, explicitly prove rejection of:
-   - universal redesign/escalation for a first clean local defect;
-   - recurrence that permits only another local sibling patch instead of family closure;
-   - incomplete family closure that automatically forces redesign;
-   - genuine post-family recurrence that permits another ordinary patch without Design reconsideration;
-   - Mode R that always requires a normative authority revision;
-   - source-file-based family fragmentation and unrelated subsystem-wide overaggregation;
-   - review intentionally stopping at the first cheap sibling blocker when proportionate saturation is available;
-   - universal/exhaustive reviewer saturation;
-   - refusal of an explicitly requested review because readiness is incomplete;
-   - a mandatory three-tool convergence pipeline;
-   - dead seam/failpoint/callback acceptance where the intended trigger need not fire;
-   - structural/negative scans substituting for required executable acceptance;
-   - ordinary implementation misses requiring numbered authority revisions;
-   - new binding semantics being left outside canonical current authority;
-   - already-governed concrete sibling evidence being forced into new normative semantics merely for provenance.
-4. **Account for all 33 O10 semantics.** Each semantic must be protected by a genuinely discriminating new/existing test appropriate to its risk. Do not duplicate strong existing tests merely for counting, but make the coverage recoverable from the test organization itself without relying on this review conversation.
-5. **Preserve established Protocol 5.4-5.11 tests.** Do not weaken prior assertions to accommodate the new suite. The stronger Protocol 5.11 polarity/counterfactual tests are positive precedent, not obstacles.
-6. **Do not rewrite correct source merely to satisfy exact test strings.** If hardened tests expose a genuinely ambiguous or contradictory canonical Protocol 5.12 clause, correct that clause at its canonical owner and regenerate affected distributions. Otherwise keep the source semantics stable.
-7. **Keep the patch one acceptance-family repair.** Do not add a new lifecycle role, persistent semantic ledger, universal matrix, repository-wide scan requirement, or mandatory analyzer pipeline.
+- **O10-13:** broad independent review and authority to surface a material new independent issue;
+- **O10-14:** closure horizon remains focus rather than a scope ceiling;
+- **O10-15:** unrelated pre-existing issues are not automatically current blockers absent material interaction;
+- **O10-19:** stage-local plus final affected-surface regression/integration remain mandatory rather than optional;
+- **O10-21:** evidence reuse/context economy/coherent-stage guidance is preserved without becoming permission to skip invalidated/final evidence;
+- **O10-22:** no recurrence/review/cycle count can force acceptance.
 
-## Required acceptance for the rework candidate
+O10-20 production qualification separation and other low-ambiguity preservation facts may retain simpler assertions when the checked clause itself establishes the required direction and existing tests genuinely protect the opposite. Do not create counterfactual machinery merely for a numeric coverage target.
 
-After all task-owned source/test changes are stable, execute on the exact candidate:
+### Reviewer saturation and routing
+
+This review inspected the complete helper/counterfactual pattern and the remaining O10 presence-oriented classes rather than stopping at one example. The blocker is still one semantic-regression acceptance family; further reviewer enumeration would mainly duplicate Implementation's correction work.
+
+The prior rework is **not treated as a genuine family closure for Mode R purposes**. The acceptance mechanism was materially improved, but its negative evidence is partly vacuous and known members of the originally implicated semantic-test family remain under-discriminating. Under the frozen convergence rule, this is incomplete family closure / implementation nonconformance to be completed under the same design.
+
+No source-architecture, packaging, distribution, lifecycle-role, or protocol-version blocker was found. The persistent rework diff is test-only, and exact-candidate CI establishes current package validity/parity. No Protocol 5.12 policy rewrite is justified by this review.
+
+## Required one-fix family-completion patch
+
+Implementation must complete the same semantic-regression family in one coherent patch before the next comprehensive Design review.
+
+1. **Make counterfactual tests non-vacuous.** For every polarity-sensitive validator exercised by the counterfactual groups, construct a minimal synthetic **positive** policy and first assert that the validator accepts it. Then derive a representative contradictory/inverted form that retains the positive prerequisites and assert that the same validator rejects it.
+2. **Exercise the discriminating branch.** Prefer `positive fixture -> add/change one forbidden semantic -> must fail` over unrelated all-negative prose. The negative case should fail because of the forbidden relation being introduced, not because required positive content disappeared.
+3. **Harden validators only as far as the governed claim requires.** Add representative forbidden-clause handling for helpers such as family identity, bounded reviewer saturation, and review non-refusal so the tested contradictions are actually rejected. Do not build a general natural-language parser or large generic policy framework.
+4. **Close the remaining directional O10 members.** Add small relation-aware validators/counterfactuals, or point to and rely on genuinely discriminating existing tests, for O10-13, O10-14, O10-15, O10-19, O10-21, and O10-22. Preserve simple exact/presence assertions for identity or low-ambiguity facts when they genuinely establish the claim.
+5. **Keep coverage recoverable from the test organization.** The test names or nearby organization must make all 33 O10 semantics recoverable without a new ledger/matrix. Existing strong tests count and should not be duplicated for counting.
+6. **Do not weaken earlier Protocol 5.4-5.11 regression.** In particular, preserve the Protocol 5.11 clause/polarity precedents and all existing stage/final regression, integration, snapshot-completeness, tool-optionality, and acceptance-integrity safeguards.
+7. **Keep correct source semantics stable.** Do not rewrite canonical Protocol 5.12 policy merely to satisfy matcher wording. Change source only if the corrected semantic tests independently expose a real ambiguity/contradiction, then regenerate affected distributions.
+8. **Keep this one family repair.** Do not add a new lifecycle role, persistent semantic ledger, universal matrix, whole-repository scan mandate, or mandatory analyzer pipeline.
+
+## Required acceptance for the next candidate
+
+After task-owned changes are stable, execute on the exact candidate:
 
 ```bash
 python -m unittest tests.test_protocol_512_convergence -v
@@ -290,7 +274,7 @@ python source/check_dist.py --expected /tmp/protocol-dist --committed dist
 git diff --check
 ```
 
-If canonical shipped source changes, regenerate committed `dist/` from `source/` before parity checking. If only tests change, do not manufacture distribution churn; still run the fresh build/validation/parity checks to prove shipped artifacts remain valid.
+If canonical shipped source changes, regenerate committed `dist/` before parity checking. If only tests change, do not manufacture distribution churn; still run the fresh build/validation/parity checks to prove shipped artifacts remain valid.
 
 Before the next Design review, reconcile the exact candidate against O1-O12 plus this current authority and verify that no temporary rework scaffolding remains.
 
@@ -298,4 +282,4 @@ Before the next Design review, reconcile the exact candidate against O1-O12 plus
 
 **NO-PASS.**
 
-The blocker is implementation acceptance nonconformance, not a newly discovered product-design deficiency. Protocol 5.12's frozen convergence design remains the target. Implementation should produce one semantic-regression-hardening patch covering the complete blocker family, run the full acceptance workflow on that exact candidate, and then request one comprehensive independent closure review.
+The blocking family is still implementation acceptance nonconformance. Complete the semantic counterfactual family so representative positive-plus-contradiction policies are rejected and the remaining directional O10 members are genuinely protected, then request one comprehensive independent closure review.
