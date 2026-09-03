@@ -20,7 +20,9 @@ jobs:
         with:
           python-version: "3.12"
       - name: Apply idempotent Protocol 5.12 source patch
-        run: python tools/apply_protocol_512.py
+        run: |
+          python tools/apply_protocol_512.py
+          python tools/fix_protocol_512.py
       - name: Install validation dependencies
         run: python -m pip install -r source/requirements-validation.txt
       - name: Run protocol regression tests
