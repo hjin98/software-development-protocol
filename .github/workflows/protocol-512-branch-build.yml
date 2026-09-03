@@ -64,10 +64,11 @@ jobs:
           rm -f PROTOCOL_512_TEST_FAILURE.log
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A README.md source tests dist PROTOCOL_512_TEST_FAILURE.log
+          git add README.md source tests dist
+          git add -u -- PROTOCOL_512_TEST_FAILURE.log 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "Protocol 5.12 candidate already materialized and validated"
             exit 0
           fi
-          git commit -m "protocol: implement 5.12 convergent development"
+          git commit -m "protocol: complete 5.12 convergence closure semantics"
           git push origin HEAD:plan/protocol-5.12-convergent-development
