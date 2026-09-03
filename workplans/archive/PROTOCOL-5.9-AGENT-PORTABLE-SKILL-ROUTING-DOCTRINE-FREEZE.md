@@ -4,7 +4,8 @@ workplan_id: PROTOCOL-5.9-AGENT-PORTABLE-SKILL-ROUTING-DOCTRINE-FREEZE
 amends_workplan_id: PROTOCOL-5.9-AGENT-PORTABLE-SKILL-ROUTING
 protocol_version: 5.8.0
 target_protocol_version: 5.9.0
-status: active
+status: completed
+completed_date: 2026-08-29
 created_date: 2026-08-29
 ---
 

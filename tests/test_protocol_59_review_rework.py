@@ -61,24 +61,35 @@ class ResourceRouteSafetyTests(unittest.TestCase):
 
 
 class WorkplanLifecycleTests(unittest.TestCase):
-    def test_protocol_58_workplan_is_archived_completed(self) -> None:
-        active = ROOT / "workplans/active/PROTOCOL-5.8-EFFECTIVE-COMPRESSION.md"
-        archived = ROOT / "workplans/archive/PROTOCOL-5.8-EFFECTIVE-COMPRESSION.md"
-        self.assertFalse(active.exists())
-        self.assertTrue(archived.is_file())
-        text = archived.read_text(encoding="utf-8")
-        self.assertIn("status: completed", text)
-        self.assertIn("completed_date: 2026-08-29", text)
-        active_names = {path.name for path in (ROOT / "workplans/active").glob("*.md")}
-        self.assertTrue(active_names)
-        allowed_new_plans = {
-            "PROTOCOL-5.10-SNAPSHOT-COMPLETE-HANDOFFS.md",
-            "PROTOCOL-5.11-TOOL-ASSISTED-ENGINEERING.md",
+    def test_completed_protocol_workplans_are_archived(self) -> None:
+        completed = {
+            "PROTOCOL-5.8-EFFECTIVE-COMPRESSION.md": "2026-08-29",
+            "PROTOCOL-5.9-AGENT-PORTABLE-SKILL-ROUTING.md": "2026-08-29",
+            "PROTOCOL-5.10-SNAPSHOT-COMPLETE-HANDOFFS.md": "2026-08-30",
+            "PROTOCOL-5.11-TOOL-ASSISTED-ENGINEERING.md": "2026-09-03",
         }
-        self.assertTrue(
-            all(name.startswith("PROTOCOL-5.9-") or name in allowed_new_plans for name in active_names),
-            active_names,
-        )
+        for name, completed_date in completed.items():
+            with self.subTest(name=name):
+                active = ROOT / "workplans/active" / name
+                archived = ROOT / "workplans/archive" / name
+                self.assertFalse(active.exists())
+                self.assertTrue(archived.is_file())
+                text = archived.read_text(encoding="utf-8")
+                self.assertIn("status: completed", text)
+                self.assertIn(f"completed_date: {completed_date}", text)
+
+        for name in (
+            "PROTOCOL-5.9-AGENT-PORTABLE-SKILL-ROUTING-DOCTRINE-FREEZE.md",
+            "PROTOCOL-5.9-AGENT-PORTABLE-SKILL-ROUTING-REVIEW-REWORK.md",
+            "PROTOCOL-5.9-AGENT-PORTABLE-SKILL-ROUTING-URI-ROUTE-REWORK.md",
+        ):
+            with self.subTest(name=name):
+                self.assertFalse((ROOT / "workplans/active" / name).exists())
+                archived = ROOT / "workplans/archive" / name
+                self.assertTrue(archived.is_file())
+                text = archived.read_text(encoding="utf-8")
+                self.assertIn("status: completed", text)
+                self.assertIn("completed_date: 2026-08-29", text)
 
 
 if __name__ == "__main__":
