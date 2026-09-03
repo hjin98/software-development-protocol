@@ -48,7 +48,8 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
         text = read("source/shared/references/tool-assisted-engineering.md").lower()
         self.assertIn("tool availability alone is not a reason", text)
         self.assertIn("tool unavailability is not an acceptance failure", text)
-        self.assertIn("not a mandatory three-tool pipeline", text)
+        self.assertIn("mandatory three-tool pipeline", text)
+        self.assertIn("do not invoke another tool merely to duplicate evidence", text)
         self.assertIn("defect diagnosis and variant analysis", text)
         self.assertIn("independent review", text)
 
