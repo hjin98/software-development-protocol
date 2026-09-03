@@ -64,7 +64,7 @@ def post_family_holds(text: str) -> bool:
         text,
         "same material family survives or reappears",
         (r"genuine family closure", r"route to.{0,80}software design reconsideration"),
-        (r"(?:another ordinary|one more|continue ordinary).{0,80}(?:patch|repair)",),
+        (r"(?:continue|permit|allow).{0,100}(?:another ordinary|one more).{0,80}(?:patch|repair)",),
     )
 
 
@@ -226,7 +226,8 @@ class Protocol512ConvergenceTests(unittest.TestCase):
         self.assertIn("evidence-directed sufficiency", self.design)
 
     def test_o10_14_15_scope_and_unrelated_issue_bounds(self) -> None:
-        self.assertIn("not a scope ceiling", paragraph(self.workflow, "closure horizon"))
+        horizon = paragraph(self.workflow, "provisional **closure horizon**")
+        self.assertIn("not a scope ceiling", horizon)
         unrelated = paragraph(self.workflow, "unrelated pre-existing issue does not block current closure")
         self.assertIn("only when evidence shows", unrelated)
         self.assertIn("materially interacts with it", unrelated)
