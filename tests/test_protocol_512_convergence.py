@@ -1,37 +1,149 @@
 from __future__ import annotations
+
 import unittest
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[1]
-def r(p):return (ROOT/p).read_text(encoding="utf-8").lower()
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def read(path: str) -> str:
+    return (ROOT / path).read_text(encoding="utf-8").lower()
+
+
 class Protocol512ConvergenceTests(unittest.TestCase):
- def setUp(self):
-  self.w=r("source/shared/references/workflow-and-workplans.md");self.t=r("source/shared/references/testing-and-validation.md");self.a=r("source/shared/references/architecture-and-design.md");self.i=r("source/shared/references/repository-intake.md");self.g=r("source/shared/references/tool-assisted-engineering.md");self.d=r("source/roles/software-design/SKILL.md");self.m=r("source/roles/software-implementation/SKILL.md");self.p=r("source/shared/templates/implementation_workplan_template.md")
- def test_identity_and_preservation(self):
-  self.assertEqual("5.12.0",r("source/PROTOCOL_VERSION").strip());h="product engineering fitness > minimum justified product/system complexity > development economy";self.assertIn(h,self.d);self.assertIn(h,self.m);self.assertIn("software-design -> software-implementation",r("source/README.md"))
- def test_escalation_and_family_boundary(self):
-  for x in ("a first clean local defect","family closure after recurrence","genuine family closure","bounded software design reconsideration","do not fragment","do not overaggregate"):self.assertIn(x,self.w)
-  for x in ("protected invariant / required product claim","semantic owner or authority class","state / transition / lifecycle class","materially equivalent failure mechanism"):self.assertIn(x,self.w)
- def test_incomplete_family_is_not_automatic_redesign(self):
-  self.assertIn("incomplete family closure",self.w);self.assertIn("remains implementation nonconformance",self.w);self.assertIn("normative design change is not predetermined",self.w);self.assertIn("does not automatically mean architecture churn",self.a);self.assertIn("complete/correct that family closure",self.m)
- def test_post_family_recurrence_reconsiders_design(self):
-  self.assertIn("after a genuine family closure",self.w);self.assertIn("same family materially fails after an adequate family closure",self.m);self.assertIn("triggers bounded design reconsideration",self.d);self.assertIn("same authority",self.a)
- def test_census_is_bounded_and_conditional(self):
-  self.assertIn("progressive evidence-directed inspection remains the default",self.i);self.assertIn("switch to a bounded census only when",self.i);self.assertIn("whole-repository inventory remains unnecessary",self.w);self.assertIn("not universal persistent traceability artifacts",self.i)
- def test_acceptance_liveness(self):
-  for x in ("patched seam, failpoint, callback","trigger actually fired","real semantic owner","not a universal requirement to check out historical commits","known-positive and known-negative","structural/negative scans complement runtime acceptance"):self.assertIn(x,self.t)
- def test_review_readiness_and_non_refusal(self):
-  for x in ("exact candidate identity","final complete affected-surface regression","real-boundary integration","not review-ready","not an automatic design revision","explicitly requested review still proceeds"):self.assertIn(x,self.w)
-  self.assertIn("do not refuse an explicitly requested review",self.d);self.assertIn("review readiness is not a mechanism for refusing review",self.t)
- def test_review_saturation_and_stopping(self):
-  for x in ("review characterizes and batches the family","implementation owns the systematic family closure","reviewer expansion stops","not proof that no conceivable repository defect exists"):self.assertIn(x,self.w)
-  self.assertIn("proportionately saturate the directly implicated family",self.d);self.assertIn("evidence-directed sufficiency",self.d)
- def test_revision_economy_and_snapshot_completeness(self):
-  for x in ("do not require a new numbered authority revision","reconcile that semantic into canonical current authority","snapshot completeness is preserved","concrete new sites"):self.assertIn(x,self.w)
-  self.assertIn("ordinary implementation misses and review cycles do not require numbered authority revisions",self.d)
- def test_closure_horizon_and_template_are_not_ceiling_or_bureaucracy(self):
-  self.assertIn("closure horizon",self.w);self.assertIn("it is not a scope ceiling",self.w);self.assertIn("conditional convergence guidance",self.p);self.assertIn("does not require a family matrix",self.p);self.assertIn("do not require ids, ledgers, persistent closure maps",self.p)
- def test_tools_remain_optional(self):
-  self.assertIn("convergence-oriented composition",self.g);self.assertIn("optional tools",self.g);self.assertIn("tool absence does not relax family closure",self.g);self.assertIn("three-tool sequence mandatory",self.g);self.assertIn("tool availability alone is not a reason",self.g)
- def test_regression_integration_qualification_preserved(self):
-  self.assertIn("stage-local affected regression",self.t);self.assertIn("stage-local affected regression",self.m);self.assertIn("final complete affected-surface regression",self.t);self.assertIn("integration/end-to-end",self.t);self.assertIn("production qualification is separate",self.m);self.assertIn("distinct from functional testing",self.t)
-if __name__=="__main__":unittest.main()
+    def setUp(self) -> None:
+        self.workflow = read("source/shared/references/workflow-and-workplans.md")
+        self.testing = read("source/shared/references/testing-and-validation.md")
+        self.architecture = read("source/shared/references/architecture-and-design.md")
+        self.intake = read("source/shared/references/repository-intake.md")
+        self.tooling = read("source/shared/references/tool-assisted-engineering.md")
+        self.design = read("source/roles/software-design/SKILL.md")
+        self.implementation = read("source/roles/software-implementation/SKILL.md")
+        self.template = read("source/shared/templates/implementation_workplan_template.md")
+
+    def test_identity_and_preservation(self) -> None:
+        self.assertEqual("5.12.0", read("source/PROTOCOL_VERSION").strip())
+        hierarchy = "product engineering fitness > minimum justified product/system complexity > development economy"
+        self.assertIn(hierarchy, self.design)
+        self.assertIn(hierarchy, self.implementation)
+        self.assertIn("software-design -> software-implementation", read("source/README.md"))
+        self.assertIn("truthful non-closure", self.design)
+        self.assertIn("truthful non-closure", self.implementation)
+
+    def test_escalation_and_semantic_family_boundary(self) -> None:
+        for phrase in (
+            "a first clean local defect",
+            "family closure after recurrence",
+            "genuine family closure",
+            "bounded software design reconsideration",
+            "do not fragment",
+            "do not overaggregate",
+            "protected invariant / required product claim",
+            "semantic owner or authority class",
+            "state / transition / lifecycle class",
+            "materially equivalent failure mechanism",
+        ):
+            self.assertIn(phrase, self.workflow)
+
+    def test_incomplete_family_closure_does_not_force_redesign(self) -> None:
+        self.assertIn("incomplete family closure", self.workflow)
+        self.assertIn("remains implementation nonconformance", self.workflow)
+        self.assertIn("normative design change is not predetermined", self.workflow)
+        self.assertIn("does not automatically mean architecture churn", self.architecture)
+        self.assertIn("complete/correct that family closure", self.implementation)
+
+    def test_genuine_post_family_recurrence_requires_design_reconsideration(self) -> None:
+        self.assertIn("after a genuine family closure", self.workflow)
+        self.assertIn("same family materially fails after an adequate family closure", self.implementation)
+        self.assertIn("triggers bounded design reconsideration", self.design)
+        self.assertIn("same authority", self.architecture)
+
+    def test_no_cycle_or_review_count_can_force_acceptance(self) -> None:
+        self.assertIn(
+            "no recurrence count, review count, cycle budget, or convergence target can force acceptance",
+            self.workflow,
+        )
+        self.assertIn("not the pass threshold", self.workflow)
+
+    def test_census_is_bounded_and_conditional(self) -> None:
+        self.assertIn("progressive evidence-directed inspection remains the default", self.intake)
+        self.assertIn("switch to a bounded census only when", self.intake)
+        self.assertIn("whole-repository inventory remains unnecessary", self.workflow)
+        self.assertIn("not universal persistent traceability artifacts", self.intake)
+
+    def test_acceptance_liveness_keeps_real_owner_and_runtime_evidence(self) -> None:
+        for phrase in (
+            "patched seam, failpoint, callback",
+            "trigger actually fired",
+            "real semantic owner",
+            "not a universal requirement to check out historical commits",
+            "known-positive and known-negative",
+            "structural/negative scans complement runtime acceptance",
+        ):
+            self.assertIn(phrase, self.testing)
+
+    def test_review_readiness_is_not_a_refusal_or_design_revision_mechanism(self) -> None:
+        for phrase in (
+            "exact candidate identity",
+            "final complete affected-surface regression",
+            "real-boundary integration",
+            "not review-ready",
+            "not an automatic design revision",
+            "explicitly requested review still proceeds",
+        ):
+            self.assertIn(phrase, self.workflow)
+        self.assertIn("do not refuse an explicitly requested review", self.design)
+        self.assertIn("review readiness is not a mechanism for refusing review", self.testing)
+
+    def test_review_saturates_family_proportionately_and_has_stopping_rule(self) -> None:
+        self.assertIn("reviewer must, to the degree proportionate and practical", self.workflow)
+        self.assertIn("review characterizes and batches the family", self.workflow)
+        self.assertIn("implementation owns the systematic family closure", self.workflow)
+        self.assertIn("reviewer expansion stops", self.workflow)
+        self.assertIn("not proof that no conceivable repository defect exists", self.workflow)
+        self.assertIn("proportionately saturate the directly implicated family", self.design)
+        self.assertIn("evidence-directed sufficiency", self.design)
+
+    def test_revision_economy_preserves_snapshot_complete_current_authority(self) -> None:
+        for phrase in (
+            "do not require a new numbered authority revision",
+            "reconcile that semantic into canonical current authority",
+            "snapshot completeness is preserved",
+            "concrete new sites",
+        ):
+            self.assertIn(phrase, self.workflow)
+        self.assertIn(
+            "ordinary implementation misses and review cycles do not require numbered authority revisions",
+            self.design,
+        )
+
+    def test_unrelated_preexisting_issue_is_not_automatically_a_blocker(self) -> None:
+        self.assertIn("unrelated pre-existing issue", self.workflow)
+        self.assertIn("does not block current closure merely because review discovered it", self.workflow)
+        self.assertIn("materially interacts with it", self.workflow)
+
+    def test_closure_horizon_and_template_remain_nonbureaucratic(self) -> None:
+        self.assertIn("closure horizon", self.workflow)
+        self.assertIn("it is not a scope ceiling", self.workflow)
+        self.assertIn("conditional convergence guidance", self.template)
+        self.assertIn("does not require a family matrix", self.template)
+        self.assertIn("do not require ids, ledgers, persistent closure maps", self.template)
+
+    def test_tools_remain_optional(self) -> None:
+        self.assertIn("convergence-oriented composition", self.tooling)
+        self.assertIn("optional tools", self.tooling)
+        self.assertIn("tool absence does not relax family closure", self.tooling)
+        self.assertIn("three-tool sequence mandatory", self.tooling)
+        self.assertIn("tool availability alone is not a reason", self.tooling)
+
+    def test_regression_integration_and_qualification_semantics_are_preserved(self) -> None:
+        self.assertIn("stage-local affected regression", self.testing)
+        self.assertIn("stage-local affected regression", self.implementation)
+        self.assertIn("final complete affected-surface regression", self.testing)
+        self.assertIn("integration/end-to-end", self.testing)
+        self.assertIn("production qualification is separate", self.implementation)
+        self.assertIn("distinct from functional testing", self.testing)
+
+
+if __name__ == "__main__":
+    unittest.main()

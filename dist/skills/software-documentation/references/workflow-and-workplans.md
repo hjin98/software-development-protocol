@@ -151,6 +151,8 @@ A prior cycle is a **genuine family closure** for later escalation only when the
 
 If the same material family survives or reappears after a genuine family closure, or the census itself demonstrates duplicated/contradictory ownership, uncontrolled entry points, proliferating exceptional paths, or another structural redesign trigger, stop another ordinary sibling-patch cycle and route to **bounded Software Design reconsideration**. Reconsideration is mandatory, but a normative design change is not predetermined: Design may keep frozen product/architecture semantics and require stronger implementation consolidation/refactoring/canonicalization, or reopen only the affected frozen decision when evidence shows that decision itself must change.
 
+No recurrence count, review count, cycle budget, or convergence target can force acceptance; escalation changes the engineering method, not the pass threshold.
+
 ### Review readiness and exact-candidate closure
 
 Normal final independent closure review should challenge a candidate Implementation has actually completed. Before claiming final review-ready state, Implementation completes, as applicable: exact candidate identity; accepted-contract reconciliation; all triggered family closure; material stage-local focused and affected regression; final affected-surface re-derivation; final complete affected-surface regression and real-boundary integration after invalidating executable edits; repository/project-required checks; structural/absence claims; acceptance-liveness evidence where a patched seam/failpoint/callback is material; known-failure triage; and final tree/diff inspection for stale paths, fallbacks, ownership drift, and unnecessary complexity.
@@ -159,13 +161,15 @@ Missing required closure/evidence makes the candidate not review-ready and is im
 
 ### Independent review saturation and sufficiency
 
-When a blocker implicates a material family, the reviewer should continue cheap, high-information read-only inspection of the directly implicated family far enough to characterize obvious sibling variants/equivalence classes before routing it back. Group same-family evidence into one family-level closure problem rather than intentionally returning one cheap sibling per review cycle. Review characterizes and batches the family; Implementation owns the systematic family closure.
+When a blocker implicates a material family, the reviewer must, to the degree proportionate and practical in the current review, continue cheap, high-information read-only inspection of the directly implicated family far enough to characterize obvious sibling variants/equivalence classes before routing it back. Group same-family evidence into one family-level closure problem rather than intentionally returning one cheap sibling per review cycle. Review characterizes and batches the family; Implementation owns the systematic family closure.
 
 Reviewer expansion stops when the materially plausible low-cost sibling space is sufficiently characterized, further discovery would become implementation-like reconstruction or expensive/unavailable execution, evidence already establishes that systematic family closure is required and more enumeration would mainly duplicate it, or no evidence-driven ownership/contract/affected-surface chain justifies broader inspection. State material limits rather than implying exhaustiveness. A sound PASS requires adequate contract closure, affected-surface evidence, challenge of material family-closure premises, and no unresolved material blocker or evidence-driven reason to expand; it is not proof that no conceivable repository defect exists.
 
 ### Finding routing, closure horizon, and authority revisions
 
 Route findings by engineering meaning, not cycle count: an already-binding requirement/invariant/acceptance miss is implementation nonconformance under the same authority; a genuinely missing or incorrect still-binding task semantic requires reconciliation of current workplan/design before the next handoff; a newly affected material issue that preserves frozen design is incorporated as a necessary implementation consequence and grouped into an existing family when semantics match; an unrelated pre-existing issue with no material dependency on the active claim is routed separately.
+
+An unrelated pre-existing issue does not block current closure merely because review discovered it; it becomes current-scope material only when evidence shows that the active change exposes, depends on, or materially interacts with it.
 
 Concrete new sites, call stacks, examples, failing inputs, or sibling manifestations are evidence rather than new normative semantics when current supplied invariant/owner authority already governs them strongly enough for a new implementer to recover the required end state. If new evidence reveals a still-binding task-specific consequence, acceptance boundary, or redesign trigger not recoverable from supplied current authority, reconcile that semantic into canonical current authority before the next Design -> Implementation handoff so snapshot completeness is preserved.
 
