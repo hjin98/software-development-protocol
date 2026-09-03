@@ -101,7 +101,7 @@ def nonrefusal(text: str) -> bool:
     relevant = [c for c in clauses(scope) if "review" in c and ("refus" in c or "proceed" in c)]
     if not any(x in c for c in relevant for x in ("still proceeds", "must not be refused", "do not refuse")):
         return False
-    return not any("refus" in c and not any(x in c for x in ("must not be refused", "do not refuse", "not a refusal mechanism")) for c in relevant)
+    return not any("refus" in c and not any(x in c for x in ("must not be refused", "do not refuse", "not a refusal mechanism", "not a mechanism for refusing review")) for c in relevant)
 
 
 def broad_review(text: str) -> bool:
