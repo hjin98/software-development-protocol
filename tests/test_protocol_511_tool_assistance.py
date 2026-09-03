@@ -56,6 +56,31 @@ def negative_subject_policy_holds(sentence: str, subject: str) -> bool:
     return any(re.search(pattern, sentence) for pattern in patterns)
 
 
+def hypothesis_anti_gaming_sentence_holds(sentence: str) -> bool:
+    sentence = sentence.lower()
+    required_scope = (
+        "filtering",
+        "health-check suppression",
+        "disabled useful phases",
+        "removed deadlines",
+        "reduced exploration",
+    )
+    purpose = r"\b(?:solely|merely)\s+to\s+(?:make|manufacture)\s+(?:a\s+)?property\s+green\b"
+    prohibition = re.search(
+        rf"\b(?:(?:do|does)\s+not|must\s+not|never)\s+"
+        rf"(?:use|apply|employ|introduce|rely\s+on)\b(?P<body>.{{0,420}}?{purpose})",
+        sentence,
+    )
+    if prohibition is None:
+        return False
+    body = prohibition.group("body")
+    if not all(mechanism in body for mechanism in required_scope):
+        return False
+    if re.search(r"\b(?:but|however|except)\b", sentence):
+        return False
+    return True
+
+
 def hypothesis_anti_gaming_policy_holds(text: str) -> bool:
     sentences = sentences_in_paragraph(text, "health-check suppression")
     required_scope = (
@@ -66,37 +91,33 @@ def hypothesis_anti_gaming_policy_holds(text: str) -> bool:
         "reduced exploration",
     )
     purpose = r"\b(?:solely|merely)\s+to\s+(?:make|manufacture)\s+(?:a\s+)?property\s+green\b"
-    anti_gaming = next(
-        (
-            sentence
-            for sentence in sentences
-            if "health-check suppression" in sentence and re.search(purpose, sentence)
-        ),
-        None,
-    )
-    if anti_gaming is None:
-        return False
-    if not all(mechanism in anti_gaming for mechanism in required_scope):
-        return False
-    if not re.search(r"\b(?:do not|must not|never)\b", anti_gaming):
-        return False
-    if re.search(r"\b(?:but|however|except)\b", anti_gaming):
+    governed = [
+        sentence
+        for sentence in sentences
+        if any(mechanism in sentence for mechanism in required_scope) and re.search(purpose, sentence)
+    ]
+    if not governed or not any(hypothesis_anti_gaming_sentence_holds(sentence) for sentence in governed):
         return False
 
-    permission = r"\b(?:may|can|allow(?:ed)?|permit(?:ted)?)\b"
-    for sentence in sentences:
-        if not any(mechanism in sentence for mechanism in required_scope):
+    positive_policy = (
+        r"\b(?:may|can|should|must|ought\s+to)\s+(?:be\s+)?"
+        r"(?:use(?:d)?|apply|applied|employ(?:ed)?|introduce(?:d)?)\b"
+        r"|\b(?:is|are)\s+(?:allowed|permitted|recommended|required|encouraged)\b"
+        r"|\b(?:allowed|permitted|recommended|required|encouraged)\s+to\b"
+        r"|^\s*(?:use|apply|employ|introduce)\b"
+    )
+    for sentence in governed:
+        if hypothesis_anti_gaming_sentence_holds(sentence):
             continue
-        if re.search(permission, sentence) and re.search(purpose, sentence):
+        if re.search(positive_policy, sentence):
             return False
     return True
 
 
 def hypothesis_settings_policy_holds(text: str) -> bool:
     sentence = sentence_containing(text, "change settings")
-    if "required coverage remains intact" not in sentence:
-        return False
-    if not re.search(r"\bchange settings\b.{0,80}\bwhen\b", sentence):
+    change_condition = re.search(r"\bchange settings\b.{0,80}\bwhen\b", sentence)
+    if change_condition is None:
         return False
 
     justification = re.search(
@@ -109,6 +130,20 @@ def hypothesis_settings_policy_holds(text: str) -> bool:
         r"\b(?:not|never|no)\b|\bfail(?:s|ed)?\s+to\b|"
         r"\b(?:don't|doesn't|didn't|cannot|can't)\b",
         justification.group("link"),
+    ):
+        return False
+
+    coverage = re.search(
+        r"\brequired coverage\s+(?:remains?|stays?|is\s+(?:kept|preserved))\s+intact\b",
+        sentence,
+    )
+    if coverage is None or coverage.start() < justification.end():
+        return False
+    coverage_tail = sentence[coverage.end() : coverage.end() + 64]
+    if re.search(
+        r"\b(?:is|are)\s+not\s+(?:required|necessary)\b|"
+        r"\bneed(?:s)?\s+not\b|\boptional\b|\bnot\s+(?:required|necessary)\b",
+        coverage_tail,
     ):
         return False
     return True
@@ -226,6 +261,13 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
             "Do not use excessive filtering, health-check suppression, disabled useful phases, removed deadlines, or "
             "reduced exploration solely to make a property green. Health-check suppression may be used solely to make "
             "a property green when failures are inconvenient.",
+            "Do not prohibit excessive filtering, health-check suppression, disabled useful phases, removed deadlines, "
+            "or reduced exploration solely to make a property green.",
+            "Do not worry; use excessive filtering, health-check suppression, disabled useful phases, removed deadlines, "
+            "or reduced exploration solely to make a property green.",
+            "Do not use excessive filtering, health-check suppression, disabled useful phases, removed deadlines, or "
+            "reduced exploration solely to make a property green. Health-check suppression should be used solely to "
+            "make a property green.",
         )
         for policy in inverted:
             with self.subTest(policy=policy):
@@ -235,6 +277,8 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
         inverted = (
             "Change settings when project/test semantics do not justify it and required coverage remains intact.",
             "Change settings when project/test semantics fail to justify it and required coverage remains intact.",
+            "Change settings when project/test semantics justify it, although required coverage remains intact is not "
+            "required.",
         )
         for policy in inverted:
             with self.subTest(policy=policy):
