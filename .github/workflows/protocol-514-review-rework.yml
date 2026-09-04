@@ -1,0 +1,205 @@
+name: Protocol 5.14 acceptance-boundary rework
+
+on:
+  push:
+    branches:
+      - plan/protocol-5.14-solution-boundary-simplicity
+
+permissions:
+  contents: write
+
+jobs:
+  rework-and-validate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: plan/protocol-5.14-solution-boundary-simplicity
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Reconcile workplan and protocol sources
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{path}: expected exactly one match, found {count}: {old[:80]!r}')
+              p.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          def append_once(path: str, marker: str, addition: str) -> None:
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              if marker not in text:
+                  p.write_text(text.rstrip() + '\n\n' + addition.strip() + '\n', encoding='utf-8')
+
+          workplan_addition = r'''
+          ## Review finding reconciliation — acceptance evidence must not freeze Tier-2 owners
+
+          Independent review of the first 5.14 implementation found one blocking authority leak: proxy-proof acceptance could still promote a replaceable Tier-2 production owner into an effective invariant merely because the workplan or test named that owner/path. This is the same solution-reification defect through the evidence contract rather than through implementation-consequence language.
+
+          The governing distinction is now explicit:
+
+          - **The acceptance claim is authoritative.** Product/Frozen behavior must be established through the actual production semantic owner of the final accepted realization.
+          - **Boundary fidelity is authoritative.** Evidence must fail when that final real owner is materially broken; mocks/fakes remain below or outside it.
+          - **A delegated Tier-2 owner identity is not authoritative merely because acceptance currently names it.** If owner `A` is legitimately replaced by equivalent simpler owner `B` while product/problem invariants and Frozen high-level architecture remain satisfied, Implementation must invalidate/reconcile `A`-specific evidence and establish the same claim through real owner `B`.
+          - **Exact owner/path identity is binding only when independently justified by Tier 1:** a governed external/product contract requires that identity, or Software Design explicitly freezes the owner/path at high-level architecture. Only then does changing it require Design reconsideration.
+
+          Therefore proxy-proof acceptance must never become a hidden third Tier-1 class. A current owner/path may be recorded so tests exercise reality, but the record must state whether exact identity is product/Frozen authority or merely the current realization.
+
+          ### Required rework
+
+          - `source/shared/references/testing-and-validation.md` must become explicit that proxy-proof acceptance binds the claim to the **final real owner**, not to an incidental historical Tier-2 owner. Owner replacement beneath Frozen architecture is local reconciliation; owner-specific evidence is invalidated and rerun/remapped rather than silently reused.
+          - `source/shared/references/workflow-and-workplans.md` and the workplan template must preserve the claim/boundary and distinguish binding owner identity from a replaceable current owner mapping. They must not place generic acceptance-owner identity into `Frozen` authority.
+          - Design and Implementation entrypoints must retain the salient real-owner safeguard while making the same distinction operational.
+          - Existing proxy-proof and 5.14 contract tests must add the directional counterexample `delegated owner A -> simpler owner B -> acceptance remaps to real B`, while preserving rejection of tests that bypass the final real owner.
+          - Historical Protocol 5.13 tool-routing tests must stop owning the current protocol-version assertion; current-version identity remains centralized in the current protocol contract tests.
+          - Regenerate and validate all committed distributions after source/test changes.
+
+          This finding is **implementation nonconformance under the existing 5.14 design**, not a redesign. Target version remains `5.14.0`; the three-tier authority model, active-simplicity rule, deterministic tool routing, and proxy-proof acceptance purpose remain Frozen.
+
+          ### Additional acceptance scenario
+
+          11. **Acceptance owner replacement:** when a delegated Tier-2 semantic owner `A` is replaced by an equivalent simpler owner `B` without changing product truth or Frozen high-level architecture, the protocol requires proxy-proof acceptance through real owner `B` and invalidation/reconciliation of `A`-specific evidence; it must not require preservation of `A` or a Design reopen solely because an earlier workplan/test named `A`.
+
+          Final acceptance additionally requires that no canonical protocol text treats an acceptance-owner mapping as independent Frozen authority unless exact identity is itself a product contract or explicitly Frozen architecture.
+          '''
+          append_once(
+              'workplans/active/PROTOCOL-5.14-SOLUTION-BOUNDARY-AND-ACTIVE-SIMPLICITY.md',
+              '## Review finding reconciliation — acceptance evidence must not freeze Tier-2 owners',
+              workplan_addition,
+          )
+
+          replace_once(
+              'source/shared/references/testing-and-validation.md',
+              'For a material integration or acceptance claim, identify the **semantic owner under acceptance**: the production component, state machine, consumer, validator, persistence mechanism, compatibility/migration path, authorization layer, orchestrator, or decision-maker whose real behavior materially constitutes the claim.',
+              'For a material integration or acceptance claim, identify the **semantic owner under acceptance for the current realization**: the production component, state machine, consumer, validator, persistence mechanism, compatibility/migration path, authorization layer, orchestrator, or decision-maker whose real behavior materially constitutes the claim. The authoritative acceptance boundary is the product/Frozen claim plus execution of its actual production owner; a lower-level Tier-2 owner does **not** become Frozen merely because a workplan or test names it. If delegated owner `A` is legitimately replaced by equivalent owner `B` while product/Frozen semantics survive, invalidate/reconcile `A`-specific evidence and establish the same claim through real owner `B`. This is local reconciliation, not proxy-passing. Exact owner/path identity is binding only when that identity is itself a governed product contract or explicitly Frozen high-level architecture.'
+          )
+          replace_once(
+              'source/shared/references/testing-and-validation.md',
+              'Before relying on material acceptance evidence, ask the counterfactual: **could this evidence remain green while the required semantic owner is materially broken?** If yes, that evidence cannot close the owner claim. A direct helper call cannot prove that its production caller detects the condition and invokes it correctly.',
+              'Before relying on material acceptance evidence, ask the counterfactual: **could this evidence remain green while the real semantic owner of the accepted current realization is materially broken?** If yes, that evidence cannot close the owner claim. A direct helper call cannot prove that its production caller detects the condition and invokes it correctly. After a legitimate delegated-owner replacement, old owner-specific evidence is stale for the remapped claim even if it remains green.'
+          )
+          replace_once(
+              'source/shared/references/testing-and-validation.md',
+              'When a workplan explicitly requires a real owner/path, inability to exercise that boundary is an unavailable/blocking acceptance check or an evidence-backed design-reopen condition; do not silently downgrade it to a proxy pass. When the task names forbidden semantic-owner substitutions and a robust inexpensive structural/negative check can prevent recurrence, add that guardrail. Do not require universal AST scanning, mutation testing, one test per function, a global monkeypatch ban, or a new anti-mocking framework merely for protocol compliance.',
+              'When exact real owner/path identity is binding because a governed product contract or explicitly Frozen architecture requires that identity, inability to exercise that boundary is an unavailable/blocking acceptance check or an evidence-backed Design-reopen condition; do not silently downgrade it to a proxy pass. Otherwise, a legitimate delegated-owner replacement must reconcile the acceptance mapping to the new real owner and invalidate/rerun owner-specific evidence rather than preserving the old owner. When the task names forbidden semantic-owner substitutions and a robust inexpensive structural/negative check can prevent recurrence, add that guardrail. Do not require universal AST scanning, mutation testing, one test per function, a global monkeypatch ban, or a new anti-mocking framework merely for protocol compliance.'
+          )
+
+          replace_once(
+              'source/shared/references/workflow-and-workplans.md',
+              'When material acceptance depends on a **real production owner/consumer boundary**, preserve the claim, required real owner/path, allowed doubles, forbidden substitutions, and observable evidence enough to prevent proxy acceptance.',
+              'When material acceptance depends on a **real production owner/consumer boundary**, preserve the product/Frozen claim, the current real owner/path or owner class needed to exercise it, allowed doubles, forbidden substitutions, and observable evidence enough to prevent proxy acceptance. Do not elevate a delegated Tier-2 owner into Frozen authority merely by naming it for acceptance. Exact owner/path identity is binding only when a governed product contract or explicitly Frozen architecture requires that identity; otherwise an equivalent owner replacement reconciles the acceptance mapping and invalidates owner-specific evidence.'
+          )
+          replace_once(
+              'source/shared/references/workflow-and-workplans.md',
+              'The accepted current handoff artifact set must be **snapshot-complete** for still-binding task-specific product/problem invariants, Frozen architecture, non-goals, acceptance boundaries, and redesign/simplification triggers.',
+              'The accepted current handoff artifact set must be **snapshot-complete** for still-binding task-specific product/problem invariants, Frozen architecture, non-goals, acceptance claims/boundaries, and redesign/simplification triggers. Preserve exact acceptance-owner identity only when product/Frozen authority makes that identity binding; a replaceable current Tier-2 owner mapping is not normative history.'
+          )
+
+          replace_once(
+              'source/shared/templates/implementation_workplan_template.md',
+              '- **Acceptance boundary:** required real semantic owner/path, allowed doubles, forbidden substitutions, and observable evidence when proxy acceptance is a material risk.',
+              '- **Acceptance boundary:** product/Frozen claim, current real semantic owner/path or owner class, allowed doubles, forbidden substitutions, and observable evidence when proxy acceptance is a material risk. State whether exact owner/path identity is itself product/Frozen authority or merely the current Tier-2 realization; if delegated, an equivalent replacement remaps acceptance to the new real owner rather than reopening Design.'
+          )
+          replace_once(
+              'source/shared/templates/implementation_workplan_template.md',
+              '<List only Tier-1 product/problem requirements and deliberately Frozen high-level architecture/acceptance decisions implementation must preserve.>',
+              '<List only Tier-1 product/problem requirements, deliberately Frozen high-level architecture, and acceptance boundaries whose exact identity is independently required by product/Frozen authority. Do not freeze a Tier-2 owner merely because current acceptance executes it.>'
+          )
+
+          replace_once(
+              'source/roles/software-design/SKILL.md',
+              'When a material acceptance claim depends on a real owner/path, identify the **required real semantic owner/path** and enough test-double constraints to prevent proxy acceptance. Evidence that **could remain green** while that semantic owner is broken cannot establish the claim.',
+              'When a material acceptance claim depends on a real owner/path, identify the **product/Frozen claim and the real semantic owner/path of the current realization** plus enough test-double constraints to prevent proxy acceptance. Evidence that **could remain green** while that final owner is broken cannot establish the claim. Naming a delegated Tier-2 owner for acceptance does not freeze its identity: an equivalent owner replacement remaps and reruns owner-specific acceptance; exact owner identity is immutable only when a governed product contract or Frozen high-level architecture makes it so.'
+          )
+
+          replace_once(
+              'source/roles/software-implementation/SKILL.md',
+              'When acceptance depends on a production owner/state transition/consumer, the **real semantic owner/path that constitutes the claim must execute**. Evidence that **could remain green** while it is broken cannot close the claim. **Bounded test doubles remain valid below or outside** that boundary. If the required boundary cannot execute, report **unavailable/blocking** rather than **silently proxy-passing** it.',
+              'When acceptance depends on a production owner/state transition/consumer, the **real semantic owner/path of the final accepted realization that constitutes the claim must execute**. Evidence that **could remain green** while it is broken cannot close the claim. **Bounded test doubles remain valid below or outside** that boundary. A delegated Tier-2 owner named by earlier acceptance guidance may be replaced by an equivalent simpler owner when product/Frozen semantics survive; reconcile the acceptance mapping and invalidate/rerun owner-specific evidence against the new real owner. Do not treat that remapping as proxy-passing or Design reopening unless exact owner identity was itself product/Frozen authority. If a binding required boundary cannot execute, report **unavailable/blocking** rather than **silently proxy-passing** it.'
+          )
+
+          replace_once(
+              'source/shared/references/protocol-versioning-and-compatibility.md',
+              'Protocol 5.14 is a backward-compatible **solution-boundary and active-simplicity strengthening**. It clarifies the existing three-tier doctrine rather than changing it: Tier 1 consists of intrinsic stakeholder/domain product truth plus high-level architecture explicitly Frozen by Software Design for the current implementation cycle; lower-level realization remains Tier 2 by default and does not acquire invariant authority through existence, dependency, testing, documentation, review history, or previous repair. Protocol 5.14 narrows minimum-known-contract semantics accordingly, distinguishes affected-surface expansion from requirement expansion, and makes Tier-2 simplification/re-derivation mandatory before another additive durable repair when structural evidence shows solution ossification or unnecessary complexity. It preserves the two-role lifecycle, product requirements, proxy-proof acceptance, snapshot-complete handoff, affected regression/integration, revision economy, and Protocol 5.13 deterministic tool routing.',
+              'Protocol 5.14 is a backward-compatible **solution-boundary and active-simplicity strengthening**. It clarifies the existing three-tier doctrine rather than changing it: Tier 1 consists of intrinsic stakeholder/domain product truth plus high-level architecture explicitly Frozen by Software Design for the current implementation cycle; lower-level realization remains Tier 2 by default and does not acquire invariant authority through existence, dependency, testing, documentation, review history, previous repair, or acceptance evidence that merely names the current owner. Protocol 5.14 narrows minimum-known-contract semantics accordingly, distinguishes affected-surface expansion from requirement expansion, makes Tier-2 simplification/re-derivation mandatory before another additive durable repair when structural evidence shows solution ossification or unnecessary complexity, and preserves proxy-proof acceptance by binding evidence to the final real production owner of the accepted claim rather than implicitly freezing a replaceable Tier-2 owner. It preserves the two-role lifecycle, product requirements, snapshot-complete handoff, affected regression/integration, revision economy, and Protocol 5.13 deterministic tool routing.'
+          )
+
+          replace_once(
+              'source/README.md',
+              'Affected-surface expansion expands inspection, implementation impact, and acceptance coverage; it does not by itself expand the product requirement or freeze the current realization.',
+              'Affected-surface expansion expands inspection, implementation impact, and acceptance coverage; it does not by itself expand the product requirement or freeze the current realization. Proxy-proof acceptance likewise follows the final real production owner of the accepted claim: naming a current Tier-2 owner for testing does not freeze that owner unless its identity is itself product/Frozen authority.'
+          )
+          replace_once(
+              'README.md',
+              'Affected-surface growth expands implementation/testing impact; it does not by itself create new product requirements or freeze the mechanism that exposed the surface.',
+              'Affected-surface growth expands implementation/testing impact; it does not by itself create new product requirements or freeze the mechanism that exposed the surface. Proxy-proof acceptance follows the final real production owner of the accepted claim; naming a current Tier-2 owner for testing does not freeze it unless exact identity is product/Frozen authority.'
+          )
+
+          proxy_path = Path('tests/test_protocol_proxy_proof_acceptance.py')
+          proxy = proxy_path.read_text(encoding='utf-8')
+          proxy = proxy.replace(
+              '        self.assertIn("required real semantic owner/path", design)\n        self.assertIn("real semantic owner/path that constitutes the claim must execute", implementation)\n',
+              '        self.assertIn("product/frozen claim and the real semantic owner/path of the current realization", design)\n        self.assertIn("real semantic owner/path of the final accepted realization", implementation)\n'
+          )
+          insert_marker = '    def test_targeted_guardrails_do_not_create_global_anti_mock_framework(self) -> None:\n'
+          new_test = '''    def test_delegated_owner_replacement_remaps_acceptance_without_freezing_old_owner(self) -> None:\n        testing = read("source/shared/references/testing-and-validation.md").lower()\n        workflow = read("source/shared/references/workflow-and-workplans.md").lower()\n        template = read("source/shared/templates/implementation_workplan_template.md").lower()\n        implementation = read("source/roles/software-implementation/SKILL.md").lower()\n        self.assertIn("lower-level tier-2 owner does **not** become frozen", testing)\n        self.assertIn("equivalent owner `b`", testing)\n        self.assertIn("reconcile the acceptance mapping to the new real owner", testing)\n        self.assertIn("do not elevate a delegated tier-2 owner into frozen authority", workflow)\n        self.assertIn("merely the current tier-2 realization", template)\n        self.assertIn("final accepted realization", implementation)\n        self.assertIn("do not treat that remapping as proxy-passing or design reopening", implementation)\n\n'''
+          if 'test_delegated_owner_replacement_remaps_acceptance_without_freezing_old_owner' not in proxy:
+              if insert_marker not in proxy:
+                  raise SystemExit('proxy test insertion marker missing')
+              proxy = proxy.replace(insert_marker, new_test + insert_marker, 1)
+          proxy_path.write_text(proxy, encoding='utf-8')
+
+          contracts_path = Path('tests/test_protocol_contracts.py')
+          contracts = contracts_path.read_text(encoding='utf-8')
+          contract_insert = '''    def test_acceptance_evidence_does_not_promote_tier2_owner(self) -> None:\n        testing = read("source/shared/references/testing-and-validation.md").lower()\n        self.assertIn("actual production owner", testing)\n        self.assertIn("does **not** become frozen", testing)\n        self.assertIn("local reconciliation, not proxy-passing", testing)\n        self.assertIn("exact owner/path identity is binding only when", testing)\n        self.assertIn("do not elevate a delegated tier-2 owner into frozen authority", self.workflow)\n        self.assertIn("do not freeze a tier-2 owner merely because current acceptance executes it", self.template)\n\n'''
+          contract_marker = '    def test_no_new_simplicity_bureaucracy_is_implied(self) -> None:\n'
+          if 'test_acceptance_evidence_does_not_promote_tier2_owner' not in contracts:
+              if contract_marker not in contracts:
+                  raise SystemExit('contract test insertion marker missing')
+              contracts = contracts.replace(contract_marker, contract_insert + contract_marker, 1)
+          contracts_path.write_text(contracts, encoding='utf-8')
+
+          routing_path = Path('tests/test_protocol_513_tool_routing_codeql_compression.py')
+          routing = routing_path.read_text(encoding='utf-8')
+          old = '''    def test_version_is_514_and_513_history_is_preserved(self) -> None:\n        self.assertEqual("5.14.0", read("source/PROTOCOL_VERSION").strip())\n        versioning = lower("source/shared/references/protocol-versioning-and-compatibility.md")\n        self.assertIn("protocol 5.14 is a backward-compatible", versioning)\n        self.assertIn("protocol 5.13 is a backward-compatible", versioning)\n'''
+          new = '''    def test_513_history_is_preserved_without_owning_current_version(self) -> None:\n        versioning = lower("source/shared/references/protocol-versioning-and-compatibility.md")\n        self.assertIn("protocol 5.14 is a backward-compatible", versioning)\n        self.assertIn("protocol 5.13 is a backward-compatible", versioning)\n'''
+          if old not in routing:
+              raise SystemExit('routing version test block missing')
+          routing_path.write_text(routing.replace(old, new, 1), encoding='utf-8')
+          PY
+
+      - name: Install validation dependencies
+        run: python -m pip install -r source/requirements-validation.txt
+      - name: Run protocol regression tests
+        run: python -m unittest discover -s tests -v
+      - name: Build canonical distribution
+        run: python source/build_skills.py --output /tmp/protocol-dist
+      - name: Validate generated packages
+        run: python source/validate_packages.py --dist /tmp/protocol-dist
+      - name: Replace committed distribution
+        run: |
+          rm -rf dist
+          cp -a /tmp/protocol-dist dist
+      - name: Verify distribution parity
+        run: python source/check_dist.py --expected /tmp/protocol-dist --committed dist
+      - name: Check whitespace
+        run: git diff --check
+      - name: Commit validated rework and remove helper
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/protocol-514-review-rework.yml
+          git add README.md source tests workplans dist
+          git commit -m 'Close Protocol 5.14 acceptance-owner authority gap'
+          git push origin HEAD:plan/protocol-5.14-solution-boundary-simplicity
