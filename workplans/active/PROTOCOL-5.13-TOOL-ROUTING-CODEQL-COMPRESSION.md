@@ -552,6 +552,8 @@ Each protected family needs, directly or through an equivalent shared helper:
 
 A detached toy-string mutation is insufficient if the same predicate never demonstrates that a material mutation of its actual source owner fails. Likewise, appending a contradiction outside a deliberately sliced paragraph/section does not establish liveness.
 
+For the representative inversion basis below, apply a **monotonic contradiction counterfactual**: if the current governed source unit passes, retaining that valid wording while adding a materially conflicting clause **inside the same governed unit** must make the same predicate fail. A predicate is not live merely because it detects replacement/removal of the positive wording. Unrelated compatible additions must remain acceptable; this is bounded polarity protection, not a rule that any extra prose fails.
+
 Use bounded line/row/paragraph/section extraction or an equivalent deterministic matcher. No general natural-language theorem prover, mutation-testing framework, semantic linter, policy DSL, or persistent routing ledger is required.
 
 ### Historical Protocol 5.11 directional preservation basis
@@ -620,17 +622,21 @@ For both lifecycle roles, protect all five class associations with stable local 
 - broad/combinatorial Python input/state invariants -> Hypothesis specific method;
 - supported interprocedural flow/taint/source-to-sink relations -> CodeQL specific method.
 
-At minimum, source-linked route mutations must reject a Serena/Semgrep target swap, Hypothesis target substitution, CodeQL flow routed to ordinary or merely structural handling, and ordinary literal/local work forced into a specialist. Prefer replacing the linked target or route meaning in a copied actual dispatch row/line so the mutation is inside the same semantic unit the predicate claims to govern.
+At minimum, source-linked route mutations must reject a Serena/Semgrep target swap, Hypothesis target substitution, CodeQL flow routed to ordinary or merely structural handling, and ordinary literal/local work forced into a specialist. Each specialized dispatch row must resolve to **exactly one required specific-tool target for that class**; the ordinary row must resolve to no forced specialist. Therefore also reject additive contradictions that retain the correct target while adding another wrong `MUST read`/specialist target on the same governed row. Prefer mutating the linked target or route meaning in a copied actual dispatch row/line so the mutation is inside the same semantic unit the predicate claims to govern.
 
 **Direct-entry negative:** a policy that makes the common tool router a mandatory prerequisite/second hop before reading the triggered specific method must fail. Direct links plus reading the common owner when overlap/composition/common evidence policy itself is material remain valid.
 
-**Capability-discovery negative:** when a specialized class fires, availability is genuinely unknown, and a cheap non-mutating probe is practical on the host, `never probe`, silently assume absence, or default to ordinary tools without checking must fail. A capability already known unavailable need not be probed again; a host with no safe/practical cheap probe, or disproportionate setup for a trivially bounded claim, may take an already-permitted concrete fallback.
+**Capability-discovery negative:** when a specialized class fires, availability is genuinely unknown, and a cheap non-mutating probe is practical on the host, `never probe`, silently assume absence, or default to ordinary tools without checking must fail. The inverse overconstraint must also fail: do not require probing when availability is already known, when the host exposes no safe/practical cheap probe, or when already-permitted disproportionate setup for a trivially bounded claim makes concrete fallback appropriate. Test both directions against copied actual lifecycle policy units so the conditional is preserved rather than collapsed into either "never probe" or "always probe."
 
-**Disposition/fallback negative:** built-in familiarity/default preference is not a permitted reason to skip an available/current/supported capability that directly models the claim. Concrete fallbacks such as unsupported language/backend, unavailable tool surface, irrecoverably stale state, model mismatch, disproportionate setup for a trivial bounded claim, or already-available equally reliable cheaper evidence remain valid.
+**Disposition/fallback negative:** built-in familiarity/default preference is not a permitted reason to skip an available/current/supported capability that directly models the claim. More generally, retaining the positive presumptive-use rule while adding that such a directly matching capability may be skipped **without a concrete permitted reason** must fail; the oracle may not protect only the familiarity wording. Concrete fallbacks such as unsupported language/backend, unavailable tool surface, irrecoverably stale state, model mismatch, disproportionate setup for a trivial bounded claim, or already-available equally reliable cheaper evidence remain valid.
 
-**Model-limit negative:** an explicit policy that treats specialist output as exhaustive despite a plausible dynamic/generated/runtime/configuration/external-consumer blind spot must fail. Cross-checking remains proportionate: no duplicate analyzer/search pass is required when no material blind spot exists.
+**Model-limit negative:** an explicit policy that treats specialist output as exhaustive despite a plausible dynamic/generated/runtime/configuration/external-consumer blind spot must fail. The inverse overconstraint must also fail: the policy may not require a duplicate analyzer/search pass when no material blind spot exists. Protect both sides of the conditional with source-linked mutations; cross-checking is required when a material model blind spot can hide the claim and remains unnecessary ceremony when it cannot.
 
-**Overlap/non-ceremony negative:** broad topic rules such as `security always means CodeQL`, structural-security routed away from Semgrep solely because it is security, and any fixed mandatory multi-tool pipeline must fail. Multi-relation claims may decompose and use the minimum capability set needed.
+**Overlap/non-ceremony negative:** broad topic rules such as `security always means CodeQL`, structural-security routed away from Semgrep solely because it is security, and any fixed mandatory multi-tool pipeline must fail. Include an explicit source-linked structural-security inversion (for example, retaining the valid forbidden-call/structural rule while adding that the same forbidden-call relation must use CodeQL solely because it is security). Multi-relation claims may decompose and use the minimum capability set needed.
+
+**Tool-specific owner liveness:** because selection boundaries, capability/model limitations, and tool-specific fallbacks are canonically owned by `tool-serena.md`, `tool-semgrep.md`, `tool-hypothesis.md`, and `tool-codeql.md`, a whole-file positive phrase census is insufficient. For **each of the four tool-specific owners**, the governing predicate must accept the actual current owner and reject at least one representative material contradiction inserted into a copied actual selection/capability/fallback policy unit. Use a tool-appropriate inversion—for example, forcing Serena onto literal/unsupported surfaces, allowing Semgrep to substitute for an interprocedural claim, forcing Hypothesis onto a small already-exhaustive deterministic case or permitting arbitrary skip of a triggered broad-state case, or forcing CodeQL onto a purely structural/security-by-topic claim. Equivalent stronger inversions are delegated. The composed routing-chain oracle must also fail when any one distributed owner is so inverted while all other owners remain valid.
+
+This per-owner mutation requirement does **not** require duplicating detailed specialist mechanics into lifecycle/common owners and does not require one mutation for every sentence in a tool file. It closes the finite canonical-owner boundary of the routing-chain family.
 
 ### Already-accepted CodeQL/provenance/compression counterfactuals
 
@@ -654,6 +660,9 @@ Do not obtain a pass by:
 - narrowing a predicate so the contradictory clause lies outside the policy unit it claims to govern;
 - using synthetic fixtures while leaving actual canonical source ungoverned;
 - replacing correct relation-to-target checking with global filename presence;
+- accepting a row merely because the correct target remains present while a second wrong required specialist is added;
+- accepting a current valid policy merely because its positive phrase remains present after an in-unit contradictory clause is added;
+- treating tool-specific owner presence checks as liveness without a canonical-source contradiction mutation;
 - re-expanding lifecycle/common/convergence prose merely to satisfy an exact-phrase test;
 - opportunistically weakening Protocol 5.12 directional/counterfactual coverage.
 
@@ -667,16 +676,19 @@ Before requesting independent closure review, Implementation must demonstrate:
 
 1. current-owner positives plus in-unit canonical-source mutations for the historical 5.11 family and Protocol 5.13 routing-chain family;
 2. the complete finite historical Protocol 5.11 inversion basis and its legitimate boundaries;
-3. all five relation-class associations, direct entry/no mandatory second hop, practical unknown-availability probing, presumptive-use/permitted-fallback polarity, conditional model-limit cross-check, overlap, and non-ceremony;
-4. the already-accepted CodeQL/provenance/compression counterfactual families remain green;
-5. Protocol 5.12 convergence/counterfactual suites remain unchanged and green;
-6. focused affected tests, then complete `python -m unittest discover -s tests -v`;
-7. `python source/build_skills.py --output <fresh-temp-dist>`;
-8. `python source/validate_packages.py --dist <fresh-temp-dist>`;
-9. `python source/check_dist.py --expected <fresh-temp-dist> --committed dist`;
-10. `git diff --check`;
-11. a fresh independent Software Design review on that exact assembled candidate before closing or archiving this workplan.
+3. all five relation-class associations with unique per-row target ownership, direct entry/no mandatory second hop, practical unknown-availability probing **and its legitimate no-probe boundary**, presumptive-use/permitted-fallback polarity including arbitrary-skip rejection, conditional model-limit cross-check **and its no-blind-spot boundary**, structural-security overlap, non-ceremony, and canonical-source contradiction liveness for each Serena/Semgrep/Hypothesis/CodeQL specific owner;
+4. the composed routing-chain predicate fails when a representative contradiction is introduced into each distributed owner class while unrelated owners remain valid;
+5. the already-accepted CodeQL/provenance/compression counterfactual families remain green;
+6. Protocol 5.12 convergence/counterfactual suites remain unchanged and green;
+7. run the focused affected family first: `python -m unittest tests.test_protocol_511_tool_assistance tests.test_protocol_513_counterfactual_oracles tests.test_protocol_513_oracle_family_closure -v`;
+8. then run complete `python -m unittest discover -s tests -v`;
+9. `python source/build_skills.py --output <fresh-temp-dist>`;
+10. `python source/validate_packages.py --dist <fresh-temp-dist>`;
+11. `python source/check_dist.py --expected <fresh-temp-dist> --committed dist`;
+12. `git diff --check`;
+13. final tree/diff inspection confirms no temporary diagnostic/trigger artifacts or unintended normative-source changes remain;
+14. a fresh independent Software Design review on that exact assembled candidate before closing or archiving this workplan.
 
 If only tests and this workplan change, do not regenerate `dist/` merely to create byte churn; parity must still be checked. If canonical packaged source changes because the oracle exposes a real contradiction, regenerate derivatives before parity validation.
 
-A later failure in this same acceptance-oracle family becomes eligible for genuine post-family Design reconsideration only after the source-linked finite family above has actually passed focused/full acceptance and been explicitly claimed closed. Until then, another miss is incomplete implementation family closure under this unchanged design.
+The bounded family is considered genuinely closed only when the current canonical owners pass, the finite inversion/boundary basis above passes, representative **additive in-unit contradictions** fail, each distributed owner class is mutation-live, the focused family command passes before the full chain, and the exact assembled candidate passes final acceptance. A later material failure in this same acceptance-oracle family becomes eligible for genuine post-family Design reconsideration only after that closure has actually been achieved and explicitly claimed. Until then, another miss is incomplete implementation family closure under this unchanged design.
