@@ -146,7 +146,12 @@ def tooling_optional_holds(text: str) -> bool:
 
 
 def revision_economy_holds(text: str) -> bool:
-    return holds(text, "ordinary implementation attempts and review cycles", (r"do not require.{0,100}numbered authority revision",))
+    return holds(
+        text,
+        "ordinary implementation attempts and review cycles",
+        (r"do not require.{0,100}numbered authority revision",),
+        (r"ordinary implementation attempts and review cycles.{0,160}(?:must|always|require(?:s|d)?(?:\s+to)?).{0,100}numbered authority revision",),
+    )
 
 
 def current_authority_holds(text: str) -> bool:
@@ -154,6 +159,7 @@ def current_authority_holds(text: str) -> bool:
         text,
         "reconcile that semantic into canonical current authority",
         (r"still-binding task-specific consequence.{0,260}reconcile that semantic into canonical current authority", r"before the next design -> implementation handoff"),
+        (r"still-binding task-specific consequence.{0,180}(?:may|can|should|must).{0,100}remain only in (?:conversation|history|review)",),
     )
 
 
@@ -162,6 +168,7 @@ def concrete_evidence_holds(text: str) -> bool:
         text,
         "concrete new sites",
         (r"concrete new sites.{0,240}are evidence rather than new normative semantics", r"current supplied invariant/owner authority already governs them"),
+        (r"concrete new sites.{0,140}(?:must|always).{0,100}(?:become|be|are).{0,80}new normative semantics",),
     )
 
 
