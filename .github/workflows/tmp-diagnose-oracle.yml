@@ -1,0 +1,31 @@
+name: Temporary Protocol 5.13 oracle diagnosis
+
+on:
+  push:
+    branches:
+      - plan/protocol-5.13-tool-routing-codeql-compression
+
+permissions:
+  contents: write
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: plan/protocol-5.13-tool-routing-codeql-compression
+      - name: Run focused oracle suite and persist traceback
+        shell: bash
+        run: |
+          set +e
+          python -m unittest -v tests.test_protocol_513_oracle_family_closure > tmp-oracle-failure.txt 2>&1
+          status=$?
+          echo "exit_status=$status" >> tmp-oracle-failure.txt
+          git rm .github/workflows/tmp-diagnose-oracle.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tmp-oracle-failure.txt
+          git commit -m 'chore: capture Protocol 5.13 oracle diagnostic'
+          git push
+          exit 0
