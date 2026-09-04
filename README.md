@@ -8,7 +8,7 @@ Software Development Protocol 5 is an engineering-fitness-first workflow for AI-
 product engineering fitness > minimum justified product/system complexity > development economy
 ```
 
-Protocol 5.12 preserves the complete two-role lifecycle and every material Protocol 5.4-5.11 engineering safeguard while adding explicit development-convergence and cycle-economy controls:
+Protocol 5.13 preserves the complete two-role lifecycle and all material Protocol 5.4-5.12 safeguards while strengthening deterministic tool entry, adding CodeQL as an optional interprocedural/data-flow capability, and restoring progressive-disclosure context economy:
 
 ```text
 software-design -> software-implementation
@@ -18,23 +18,45 @@ The durable stakeholder product is the objective; workplans, tests, gates, metri
 
 `software-design` diagnoses and chooses the product design, preserves task-specific intent in a lossless implementation contract, designs acceptance, and independently reviews when warranted. `software-implementation` realizes that contract adaptively, closes coherent material stages semantically and functionally, and completes final accepted-contract reconciliation plus affected-surface regression/integration.
 
-Protocol 5.12 preserves Protocol 5.11 optional tool-assisted methodology, Protocol 5.10 snapshot-complete handoffs, and Protocol 5.9 **canonical detailed ownership + deterministic progressive-disclosure routing** unchanged. Role-critical task triggers still require exact linked references before the corresponding decision or closure, while domain references remain conditional. Final accepted handoffs still carry every binding task-specific semantic in the supplied current artifact set rather than depending on hidden history or conversation state.
+## Deterministic progressive disclosure
 
-The 5.11 addition is a single canonical tool-assisted engineering reference, conditionally routed from both lifecycle roles. Serena can provide semantic repository navigation and bounded editing, Semgrep can provide structural/variant analysis, and Hypothesis can provide property/stateful testing when those capabilities materially improve the task. They are optional environment capabilities and evidence instruments—not generic skill dependencies, lifecycle gates, normative task authority, or substitutes for affected regression and real-boundary integration.
+Protocol 5.13 preserves Protocol 5.9 deterministic reference routing and makes optional tool routing operational **per material engineering question** rather than depending on an agent first deciding that an unfamiliar tool would help. The relation under the current claim determines the route:
 
-Executable changes still require focused checks, stage-local affected regression for every material behavior-changing stage, final affected-surface re-derivation/regression, integration through real product/consumer boundaries, and repository/project-required checks. A local coherent behavior change is normally one stage; proportionality reduces ceremony, never coverage. Production qualification remains separate from functional acceptance.
+```text
+literal/path/text -> ordinary repository search/read
+symbol owner/definition/reference/caller -> Serena
+AST/syntax/structural pattern -> Semgrep
+broad Python input/state invariant -> Hypothesis
+interprocedural flow/taint/source-to-sink -> CodeQL
+```
 
-Independent review remains Software Design mode, not a third lifecycle role. Optional specialists are supporting capabilities, not approval gates.
+A specialized trigger directly routes to its tool-specific method. When availability is unknown, the agent uses a cheap non-mutating capability probe when practical; when the capability is available/current/supported and directly models the claim, it is presumptively used, otherwise the agent takes a concrete permitted fallback. Familiarity with built-in search/read/shell/test primitives is not itself a fallback reason. Tool availability alone never creates a fixed multi-tool pipeline.
 
-## Convergent development
+The former monolithic tool manual is split into one compact common selection/composition owner plus Serena, Semgrep, Hypothesis, and CodeQL method references. Detailed Protocol 5.12 convergence/cycle-economy mechanics are likewise conditionally owned outside the common workflow reference, while compact recurrence/review triggers remain directly visible. This reduces loaded context and duplication without weakening accepted doctrine.
 
-The 5.12 convergence control keeps a first clean local defect local, but material sibling recurrence changes the unit of work to a bounded semantic defect family. Implementation establishes a family closure basis, repairs the canonical owner/mechanism, and proves family-level real-owner plus affected-regression/integration behavior. Genuine same-family recurrence after adequate family closure triggers bounded Design reconsideration before another ordinary sibling patch; reconsideration may preserve frozen design and require consolidation/refactoring rather than automatically creating a new normative revision.
+## CodeQL evidence model
 
-Review readiness, acceptance liveness, proportionate blocker-family saturation, conditional finite-surface census, closure horizons, and revision-number economy reduce repeated rediscovery without making exhaustive scans, matrices, new roles, or fixed review counts universal. Independent review remains able to find material new issues, and genuinely new binding task semantics still enter canonical current authority before the next handoff.
+CodeQL is optional and specialized for supported interprocedural/data-flow relations. Protocol 5.13 distinguishes:
+
+1. local/external CodeQL execution;
+2. separately executed GitHub-managed CodeQL analysis;
+3. the GitHub code-scanning result/alert surface, which may contain results from managed CodeQL, uploaded SARIF, or another analyzer.
+
+Uploading SARIF from a local run does not create a second independent execution merely because the result appears in GitHub. Database/source/build/query identity, invalidation after relevant changes, negative-evidence bounds, query governance, privileged build/extraction behavior, resource limits, and upload trust boundaries are all explicit. Generic protocol validity does not require GitHub or CodeQL unless project/task authority independently requires a named check.
+
+## Acceptance and convergence remain intact
+
+Executable changes still require focused checks, stage-local affected regression for every material behavior-changing stage, final affected-surface re-derivation/regression, integration through real product/consumer boundaries, and repository/project-required checks. Semantic conformance never substitutes for executable testing; green tests never prove an omitted obligation was implemented. Production qualification remains separate from functional acceptance.
+
+A first clean local defect remains local. Material sibling recurrence changes the unit of work to a bounded semantic family; genuine same-family recurrence after adequate family closure triggers bounded Software Design reconsideration before another ordinary sibling patch. Review readiness, acceptance liveness, blocker-family saturation, finite-surface census when justified, closure horizons, revision economy, and evidence reuse remain preserved through the conditionally loaded convergence reference.
+
+Independent review remains Software Design mode, not a third lifecycle role. Optional specialists and optional analyzers are supporting capabilities, not approval gates.
 
 ## Build and repository acceptance
 
-`source/` is canonical. `dist/skills/<skill-name>/` contains first-class ready-to-install directory bundles and the existing top-level ZIPs remain backward-compatible transport artifacts generated from the same bundle tree. See `PORTABILITY.md` for installation and real-harness routing qualification. Before a protocol revision is complete:
+`source/` is canonical. `dist/skills/<skill-name>/` contains first-class ready-to-install directory bundles and top-level ZIPs remain backward-compatible generated transport artifacts. See `PORTABILITY.md` for installation, reference-routing qualification, and live tool-routing qualification.
+
+Before a protocol revision is complete:
 
 ```bash
 python -m pip install -r source/requirements-validation.txt
