@@ -73,6 +73,16 @@ def negative_subject_clause_holds(clause: str, subject: str) -> bool:
 
 
 def negative_subject_policy_holds(text: str, subject: str) -> bool:
+    paragraph = norm(paragraph_containing(text, subject))
+    explicit_affirmative = (
+        f"this is a {subject}",
+        f"a {subject} is required",
+        f"form a {subject}",
+        f"forms a {subject}",
+        f"must use a {subject}",
+    )
+    if any(marker in paragraph for marker in explicit_affirmative):
+        return False
     clauses = [
         clause
         for clause in policy_clauses_in_paragraph(text, subject)
