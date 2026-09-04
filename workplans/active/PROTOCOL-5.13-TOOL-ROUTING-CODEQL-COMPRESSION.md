@@ -3,10 +3,11 @@ kind: implementation-workplan
 workplan_id: PROTOCOL-5.13-TOOL-ROUTING-CODEQL-COMPRESSION
 protocol_version: 5.12.0
 target_protocol_version: 5.13.0
-status: frozen
+status: active
 created_date: 2026-09-03
 frozen_date: 2026-09-03
 reviewed_date: 2026-09-03
+reopened_date: 2026-09-03
 base_commit: b893eb428a81c71ee9f091d3e3b98417a656ac64
 ---
 
@@ -519,3 +520,52 @@ Apply snapshot-loss counterfactual: remove prior chat, initial Protocol 5.13 dra
 - implementation authority, affected surfaces, counterfactual acceptance, live-qualification limits, and redesign triggers.
 
 Implementation must preserve Protocol 5.12 doctrine by inheritance rather than copying it into new prose. No material requirement above may remain only in conversation or superseded review history after handoff.
+
+## Independent Software Design review reopen — 2026-09-03
+
+**Verdict:** NO-PASS. Reopen only the acceptance-oracle/test surface. The implemented routing architecture, tool-specific ownership split, CodeQL methodology/provenance model, convergence extraction, versioning, packaging design, and current normative source wording remain frozen unless new evidence independently invalidates them.
+
+### Blocking finding — counterfactual-oracle regression
+
+The assembled source expresses the intended Protocol 5.13 semantics, but the acceptance suite no longer proves several required polarity guarantees. During the ownership/compression refactor, historical Protocol 5.11 directional tests for mandatory-pipeline polarity and Hypothesis anti-gaming/settings polarity were replaced by phrase-presence assertions. The new Protocol 5.13 suite likewise checks many positive phrases but does not construct direct contradictory policies and prove that the semantic oracle rejects them. A policy can therefore contain both the required positive phrase and an explicit inverse while the affected tests remain green.
+
+This is implementation nonconformance under existing O4/O8 and final-acceptance items 16-17, not a new design requirement. Green package/source tests do not close it because the frozen plan explicitly requires direct inversion rejection and preservation of historical counterfactual defenses.
+
+### Required corrected end state
+
+1. Restore Protocol 5.11 directional protection under the split canonical owners, or implement an equivalent stronger bounded oracle. At minimum preserve nonvacuous negative tests for:
+   - optional composition / no mandatory analyzer pipeline;
+   - Hypothesis anti-gaming controls, including filtering/`assume`/strategy narrowing/exclusions/health-check or phase/deadline/exploration weakening solely to manufacture a green property;
+   - Hypothesis settings changes only when project/test semantics justify them while required coverage remains intact.
+2. Add nonvacuous Protocol 5.13 positive-plus-contradiction counterfactuals that reject explicit inversions for every final-acceptance family already named by this plan:
+   - per-question dispatch/classification and ordinary-vs-specialized relation selection;
+   - relation-first overlap, including rejection of broad-topic rules such as “security always means CodeQL”;
+   - fallback polarity, including rejection of built-in familiarity/default preference as a permitted reason;
+   - mandatory multi-tool pipeline;
+   - acceptance of a stale CodeQL database for a changed relevant candidate/extraction dimension;
+   - acceptance-critical custom CodeQL query without representative validation;
+   - overbroad zero-findings/absence claim outside database/query/model scope;
+   - local SARIF rehosting treated as independent GitHub-managed execution, local analysis substituted for a required hosted check, and stale/wrong-candidate hosted evidence;
+   - compression ownership inversion that duplicates conditional canonical mechanics back into always-loaded owners while still satisfying positive phrase-presence checks.
+3. Each counterfactual must be able to accept a valid compact policy and reject the same policy after an explicit material contradiction is introduced. Phrase presence, filename presence, or byte thresholds alone are not sufficient evidence for polarity.
+4. Do not re-expand lifecycle entrypoints or common tool/convergence owners merely to satisfy the tests. Keep the current source semantics and progressive-disclosure gains unless a failing directional test exposes a genuine semantic contradiction.
+5. Preserve current Protocol 5.12 directional/counterfactual coverage. Do not weaken existing predicates/fixtures to make the repaired suite green.
+
+### Rework acceptance
+
+Run, on the repaired exact candidate:
+
+```text
+focused Protocol 5.11 directional/tool-assistance tests
++ focused Protocol 5.13 routing/CodeQL/compression counterfactual tests
++ Protocol 5.12 convergence/counterfactual tests
+-> complete python -m unittest discover -s tests -v
+-> python source/build_skills.py --output <fresh-temp-dist>
+-> python source/validate_packages.py --dist <fresh-temp-dist>
+-> python source/check_dist.py --expected <fresh-temp-dist> --committed dist
+-> git diff --check
+```
+
+If only tests and this workplan change, generated `dist/` need not be regenerated merely to create byte churn; parity must still be rechecked. If canonical packaged source changes, regenerate `dist/` from canonical source before parity validation.
+
+Existing evidence for routing architecture, CodeQL methodology, source/package composition, and loaded-context reduction remains reusable until a repaired test or later change invalidates those claims. After the counterfactual-oracle family is closed, perform a new independent Software Design review on the exact assembled candidate. Do not close or archive this workplan before that review passes.
