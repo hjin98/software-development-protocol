@@ -18,9 +18,12 @@ PROTOCOL_VERSION = (ROOT / "PROTOCOL_VERSION").read_text(encoding="utf-8").strip
 
 CORE = [
     "workflow-and-workplans.md",
-    "convergence-and-cycle-economy.md",
     "testing-and-validation.md",
     "protocol-versioning-and-compatibility.md",
+]
+
+ROLE_CONDITIONAL = [
+    "convergence-and-cycle-economy.md",
 ]
 
 TOOL_METHODS = [
@@ -46,7 +49,7 @@ ENGINEERING_FITNESS = [
 ROLE_SPECS = {
     "software-design": {
         "role": "design",
-        "references": CORE + [
+        "references": CORE + ROLE_CONDITIONAL + [
             "architecture-and-design.md",
             "documentation-and-evidence.md",
             "specification-and-implementation.md",
@@ -57,7 +60,7 @@ ROLE_SPECS = {
     },
     "software-implementation": {
         "role": "implementation",
-        "references": CORE + [
+        "references": CORE + ROLE_CONDITIONAL + [
             "architecture-and-design.md",
             "debugging-and-state-recovery.md",
             "documentation-and-evidence.md",
