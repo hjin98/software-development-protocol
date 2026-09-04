@@ -3,12 +3,13 @@ kind: implementation-workplan
 workplan_id: PROTOCOL-5.13-TOOL-ROUTING-CODEQL-COMPRESSION
 protocol_version: 5.12.0
 target_protocol_version: 5.13.0
-status: frozen
+status: active
 created_date: 2026-09-03
 frozen_date: 2026-09-03
 reviewed_date: 2026-09-03
 reopened_date: 2026-09-03
 refrozen_date: 2026-09-03
+reopened_again_date: 2026-09-03
 base_commit: b893eb428a81c71ee9f091d3e3b98417a656ac64
 ---
 
@@ -163,7 +164,7 @@ Distinguish execution from result hosting:
 
 1. **Local/external CodeQL execution** — CLI/database/query analysis executed outside GitHub-managed scanning; may produce/upload SARIF.
 2. **GitHub-managed CodeQL execution** — CodeQL executed by GitHub default/advanced code-scanning configuration or an equivalent repository CI workflow under project policy.
-3. **GitHub code-scanning result/alert surface** — repository-hosted results that may originate from GitHub-managed CodeQL, externally uploaded CodeQL SARIF, or other analyzers.
+3. **GitHub code-scanning result/alert surface** — repository-hosted findings/results that may originate from GitHub-managed CodeQL, externally uploaded CodeQL SARIF, or other analyzers.
 
 Consequences:
 
@@ -619,3 +620,67 @@ Conversely, the tests need only reject representative explicit material inversio
 The accepted rework surface is now bounded to tests/helpers and this workplan unless a repaired source-linked oracle exposes a genuine contradiction in canonical normative source. If that happens, repair only the affected normative rule and regenerate packaged derivatives as required; do not reopen unrelated routing, CodeQL, convergence, versioning, or compression design.
 
 Implementation may choose helper/module organization freely, but final review must be able to demonstrate source linkage, nonvacuous contradiction rejection, legitimate-boundary preservation, unchanged Protocol 5.12 counterfactual strength, complete regression/build/package/parity checks, and an exact assembled candidate. The snapshot-loss counterfactual now recovers these requirements entirely from this workplan and the declared Protocol 5.12 base authority.
+
+## Independent Software Design implementation re-review reopen — 2026-09-03
+
+**Verdict:** NO-PASS. Reopen the same acceptance-oracle/test family only. The current Protocol 5.13 normative source, routing architecture, CodeQL methodology/provenance, progressive-disclosure ownership, convergence extraction, versioning, packaging, and loaded-context reductions remain frozen. This finding is incomplete family closure under the accepted design, not post-family evidence requiring redesign.
+
+### Blocking family A — historical Protocol 5.11 directional strength is still weakened
+
+The new source-linked oracle is an improvement over phrase presence, but it is not equivalent in strength to the historical Protocol 5.11 oracle that this workplan explicitly preserves.
+
+The repaired oracle must continue to reject the material historical inversion classes, not merely one preferred wording. At minimum preserve the previously exercised behaviors:
+
+- **mandatory-pipeline polarity:** reject affirmative declarations such as `This is a mandatory three-tool pipeline`, `form a mandatory three-tool pipeline`, and a positive no-pipeline rule followed by a conflicting mandatory-pipeline clause;
+- **Hypothesis anti-gaming polarity:** reject direct permission/recommendation/exception forms for any governed mechanism, including `is permitted`, `may be used`, `should be used`, `is acceptable`, and `unless ... solely to make a property green`, while still allowing filtering/settings changes justified by the real governed domain rather than by manufacturing a pass;
+- **Hypothesis settings polarity:** reject negated justification (`do not justify`, `fail to justify`) and coverage escape hatches such as `unless`, `may be discarded`, `is no longer necessary`, `may be sacrificed`, or equivalent explicit abandonment of required coverage.
+
+Implementation may reuse/adapt the Protocol 5.12-base helpers/fixtures against the split current owners or implement a simpler equivalent bounded oracle. It must not reduce the historical material inversion classes to a smaller vocabulary merely because the positive source currently uses one phrase.
+
+### Blocking family B — Protocol 5.13 routing-chain oracle remains incomplete
+
+Close O1/O2/O3/O8 as one bounded routing-chain acceptance family rather than adding isolated phrase checks.
+
+For both lifecycle roles, a source-linked bounded predicate/table must establish the material chain:
+
+```text
+relation class
+-> correct direct tool-specific method (or ordinary-tools class)
+-> no mandatory common-router second hop before the specific method
+-> unknown availability -> cheap non-mutating probe when practical
+-> available/current/supported/directly matching -> presumptive specialized use
+   OR concrete permitted fallback
+-> material analyzer blind spot -> proportionate cross-check
+-> no fixed multi-tool pipeline
+```
+
+Required negative mutations:
+
+1. **Every relation class:** ordinary, Serena, Semgrep, Hypothesis, and CodeQL each need a positive and a wrong-route/inversion case. Merely proving that all four tool filenames appear somewhere is insufficient. A Serena/Semgrep route swap, Hypothesis routed to a different tool, CodeQL flow routed to ordinary/structural handling, or ordinary literal work forced into a specialist must fail.
+2. **Direct entry:** requiring the common tool router to be read first as a mandatory second hop before the triggered tool-specific method must fail; direct links and compact overlap routing remain valid.
+3. **Capability discovery:** a direct inversion such as `never probe unknown availability`, `assume the specialized capability is unavailable without checking when a cheap probe is practical`, or equivalent silent bypass must fail. Preserve the legitimate boundary that probing is conditional on practicality/host support/material setup cost.
+4. **Disposition/fallback:** built-in familiarity/default preference remains invalid as the reason to skip an available/current/supported matching capability; concrete permitted fallbacks remain accepted.
+5. **Model-limit cross-check:** an explicit assertion that specialized analyzer output is exhaustive and never needs material dynamic/generated/runtime/configuration cross-checking must fail. Preserve the boundary that cross-checking is proportionate to plausible model blind spots, not a mandatory duplicate scan for every question.
+6. **Non-ceremony:** preserve the historical no-mandatory-pipeline polarity above.
+
+A small table-driven helper over canonical lines/sections is preferred if it reduces duplicated regex logic, but helper organization remains delegated. Do not build a generic natural-language policy engine.
+
+### Surfaces already accepted and not to churn
+
+The current CodeQL stale-database, custom-query, zero-result scope, hosted/SARIF provenance, hosted-required-check, analyzer-build trust, and universal-CodeQL-negative predicates have representative source-linked inversions and legitimate boundaries. The current compression-ownership predicate is also adequately bounded to canonical normative `source/` ownership. Preserve them unless the routing-family repair exposes a concrete contradiction.
+
+Protocol 5.12 counterfactual tests were not changed by the last rework and remain required unchanged. The exact candidate `8750f420efc6f0ed8c6f074cef97916077f65dfb` passed the normal PR regression/build/package-validation/committed-dist-parity/whitespace workflow; that evidence remains reusable only for dimensions unchanged by the next test edits, and the final exact candidate must rerun the full chain.
+
+### Rework acceptance
+
+Before another independent closure review:
+
+1. Run focused Protocol 5.11 historical-directional tests including the historical inversion classes above through the current split owners.
+2. Run focused Protocol 5.13 routing-chain counterfactual tests proving all five relation classes, direct entry/no-second-hop, capability probing, disposition/fallback, model-limit cross-check, and non-ceremony.
+3. Keep the already-green CodeQL/provenance/compression counterfactual families green.
+4. Keep Protocol 5.12 convergence/counterfactual suites unchanged and green.
+5. Run complete `python -m unittest discover -s tests -v` on the exact candidate.
+6. Run canonical build, independent package validation, committed `dist/` parity, and `git diff --check` on that same exact candidate. If only tests/workplan change, do not regenerate `dist/`; if canonical packaged source changes because a repaired oracle exposes a real contradiction, repair only that rule and regenerate derivatives before parity validation.
+7. Perform a fresh independent Software Design review before closing or archiving this workplan.
+
+Do not broaden the rework into another Protocol 5.13 prose rewrite. The blocker is the acceptance oracle's bounded semantic coverage, not the current normative protocol design.
