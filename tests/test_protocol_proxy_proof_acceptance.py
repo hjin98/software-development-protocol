@@ -63,8 +63,8 @@ class ProxyProofAcceptanceContractTests(unittest.TestCase):
     def test_workplan_boundary_is_conditional_not_ceremonial(self) -> None:
         workflow = read("source/shared/references/workflow-and-workplans.md").lower()
         template = read("source/shared/templates/implementation_workplan_template.md").lower()
-        self.assertIn("required real owner/path", workflow)
-        self.assertIn("ordinary unit tests", workflow)
+        self.assertIn("when material acceptance depends", workflow)
+        self.assertIn("real production owner/consumer boundary", workflow)
         self.assertIn("acceptance boundary", template)
         self.assertIn("when proxy acceptance is a material risk", template)
         self.assertIn("attach only when material", template)

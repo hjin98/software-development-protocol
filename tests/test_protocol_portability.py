@@ -9,22 +9,31 @@ SOURCE = ROOT / "source"
 HIERARCHY = "product engineering fitness > minimum justified product/system complexity > development economy"
 LINK_RE = re.compile(r"\[[^\]]+\]\((references/[A-Za-z0-9_.-]+\.md)\)")
 
+ROLE_513 = {
+    "convergence-and-cycle-economy.md",
+    "tool-assisted-engineering.md",
+    "tool-serena.md",
+    "tool-semgrep.md",
+    "tool-hypothesis.md",
+    "tool-codeql.md",
+}
+
 EXPECTED_REFERENCES = {
     "roles/software-design": {
         "workflow-and-workplans.md", "testing-and-validation.md", "protocol-versioning-and-compatibility.md",
         "architecture-and-design.md", "documentation-and-evidence.md", "specification-and-implementation.md",
-        "release-and-distribution.md", "repository-intake.md", "tool-assisted-engineering.md",
+        "release-and-distribution.md", "repository-intake.md",
         "configuration-and-policy.md", "concurrency-and-orchestration.md", "security-and-trust-boundaries.md",
         "performance-and-parallelism.md", "storage-and-io.md", "scientific-software.md",
-    },
+    } | ROLE_513,
     "roles/software-implementation": {
         "workflow-and-workplans.md", "testing-and-validation.md", "protocol-versioning-and-compatibility.md",
         "architecture-and-design.md", "debugging-and-state-recovery.md", "documentation-and-evidence.md",
         "specification-and-implementation.md", "release-and-distribution.md", "repository-intake.md",
-        "git-and-version-control.md", "tool-assisted-engineering.md", "configuration-and-policy.md",
+        "git-and-version-control.md", "configuration-and-policy.md",
         "concurrency-and-orchestration.md", "security-and-trust-boundaries.md", "performance-and-parallelism.md",
         "storage-and-io.md", "scientific-software.md",
-    },
+    } | ROLE_513,
     "specialists/software-documentation": {
         "workflow-and-workplans.md", "testing-and-validation.md", "protocol-versioning-and-compatibility.md",
         "architecture-and-design.md", "documentation-and-evidence.md", "documentation-maintenance.md",
@@ -50,6 +59,16 @@ class ProtocolPortabilityTests(unittest.TestCase):
             text = (SOURCE / rel / "SKILL.md").read_text(encoding="utf-8")
             linked = {Path(path).name for path in LINK_RE.findall(text)}
             self.assertEqual(expected, linked, rel)
+
+    def test_protocol_513_tool_and_convergence_refs_are_lifecycle_only(self) -> None:
+        for rel in ("roles/software-design", "roles/software-implementation"):
+            text = (SOURCE / rel / "SKILL.md").read_text(encoding="utf-8")
+            linked = {Path(path).name for path in LINK_RE.findall(text)}
+            self.assertTrue(ROLE_513 <= linked)
+        for rel in ("specialists/software-documentation", "specialists/repository-hygiene"):
+            text = (SOURCE / rel / "SKILL.md").read_text(encoding="utf-8")
+            linked = {Path(path).name for path in LINK_RE.findall(text)}
+            self.assertTrue(ROLE_513.isdisjoint(linked))
 
     def test_design_role_critical_routes_are_mandatory(self) -> None:
         text = (SOURCE / "roles/software-design/SKILL.md").read_text(encoding="utf-8")

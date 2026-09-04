@@ -11,19 +11,20 @@ def read(path: str) -> str:
 
 
 class ProtocolContractTests(unittest.TestCase):
-    def test_protocol_512_identity_and_two_role_lifecycle(self) -> None:
-        self.assertEqual("5.12.0", read("source/PROTOCOL_VERSION").strip())
+    def test_protocol_513_identity_and_two_role_lifecycle(self) -> None:
+        self.assertEqual("5.13.0", read("source/PROTOCOL_VERSION").strip())
         source_readme = read("source/README.md").lower()
         root_readme = read("README.md").lower()
         versioning = read("source/shared/references/protocol-versioning-and-compatibility.md").lower()
-        self.assertIn("software development protocol 5.12", source_readme)
-        self.assertIn("protocol 5.12", root_readme)
+        self.assertIn("software development protocol 5.13", source_readme)
+        self.assertIn("protocol 5.13", root_readme)
+        self.assertIn("protocol 5.13 is a backward-compatible", versioning)
         self.assertIn("protocol 5.12 is a backward-compatible", versioning)
         self.assertIn("protocol 5.11 is a backward-compatible", versioning)
         self.assertIn("protocol 5.10 is a backward-compatible", versioning)
         self.assertIn("protocol 5.9 is a backward-compatible", versioning)
-        self.assertIn("protocol 5.4-5.11 guarantees unchanged", source_readme)
-        self.assertIn("optional capability-aware tool-assisted engineering", source_readme)
+        self.assertIn("preserves all material protocol 5.4-5.12 guarantees", source_readme)
+        self.assertIn("deterministic progressive disclosure", source_readme)
         for text in (source_readme, root_readme, versioning):
             self.assertIn("software-design", text)
             self.assertIn("software-implementation", text)
@@ -48,8 +49,9 @@ class ProtocolContractTests(unittest.TestCase):
             self.assertIn("inspect progressively", text)
             self.assertIn("ownership, dependency, contract, or behavioral impact", text)
             self.assertIn("## reference routing", text)
-            self.assertIn("](references/repository-intake.md)", text)
-            self.assertIn("progressive disclosure is preserved", text)
+            self.assertIn("references/repository-intake.md", text)
+            self.assertIn("conditional routes preserve progressive disclosure", text)
+            self.assertIn("per-question tool dispatch", text)
         self.assertIn("lowest-cost next inspection", intake)
         self.assertIn("reuse repository facts", intake)
         self.assertIn("context minimization is never permission", intake)
@@ -63,7 +65,7 @@ class ProtocolContractTests(unittest.TestCase):
             "delegated",
             "reopen only on evidence",
             "minimum known contract, not a ceiling",
-            "later protocol releases do not silently reinterpret",
+            "later releases do not silently reinterpret older active/completed plans",
         ):
             self.assertIn(phrase, workflow)
         self.assertIn("implementation realization", implementation)
@@ -97,7 +99,7 @@ class ProtocolContractTests(unittest.TestCase):
         documentation = read("source/shared/references/documentation-and-evidence.md").lower()
         for phrase in (
             "snapshot-complete",
-            "supplied artifact set",
+            "accepted current handoff artifact set",
             "snapshot-loss counterfactual",
             "workplan/design deficiency",
         ):
@@ -109,7 +111,7 @@ class ProtocolContractTests(unittest.TestCase):
         self.assertIn("not sufficient normative storage", template)
         self.assertIn("current protocol/specification/architecture/package composition remains valid", template)
         self.assertIn("snapshot-complete", design)
-        self.assertIn("supplied current authority", design)
+        self.assertIn("supplied current", design)
         self.assertIn("complete task-specific authority", implementation)
         self.assertIn("workplan/design deficiency", implementation)
         self.assertIn("not the normal source of normative task requirements", implementation)
@@ -177,6 +179,21 @@ class ProtocolContractTests(unittest.TestCase):
         self.assertIn("not approval gates", source_readme)
         self.assertIn("product engineering fitness first", docs)
         self.assertIn("not a lifecycle role", hygiene)
+
+    def test_tool_and_convergence_progressive_disclosure_surfaces_are_packaged(self) -> None:
+        source_readme = read("source/README.md").lower()
+        for name in (
+            "convergence-and-cycle-economy.md",
+            "tool-assisted-engineering.md",
+            "tool-serena.md",
+            "tool-semgrep.md",
+            "tool-hypothesis.md",
+            "tool-codeql.md",
+        ):
+            self.assertIn(name, source_readme)
+        portability = read("PORTABILITY.md").lower()
+        self.assertIn("bounded live tool-routing qualification", portability)
+        self.assertIn("named harness/tool configuration", portability)
 
 
 if __name__ == "__main__":

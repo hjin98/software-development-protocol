@@ -22,6 +22,18 @@ CORE = [
     "protocol-versioning-and-compatibility.md",
 ]
 
+ROLE_CONDITIONAL = [
+    "convergence-and-cycle-economy.md",
+]
+
+TOOL_METHODS = [
+    "tool-assisted-engineering.md",
+    "tool-serena.md",
+    "tool-semgrep.md",
+    "tool-hypothesis.md",
+    "tool-codeql.md",
+]
+
 CROSS_CUTTING = [
     "configuration-and-policy.md",
     "concurrency-and-orchestration.md",
@@ -37,19 +49,18 @@ ENGINEERING_FITNESS = [
 ROLE_SPECS = {
     "software-design": {
         "role": "design",
-        "references": CORE + [
+        "references": CORE + ROLE_CONDITIONAL + [
             "architecture-and-design.md",
             "documentation-and-evidence.md",
             "specification-and-implementation.md",
             "release-and-distribution.md",
             "repository-intake.md",
-            "tool-assisted-engineering.md",
-        ] + CROSS_CUTTING + ENGINEERING_FITNESS,
+        ] + TOOL_METHODS + CROSS_CUTTING + ENGINEERING_FITNESS,
         "templates": ["implementation_workplan_template.md"],
     },
     "software-implementation": {
         "role": "implementation",
-        "references": CORE + [
+        "references": CORE + ROLE_CONDITIONAL + [
             "architecture-and-design.md",
             "debugging-and-state-recovery.md",
             "documentation-and-evidence.md",
@@ -57,8 +68,7 @@ ROLE_SPECS = {
             "release-and-distribution.md",
             "repository-intake.md",
             "git-and-version-control.md",
-            "tool-assisted-engineering.md",
-        ] + CROSS_CUTTING + ENGINEERING_FITNESS,
+        ] + TOOL_METHODS + CROSS_CUTTING + ENGINEERING_FITNESS,
         "templates": [],
     },
 }
