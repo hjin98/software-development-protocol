@@ -102,9 +102,9 @@ Workplans inherit generic obligations from their declared protocol version; late
 
 ## Convergence trigger and conditional owner
 
-The first clean local defect remains local and receives an owning-layer repair plus proportionate consideration of obvious variants. Material sibling recurrence, a canonical mechanism with bypasses, family-level review blockers, or claimed family closure whose adequacy becomes material triggers [Convergence and development-cycle economy](convergence-and-cycle-economy.md).
+The first clean local defect remains local and receives an owning-layer repair plus proportionate consideration of obvious variants. Material sibling recurrence, a canonical mechanism with bypasses, family-level review blockers, or claimed family closure whose adequacy becomes material triggers detailed convergence/cycle-economy handling for lifecycle roles through `convergence-and-cycle-economy.md`.
 
-That reference owns detailed semantic-family definition, bounded family closure, post-family Design reconsideration, review readiness, blocker-family saturation/stopping rules, closure horizons, revision economy, and cycle-economy method. No recurrence/review count can force acceptance. Keep compact triggers here so conditional extraction never hides the escalation boundary.
+That conditional owner contains semantic-family definition, bounded family closure, post-family Design reconsideration, review readiness, blocker-family saturation/stopping rules, closure horizons, revision economy, and cycle-economy method. Lifecycle entrypoints link it directly when the trigger is material; optional specialists do not inherit an unrelated convergence manual merely because they share this generic workflow reference. No recurrence/review count can force acceptance. Keep compact triggers here so conditional extraction never hides the escalation boundary.
 
 ## Compact working state for long gated work
 
@@ -153,4 +153,4 @@ Route rework as:
 - **workplan/design deficiency** -> reconcile affected governing design/workplan before reimplementation;
 - **new independent issue** -> local necessary consequence or evidence-backed bounded redesign.
 
-Equivalent preferences without material engineering benefit are not blockers. Missing required implementation closure/evidence does not authorize a reviewer to refuse an explicitly requested review; detailed recurrence/readiness/saturation semantics live in the convergence reference. No separate verification report is required unless project/release/compliance policy independently requires one.
+Equivalent preferences without material engineering benefit are not blockers. Missing required implementation closure/evidence does not authorize a reviewer to refuse an explicitly requested review; detailed recurrence/readiness/saturation semantics live in the lifecycle-role convergence reference. No separate verification report is required unless project/release/compliance policy independently requires one.
