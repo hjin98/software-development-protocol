@@ -18,6 +18,12 @@ ROLE_513 = {
     "tool-codeql.md",
 }
 
+ROLE_515 = {
+    "language-profiles.md",
+    "python-engineering.md",
+    "cpp-engineering.md",
+}
+
 EXPECTED_REFERENCES = {
     "roles/software-design": {
         "workflow-and-workplans.md", "testing-and-validation.md", "protocol-versioning-and-compatibility.md",
@@ -25,7 +31,7 @@ EXPECTED_REFERENCES = {
         "release-and-distribution.md", "repository-intake.md",
         "configuration-and-policy.md", "concurrency-and-orchestration.md", "security-and-trust-boundaries.md",
         "performance-and-parallelism.md", "storage-and-io.md", "scientific-software.md",
-    } | ROLE_513,
+    } | ROLE_513 | ROLE_515,
     "roles/software-implementation": {
         "workflow-and-workplans.md", "testing-and-validation.md", "protocol-versioning-and-compatibility.md",
         "architecture-and-design.md", "debugging-and-state-recovery.md", "documentation-and-evidence.md",
@@ -33,7 +39,7 @@ EXPECTED_REFERENCES = {
         "git-and-version-control.md", "configuration-and-policy.md",
         "concurrency-and-orchestration.md", "security-and-trust-boundaries.md", "performance-and-parallelism.md",
         "storage-and-io.md", "scientific-software.md",
-    } | ROLE_513,
+    } | ROLE_513 | ROLE_515,
     "specialists/software-documentation": {
         "workflow-and-workplans.md", "testing-and-validation.md", "protocol-versioning-and-compatibility.md",
         "architecture-and-design.md", "documentation-and-evidence.md", "documentation-maintenance.md",
@@ -69,6 +75,27 @@ class ProtocolPortabilityTests(unittest.TestCase):
             text = (SOURCE / rel / "SKILL.md").read_text(encoding="utf-8")
             linked = {Path(path).name for path in LINK_RE.findall(text)}
             self.assertTrue(ROLE_513.isdisjoint(linked))
+
+    def test_protocol_515_language_profiles_are_lifecycle_only(self) -> None:
+        for rel in ("roles/software-design", "roles/software-implementation"):
+            text = (SOURCE / rel / "SKILL.md").read_text(encoding="utf-8")
+            linked = {Path(path).name for path in LINK_RE.findall(text)}
+            self.assertTrue(ROLE_515 <= linked)
+        for rel in ("specialists/software-documentation", "specialists/repository-hygiene"):
+            text = (SOURCE / rel / "SKILL.md").read_text(encoding="utf-8")
+            linked = {Path(path).name for path in LINK_RE.findall(text)}
+            self.assertTrue(ROLE_515.isdisjoint(linked))
+
+    def test_language_profile_routes_are_mandatory_for_both_lifecycle_roles(self) -> None:
+        for rel in ("roles/software-design", "roles/software-implementation"):
+            text = (SOURCE / rel / "SKILL.md").read_text(encoding="utf-8")
+            for path in (
+                "references/language-profiles.md",
+                "references/python-engineering.md",
+                "references/cpp-engineering.md",
+            ):
+                line = next(line for line in text.splitlines() if f"]({path})" in line)
+                self.assertIn("MUST read", line, (rel, path))
 
     def test_design_role_critical_routes_are_mandatory(self) -> None:
         text = (SOURCE / "roles/software-design/SKILL.md").read_text(encoding="utf-8")

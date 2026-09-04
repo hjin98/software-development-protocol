@@ -20,14 +20,21 @@ class ProtocolContractTests(unittest.TestCase):
         self.template = read("source/shared/templates/implementation_workplan_template.md").lower()
         self.versioning = read("source/shared/references/protocol-versioning-and-compatibility.md").lower()
 
-    def test_protocol_514_identity_and_two_role_lifecycle(self) -> None:
-        self.assertEqual("5.14.0", read("source/PROTOCOL_VERSION").strip())
+    def test_protocol_515_identity_and_two_role_lifecycle(self) -> None:
+        self.assertEqual("5.15.0", read("source/PROTOCOL_VERSION").strip())
         source_readme = read("source/README.md").lower()
         root_readme = read("README.md").lower()
-        self.assertIn("software development protocol 5.14", source_readme)
-        self.assertIn("protocol 5.14", root_readme)
-        self.assertIn("protocol 5.14 is a backward-compatible", self.versioning)
-        for historical in ("protocol 5.13 is a backward-compatible", "protocol 5.12 is a backward-compatible", "protocol 5.11 is a backward-compatible", "protocol 5.10 is a backward-compatible", "protocol 5.9 is a backward-compatible"):
+        self.assertIn("software development protocol 5.15", source_readme)
+        self.assertIn("current protocol version: **5.15**", root_readme)
+        self.assertIn("protocol 5.15 is a backward-compatible", self.versioning)
+        for historical in (
+            "protocol 5.14 is a backward-compatible",
+            "protocol 5.13 is a backward-compatible",
+            "protocol 5.12 is a backward-compatible",
+            "protocol 5.11 is a backward-compatible",
+            "protocol 5.10 is a backward-compatible",
+            "protocol 5.9 is a backward-compatible",
+        ):
             self.assertIn(historical, self.versioning)
         self.assertIn("software-design -> software-implementation", source_readme)
 

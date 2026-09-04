@@ -26,6 +26,12 @@ ROLE_CONDITIONAL = [
     "convergence-and-cycle-economy.md",
 ]
 
+LANGUAGE_PROFILES = [
+    "language-profiles.md",
+    "python-engineering.md",
+    "cpp-engineering.md",
+]
+
 TOOL_METHODS = [
     "tool-assisted-engineering.md",
     "tool-serena.md",
@@ -49,7 +55,7 @@ ENGINEERING_FITNESS = [
 ROLE_SPECS = {
     "software-design": {
         "role": "design",
-        "references": CORE + ROLE_CONDITIONAL + [
+        "references": CORE + ROLE_CONDITIONAL + LANGUAGE_PROFILES + [
             "architecture-and-design.md",
             "documentation-and-evidence.md",
             "specification-and-implementation.md",
@@ -60,7 +66,7 @@ ROLE_SPECS = {
     },
     "software-implementation": {
         "role": "implementation",
-        "references": CORE + ROLE_CONDITIONAL + [
+        "references": CORE + ROLE_CONDITIONAL + LANGUAGE_PROFILES + [
             "architecture-and-design.md",
             "debugging-and-state-recovery.md",
             "documentation-and-evidence.md",

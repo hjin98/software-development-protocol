@@ -18,6 +18,17 @@ Before substantive implementation reasoning, apply these explicit routes. A **MU
 - Before a material ownership/refactor/architecture/algorithm/complexity/redesign decision, **MUST read** [Architecture and design](references/architecture-and-design.md).
 - Before deciding protocol/workplan version binding, compatibility, or release-version semantics, **MUST read** [Protocol versioning and compatibility](references/protocol-versioning-and-compatibility.md).
 
+### Language-profile dispatch
+
+For material executable work, language semantics are part of the normal implementation path rather than an optional performance appendix.
+
+- First **MUST read** [Language engineering profiles](references/language-profiles.md) to classify the affected runtime/build surface.
+- For materially affected Python executable surfaces, **MUST read** [Python engineering](references/python-engineering.md).
+- For materially affected C++ executable surfaces, **MUST read** [C++ engineering](references/cpp-engineering.md).
+- Mixed Python/C++ boundaries **MUST read both** language profiles and apply the router's boundary rules. Tiny literal/text/config-only work may remain on shared doctrine when language semantics cannot alter the decision.
+
+Shared owners outrank language profiles. Implement idiomatically for the active language/runtime while preserving the accepted product/Frozen contract and minimum justified total complexity.
+
 ### Per-question tool dispatch
 
 Classify each material engineering question by the relation under the claim, not once per task:
@@ -26,9 +37,12 @@ Classify each material engineering question by the relation under the claim, not
 - symbol ownership/definition/callers/references/implementations, bounded semantic navigation, or symbol-aware editing -> **MUST read** [Serena](references/tool-serena.md) before relying solely on lower-information defaults;
 - AST/syntax/structural patterns, diagnosed variants, forbidden/legacy constructs, or structural absence/uniqueness -> **MUST read** [Semgrep](references/tool-semgrep.md);
 - broad/combinatorial Python input/state invariants -> **MUST read** [Hypothesis](references/tool-hypothesis.md);
+- broad/combinatorial non-Python input/state invariants -> use the language-appropriate property/generative route in [Tool-assisted engineering](references/tool-assisted-engineering.md) plus the active language profile;
 - supported interprocedural flow/taint/source-to-sink relations -> **MUST read** [CodeQL](references/tool-codeql.md).
 
-When a specialized trigger fires and availability is unknown, use a cheap non-mutating capability probe when practical. If the capability is available/current/supported and directly models the claim, presumptively use it; otherwise take a concrete fallback such as unsupported backend/language, unavailable tool surface, stale/unreliable analysis state that cannot economically be refreshed, model mismatch, disproportionate setup for a trivially bounded claim, or already-available evidence that establishes the same claim at least as reliably and more cheaply. Familiarity with built-in search/read/shell/test tools is not itself a fallback reason. For overlaps/composition/common evidence limits, read [Tool-assisted engineering](references/tool-assisted-engineering.md).
+Runtime-state/debugger, memory/lifetime/UB, race/synchronization, and performance/vectorization questions route through Tool-assisted engineering plus the active language profile rather than a fixed tool sequence. For overlaps/composition/common evidence limits, read [Tool-assisted engineering](references/tool-assisted-engineering.md).
+
+When a specialized trigger fires and availability is unknown, use a cheap non-mutating capability probe when practical. If the capability is available/current/supported and directly models the claim, presumptively use it; otherwise take a concrete fallback such as unsupported backend/language, unavailable tool surface, stale/unreliable analysis state that cannot economically be refreshed, model mismatch, disproportionate setup for a trivially bounded claim, or already-available evidence that establishes the same claim at least as reliably and more cheaply. Familiarity with built-in search/read/shell/test tools is not itself a fallback reason.
 
 ### Domain-conditional routes
 
@@ -91,6 +105,8 @@ recover Tier-1 product/problem invariants
 
 This is not a line-count rule. New machinery is justified when Tier-1/Frozen requirements need a capability the simplified system cannot supply cleanly, or when it reduces total complexity by replacing broader machinery. Detailed criteria live in [Architecture and design](references/architecture-and-design.md).
 
+For material Python/C++ code, this owning-layer rule includes language-native realization: do not preserve Python compensating machinery when C++ offers a simpler value/lifetime/runtime model, and do not reproduce low-level C++ machinery in Python when a high-level compiled/library path is simpler and sufficient. Performance complexity must earn its source/build/dependency/maintenance cost under the shared performance owner.
+
 ## Convergence trigger
 
 If materially equivalent sibling behavior recurs, a canonical mechanism has bypasses, or review identifies a family-level blocker, **MUST read** [Convergence and development-cycle economy](references/convergence-and-cycle-economy.md). Recurrence broadens reasoning to the shared owner/mechanism but does not make the current realization invariant. If recurrence also shows solution complexity, simplify Tier 2 before another equivalent additive repair. Use bounded family census when the actual Tier-1 claim is finite/exhaustive or safe simplification/canonicalization needs sibling discovery. Post-simplification recurrence or evidence that Frozen architecture is wrong routes to bounded Software Design reconsideration.
@@ -104,6 +120,8 @@ If materially equivalent sibling behavior recurs, a canonical mechanism has bypa
 Each material stage closes semantically and functionally: accepted product/Frozen obligations remain satisfied, **newly discovered affected behavior** is accounted for, focused checks and relevant **stage-local affected regression** execute, and no unintended authority/stale path/unjustified complexity remains. Reuse still-valid intermediate evidence; green tests never prove an omitted obligation.
 
 When acceptance depends on a production owner/state transition/consumer, the **real semantic owner/path of the final accepted realization that constitutes the claim must execute**. Evidence that **could remain green** while it is broken cannot close the claim. **Bounded test doubles remain valid below or outside** that boundary. A delegated Tier-2 owner named by earlier acceptance guidance may be replaced by an equivalent simpler owner when product/Frozen semantics survive; reconcile the acceptance mapping and invalidate/rerun owner-specific evidence against the new real owner. Do not treat that remapping as proxy-passing or Design reopening unless exact owner identity was itself product/Frozen authority. If a binding required boundary cannot execute, report **unavailable/blocking** rather than **silently proxy-passing** it.
+
+For performance-sensitive work, distinguish implementation permission from performance evidence: an obvious semantically equivalent, low-complexity efficiency improvement need not wait for a pre-change benchmark, but quantitative speedup/scaling/resource claims require representative comparable measurement. Supported optimized/production build behavior must be exercised when build mode can change correctness; sanitizer/debug builds are complementary correctness evidence, not production-performance evidence.
 
 Before completion:
 

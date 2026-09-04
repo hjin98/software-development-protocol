@@ -1,8 +1,21 @@
 # Concurrency and Orchestration Correctness
 
-Parallelism is not only a throughput problem. Schedulers, worker pools, concurrent jobs, asynchronous pipelines, and resumable stages create correctness obligations around ownership, failure propagation, cancellation, retries, state publication, and deterministic aggregation.
+Concurrency is an execution-model choice before it is a language/runtime choice. Synchronous code, event loops, shared-memory workers, isolated processes, distributed ranks, and accelerator pipelines all create correctness obligations around ownership, failure propagation, cancellation, publication, resource budgets, and deterministic aggregation.
 
-Read `performance-and-parallelism.md` for throughput/resource sizing and `storage-and-io.md` for parallel persistence. This document owns orchestration correctness.
+Read `performance-and-parallelism.md` for throughput/resource sizing. Language-specific runtime selection belongs in the active language profile.
+
+## Choose the execution class deliberately
+
+Use the simplest class that satisfies the product/Frozen workload and resource envelope:
+
+- **synchronous serial** when concurrency adds no material value;
+- **asynchronous/event-driven** for high-concurrency I/O, events, network/service orchestration, or useful pipeline overlap;
+- **shared-memory concurrency** when low-cost shared address-space access and clear synchronization/ownership fit the workload;
+- **process isolation** for independent address spaces, failure/security/runtime isolation, external executables, or a deliberately process-oriented architecture;
+- **distributed-memory execution** for multi-process/multi-node scaling when required by product/Frozen architecture;
+- **accelerator execution** only when architecture-authorized.
+
+Do not equate a particular language with one class. Python may use threads, async, processes, MPI, or native kernels depending on interpreter/runtime semantics; C++ may use native threads/task runtimes, OpenMP-like execution, processes, MPI, or async/event runtimes. The profiles own those mappings.
 
 ## Define the execution state machine
 
@@ -15,7 +28,7 @@ QUEUED -> RUNNING -> COMPLETE
                  -> BLOCKED
 ```
 
-Resumable systems may also need durable distinctions such as `PARTIAL`, `RECOVERABLE`, or `INVALID`, but do not proliferate states without a real semantic difference.
+Resumable systems may need durable distinctions such as `PARTIAL`, `RECOVERABLE`, or `INVALID`, but do not proliferate states without a real semantic difference.
 
 Define:
 
@@ -33,25 +46,14 @@ Do not infer completion from worker disappearance, file existence, or a progress
 Classify failures before retrying. Useful classes include:
 
 - transient infrastructure/resource failures where retry can preserve semantics;
-- adaptive resource failures with a bounded corrective action, such as retrying an OOM-safe batch at a smaller size;
+- adaptive resource failures with a bounded corrective action, such as an OOM-safe smaller batch;
 - external-service/transient I/O failures with bounded backoff where idempotency is established;
 - deterministic input/configuration/scientific-invariant failures;
 - programmer defects/assertion failures;
 - corruption/schema/lineage mismatch;
 - user cancellation/preemption.
 
-Only retry classes whose semantics are understood.
-
-A safe retry policy defines:
-
-- maximum attempts;
-- backoff/jitter where appropriate;
-- what state is discarded or reused;
-- whether the operation is idempotent;
-- what evidence is retained across attempts;
-- final failure behavior.
-
-`retryable failure != arbitrary failure`. Do not hide deterministic defects behind automatic retries.
+Only retry classes whose semantics are understood. A safe retry policy defines maximum attempts, backoff/jitter where appropriate, attempt-local versus reusable state, idempotency/publication behavior, retained evidence, and terminal failure. `retryable failure != arbitrary failure`.
 
 ## Idempotency and publication
 
@@ -59,8 +61,8 @@ Operations that may be retried or resumed should be idempotent or use unique att
 
 - Separate attempt-local temporary state from accepted durable state.
 - Publish final artifacts only after validation.
-- Prevent duplicate logical outputs from concurrent/retried attempts unless duplicates are an intentional contract.
-- Ensure a resumed stage can distinguish already-accepted work from partial or stale work.
+- Prevent duplicate logical outputs from concurrent/retried attempts unless duplicates are intentional.
+- Ensure a resumed stage can distinguish accepted work from partial/stale work.
 
 For file-backed publication, coordinate with `storage-and-io.md`.
 
@@ -68,89 +70,106 @@ For file-backed publication, coordinate with `storage-and-io.md`.
 
 Long-running user/HPC workflows should define behavior for cancellation and common termination signals where the platform permits it.
 
-- Stop scheduling new work once cancellation begins.
-- Propagate cancellation to owned children/workers.
-- Allow a bounded graceful-cleanup/checkpoint path only when it is safe and fast enough for the environment.
+- Stop admitting/scheduling new work once cancellation begins.
+- Propagate cancellation to owned tasks/processes/ranks/coroutines/workers as the runtime supports.
+- Allow bounded graceful cleanup/checkpointing only when safe and useful.
 - Do not claim a checkpoint was committed unless publication completed.
-- Release GPU contexts, file handles, temporary directories, locks, shared-memory segments, and child processes owned by the stage.
+- Release owned devices, file handles, temporary directories, locks, shared-memory objects, child processes, and other runtime resources.
 - Preserve externally owned/user input state.
 
-A forced kill can always occur; design durable state so abrupt termination cannot make partial state appear valid.
+A forced kill can always occur; durable state must not make partial output appear valid.
 
-## Backpressure and bounded queues
+## Backpressure and bounded in-flight work
 
-Producer/consumer pipelines need bounded in-flight work.
+Producer/consumer and async pipelines need bounded in-flight work.
 
-- Bound queues by task count and/or memory footprint.
-- Avoid reading/materializing an entire dataset merely because downstream workers are slower.
-- Couple admission to RAM/VRAM/I/O/storage budgets where tasks have heterogeneous cost.
-- Avoid unbounded futures lists, result buffers, log queues, and pending serialization.
+- Bound queues/futures/tasks by count and/or resource footprint.
+- Avoid reading/materializing an entire dataset merely because downstream work is slower.
+- Couple admission to RAM/VRAM/I/O/storage budgets for heterogeneous tasks.
+- Avoid unbounded result buffers, logs, pending serialization, requests, and callbacks.
 
-When throughput stalls, distinguish compute saturation from queueing, lock contention, I/O saturation, or downstream backpressure.
+When throughput stalls, distinguish compute saturation from queueing, lock contention, event-loop blocking, I/O saturation, communication, or downstream backpressure.
 
-## Resource ownership and nested schedulers
+## Resource ownership and nested runtimes
 
 Make ownership of scarce resources explicit:
 
-- CPU worker/thread leases;
-- GPU/device assignment and concurrent-job limits;
+- CPU worker/thread/rank leases;
+- accelerator/device assignment and concurrent-job limits;
 - RAM/VRAM reservations or admission estimates;
-- I/O worker budgets;
-- scratch directories and cache writers;
-- ports/files/locks/shared-memory objects.
+- I/O concurrency budgets;
+- scratch directories/cache writers;
+- ports/files/locks/shared-memory objects;
+- event-loop/thread affinity where the runtime requires it.
 
-Do not allow nested schedulers to independently assume they own the entire machine. A library called from an already-parallel job should be able to run with bounded/serial inner concurrency.
+Do not allow nested runtimes to independently assume they own the entire machine. An inner numerical or framework library called from an already-parallel region should use bounded/serial inner concurrency when that is the correct resource plan.
 
 ## Determinism and aggregation
 
-Concurrency may change arrival order without permission to change externally visible semantics.
+Concurrency may change completion/arrival order without permission to change externally visible semantics.
 
 - Define whether result ordering is input order, key-sorted order, stable task order, or intentionally unordered.
 - Use deterministic reductions where reproducibility requires them; document accepted floating-point nondeterminism when strict reproducibility is impractical.
-- Make random seeds/task seeds independent of worker scheduling when reproducible stochastic behavior is required.
-- Avoid stateful global RNG/resource mutation from unordered workers unless explicitly coordinated.
+- Make random seeds/task seeds independent of scheduler/rank timing when reproducibility is required.
+- Avoid unordered mutation of process-global/runtime-global state unless explicitly coordinated.
 
 ## Locks and shared state
 
 Prefer ownership/partitioning or immutable shared data over broad locking.
 
-When locks are unavoidable:
+When locks/synchronization are unavoidable:
 
-- define lock scope/order;
+- define scope/order;
 - keep critical sections small;
-- avoid lock acquisition while performing slow external I/O where possible;
-- ensure exceptions release locks;
+- avoid holding locks across slow I/O or blocking callbacks when possible;
+- ensure exceptions/cancellation release synchronization resources;
 - test concurrent creation/publication paths;
 - avoid stale lock files without ownership/lease semantics.
 
+Language/runtime-specific memory-model and race hazards belong in the active profile.
+
+## Distributed-memory execution
+
+When distributed execution is Frozen, reason explicitly about:
+
+- decomposition and rank ownership;
+- communication volume and message size;
+- collectives and synchronization points;
+- failure model and cancellation semantics;
+- rank-local shared-memory/threaded libraries;
+- I/O topology and publication;
+- deterministic/global aggregation where required.
+
+MPI is a common realization from both Python and C++, not a C++-only doctrine. Do not introduce distributed execution merely because an MPI runtime is installed.
+
 ## Progress and ETA
 
-Progress must describe accepted logical work, not merely submitted tasks. Keep the output convention stable within a project. For resumable workflows, restored completed work should not be double-counted.
+Progress describes accepted logical work, not merely submitted tasks. Keep output convention stable within a project. Restored completed work should not be double-counted.
 
-ETA is observational: base it on representative completed work, use a consistent project-defined format, and do not let progress reporting materially perturb hot loops or disk I/O.
+ETA is observational: base it on representative completed work, use a consistent project-defined format, and do not let progress reporting materially perturb hot loops, event loops, communication, or disk I/O.
 
 ## Verification
 
-Test concurrency at the state-transition level, not only by comparing final happy-path output:
+Test concurrency at the state-transition/resource boundary, not only by comparing final happy-path output:
 
-- serial vs concurrent equivalence;
-- deterministic ordering/seed behavior;
-- worker failure propagation;
-- cancellation during compute and during publication;
+- serial/reference versus concurrent equivalence;
+- deterministic ordering/seed/reduction behavior where required;
+- task/worker/rank failure propagation;
+- cancellation during compute, waits, communication, and publication as applicable;
 - bounded retry/backoff and terminal failure;
 - OOM/resource backoff only where semantically safe;
 - bounded queue/backpressure behavior;
 - concurrent cache/output creation;
-- restart after partial worker completion;
-- cleanup of children/temp state/locks after failure;
-- nested thread/process budget behavior;
-- repeated stress runs for races when deterministic unit tests cannot expose them reliably.
+- restart after partial completion;
+- cleanup of children/tasks/temp state/locks after failure;
+- nested runtime budget behavior;
+- repeated stress/race checks where deterministic tests cannot expose the risk.
 
 ## Hard rules
 
-- Do not equate more workers with correctness or performance.
+- Do not equate more concurrency with correctness or performance.
 - Do not retry unknown failures indefinitely.
-- Do not leave orphan workers or owned temporary resources after normal failure/cancellation paths.
-- Do not let task completion race with artifact publication or manifest update.
+- Do not leave orphan owned tasks/processes/ranks/resources after normal failure/cancellation paths.
+- Do not let task completion race with artifact publication or manifest/state transition.
 - Do not make externally visible ordering accidentally depend on scheduler timing.
-- Do not allow unbounded queues/futures to become hidden memory/storage buffers.
+- Do not allow unbounded queues/futures/tasks to become hidden memory/storage buffers.

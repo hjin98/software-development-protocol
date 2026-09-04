@@ -18,6 +18,17 @@ Before substantive role reasoning, apply these explicit routes. A **MUST read** 
 - Before a nontrivial architecture, ownership, algorithm, product-complexity, or redesign decision, or an independent engineering challenge, **MUST read** [Architecture and design](references/architecture-and-design.md).
 - Before deciding protocol/workplan version binding, compatibility, or release-version semantics, **MUST read** [Protocol versioning and compatibility](references/protocol-versioning-and-compatibility.md).
 
+### Language-profile dispatch
+
+For material executable design or independent review, language semantics are part of the normal reasoning path rather than an optional performance appendix.
+
+- First **MUST read** [Language engineering profiles](references/language-profiles.md) to classify the affected runtime/build surface.
+- For materially affected Python executable surfaces, **MUST read** [Python engineering](references/python-engineering.md).
+- For materially affected C++ executable surfaces, **MUST read** [C++ engineering](references/cpp-engineering.md).
+- Mixed Python/C++ boundaries **MUST read both** language profiles and apply the router's boundary rules. Purely generic architecture/documentation or tiny text/config work need not load a profile when language semantics cannot affect the decision.
+
+Shared domain owners remain authoritative over the profiles. Do not create global Python-vs-C++ precedence or duplicate shared doctrine in language-specific branches.
+
 ### Per-question tool dispatch
 
 Classify each material engineering question by the relation under the claim, not once per task:
@@ -26,9 +37,12 @@ Classify each material engineering question by the relation under the claim, not
 - symbol ownership/definition/callers/references/implementations or bounded semantic navigation -> **MUST read** [Serena](references/tool-serena.md) before relying solely on lower-information defaults;
 - AST/syntax/structural patterns, diagnosed variants, forbidden/legacy constructs, or structural absence/uniqueness -> **MUST read** [Semgrep](references/tool-semgrep.md);
 - broad/combinatorial Python input/state invariants -> **MUST read** [Hypothesis](references/tool-hypothesis.md);
+- broad/combinatorial non-Python input/state invariants -> use the language-appropriate property/generative route in [Tool-assisted engineering](references/tool-assisted-engineering.md) plus the active language profile;
 - supported interprocedural flow/taint/source-to-sink relations -> **MUST read** [CodeQL](references/tool-codeql.md).
 
-When a specialized trigger fires and availability is unknown, use a cheap non-mutating capability probe when practical. If the capability is available/current/supported and directly models the claim, presumptively use it; otherwise take a concrete fallback such as unsupported backend/language, unavailable tool surface, stale/unreliable analysis state that cannot economically be refreshed, model mismatch, disproportionate setup for a trivially bounded claim, or already-available evidence that establishes the same claim at least as reliably and more cheaply. Familiarity with built-in search/read/shell/test tools is not itself a fallback reason. For overlaps/composition/common evidence limits, read [Tool-assisted engineering](references/tool-assisted-engineering.md).
+Runtime-state/debugger, memory/lifetime/UB, race/synchronization, and performance/vectorization questions route through Tool-assisted engineering plus the active language profile rather than a fixed C++ tool pipeline. For overlaps/composition/common evidence limits, read [Tool-assisted engineering](references/tool-assisted-engineering.md).
+
+When a specialized trigger fires and availability is unknown, use a cheap non-mutating capability probe when practical. If the capability is available/current/supported and directly models the claim, presumptively use it; otherwise take a concrete fallback such as unsupported backend/language, unavailable tool surface, stale/unreliable analysis state that cannot economically be refreshed, model mismatch, disproportionate setup for a trivially bounded claim, or already-available evidence that establishes the same claim at least as reliably and more cheaply. Familiarity with built-in search/read/shell/test tools is not itself a fallback reason.
 
 ### Domain-conditional routes
 
@@ -56,7 +70,7 @@ product engineering fitness > minimum justified product/system complexity > deve
 Classify authority before applying that hierarchy:
 
 - **Tier 1A — intrinsic product/problem invariants:** stakeholder/domain outcomes and governed contracts that define what the product must do.
-- **Tier 1B — Frozen high-level architecture:** material architecture/ownership/algorithm/data/resource/compatibility decisions Design explicitly fixes for this implementation cycle.
+- **Tier 1B — Frozen high-level architecture:** material architecture/ownership/algorithm/data/resource/compatibility decisions Design explicitly fixes for the current implementation cycle.
 - **Tier 2 — delegated solution space:** all lower-level realization. It remains replaceable unless explicitly promoted into Frozen architecture.
 - **Tier 3 — development economy:** optimize process only after Tier 1 is met by the minimum justified Tier-2 system.
 
@@ -78,7 +92,7 @@ Do not freeze a detail merely because Design discussed it. Promotion into Frozen
 
 ## Workplan authority without solution ossification
 
-An accepted workplan is a compressed implementation contract, not a frozen proof script. Preserve still-binding product/problem invariants, Frozen high-level architecture, non-goals, task-specific acceptance boundaries, and evidence. Implementation obligations describe required outcomes/constraints; an equivalent simpler realization remains valid unless the realization itself is explicitly Frozen.
+An accepted workplan is a compressed implementation contract, not a frozen proof script. Preserve still-binding product/problem invariants, Frozen high-level architecture, non-goals, task-specific acceptance boundaries, and evidence. Implementation obligations describe required outcomes/constraints; an equivalent simpler realization remains valid unless the realization itself was explicitly Frozen.
 
 The accepted plan is the **minimum known contract, not a ceiling** only for newly discovered affected behavior and logically necessary consequences of already-binding product/Frozen semantics. Discovery does not mint new product requirements. **Affected-surface expansion is not requirement expansion**: more callers/consumers/tests may expand implementation and validation without freezing the mechanism that exposed them.
 
@@ -90,12 +104,14 @@ Reopen Design only when evidence shows a Frozen high-level decision must change,
 
 Executable changes retain focused checks, **stage-local affected regression**, final affected-surface re-derivation/regression, integration through assembled real product/consumer boundaries, and repository/project-required checks. Green tests do not prove an omitted accepted obligation. Full production qualification remains separate.
 
+For material Python/C++ executable work, conformance/review also challenges whether the realization is language-native: it should use the active language's simpler ownership/resource/data/error/abstraction mechanisms, avoid translating another language's compensating machinery, and justify performance complexity by total-system benefit. This is an engineering challenge, not style policing; equivalent stylistic preferences without material benefit do not block acceptance.
+
 When a material acceptance claim depends on a real owner/path, identify the **product/Frozen claim and the real semantic owner/path of the current realization** plus enough test-double constraints to prevent proxy acceptance. Evidence that **could remain green** while that final owner is broken cannot establish the claim. Naming a delegated Tier-2 owner for acceptance does not freeze its identity: an equivalent owner replacement remaps and reruns owner-specific acceptance; exact owner identity is immutable only when a governed product contract or Frozen high-level architecture makes it so.
 
 Independent review starts from the highest-information current evidence:
 
 1. **Contract/outcome conformance** — determine whether **literal compliance actually realizes the protected stakeholder outcome**. A deficient contract is a **workplan/design deficiency**; a miss under a sufficient contract is implementation nonconformance.
-2. **Independent engineering challenge** — inspect material correctness/scientific, durability, scaling/resources/performance, ownership/complexity, failure/security, affected-surface, testing, and design-premise risks.
+2. **Independent engineering challenge** — inspect material correctness/scientific, durability, scaling/resources/performance, ownership/complexity, language-native realization, failure/security, affected-surface, testing, and design-premise risks.
 
 For every additive or preservation-oriented finding, identify the Tier-1/Frozen authority it protects. If the problem exists only because of delegated machinery, challenge that machinery under Tier 2 before requiring another patch. Equivalent implementation preferences with no material engineering benefit do not block acceptance.
 
