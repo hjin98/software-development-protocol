@@ -3,7 +3,8 @@ kind: implementation-workplan
 workplan_id: PROTOCOL-5.13-TOOL-ROUTING-CODEQL-COMPRESSION
 protocol_version: 5.12.0
 target_protocol_version: 5.13.0
-status: frozen
+status: completed
+completed_date: 2026-09-03
 created_date: 2026-09-03
 frozen_date: 2026-09-03
 reviewed_date: 2026-09-03
