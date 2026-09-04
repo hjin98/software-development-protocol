@@ -150,7 +150,10 @@ def revision_economy_holds(text: str) -> bool:
         text,
         "ordinary implementation attempts and review cycles",
         (r"do not require.{0,100}numbered authority revision",),
-        (r"ordinary implementation attempts and review cycles.{0,160}(?:must|always|require(?:s|d)?(?:\s+to)?).{0,100}numbered authority revision",),
+        (
+            r"ordinary implementation attempts and review cycles\s+(?:must|always)\s+.{0,80}numbered authority revision",
+            r"ordinary implementation attempts and review cycles\s+require(?:s|d)?(?:\s+an?|\s+the)?\s+numbered authority revision",
+        ),
     )
 
 
