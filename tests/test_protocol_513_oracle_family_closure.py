@@ -31,7 +31,7 @@ def section_between(text: str, start_heading: str, end_heading: str) -> str:
 
 
 def policy_clauses_in_paragraph(text: str, needle: str) -> list[str]:
-    paragraph = paragraph_containing(text, needle).lower()
+    paragraph = norm(paragraph_containing(text, needle))
     return [
         clause.strip()
         for clause in re.split(r";\s*|(?<=[.!?])\s+", paragraph)
