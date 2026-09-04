@@ -18,57 +18,53 @@ jobs:
           python-version: "3.12"
       - name: Install validation dependencies
         run: python -m pip install -r source/requirements-validation.txt
-      - name: 511 routing and packaging
+      - name: Build index contracts
         continue-on-error: true
-        run: |
-          python -m unittest -v \
-            tests.test_protocol_511_tool_assistance.Protocol511ToolAssistanceTests.test_lifecycle_entrypoints_dispatch_directly_by_question_class \
-            tests.test_protocol_511_tool_assistance.Protocol511ToolAssistanceTests.test_tool_references_are_packaged_only_for_lifecycle_roles
-      - name: 511 common composition
+        run: python -m unittest -v tests.test_build_index_contract
+      - name: Protocol 5.11 tool assistance
         continue-on-error: true
-        run: |
-          python -m unittest -v \
-            tests.test_protocol_511_tool_assistance.Protocol511ToolAssistanceTests.test_common_reference_owns_selection_composition_and_authority \
-            tests.test_protocol_511_tool_assistance.Protocol511ToolAssistanceTests.test_common_reference_is_progressive_disclosure_not_tool_manual
-      - name: 511 Serena method
-        continue-on-error: true
-        run: python -m unittest -v tests.test_protocol_511_tool_assistance.Protocol511ToolAssistanceTests.test_serena_guidance_protects_backend_completeness_mutation_and_memory
-      - name: 511 Semgrep method
-        continue-on-error: true
-        run: python -m unittest -v tests.test_protocol_511_tool_assistance.Protocol511ToolAssistanceTests.test_semgrep_guidance_bounds_rule_engine_scope_and_suppressions
-      - name: 511 Hypothesis method
-        continue-on-error: true
-        run: python -m unittest -v tests.test_protocol_511_tool_assistance.Protocol511ToolAssistanceTests.test_hypothesis_guidance_preserves_oracle_durability_and_isolation
-      - name: 512 convergence contract
+        run: python -m unittest -v tests.test_protocol_511_tool_assistance
+      - name: Protocol 5.12 convergence
         continue-on-error: true
         run: python -m unittest -v tests.test_protocol_512_convergence
-      - name: 512 counterfactual closure
+      - name: Protocol 5.12 counterfactual closure
         continue-on-error: true
         run: python -m unittest -v tests.test_protocol_512_counterfactual_closure
-      - name: 513 dispatch and CodeQL
+      - name: Protocol 5.9 review rework
         continue-on-error: true
-        run: |
-          python -m unittest -v \
-            tests.test_protocol_513_tool_routing_codeql_compression.Protocol513ToolRoutingCodeQLCompressionTests.test_dispatch_is_per_question_relation_first_and_direct \
-            tests.test_protocol_513_tool_routing_codeql_compression.Protocol513ToolRoutingCodeQLCompressionTests.test_trigger_requires_reference_entry_and_non_silent_disposition \
-            tests.test_protocol_513_tool_routing_codeql_compression.Protocol513ToolRoutingCodeQLCompressionTests.test_overlap_classification_is_relation_not_security_label \
-            tests.test_protocol_513_tool_routing_codeql_compression.Protocol513ToolRoutingCodeQLCompressionTests.test_serena_semgrep_hypothesis_keep_distinct_positive_and_negative_cases \
-            tests.test_protocol_513_tool_routing_codeql_compression.Protocol513ToolRoutingCodeQLCompressionTests.test_codeql_is_dataflow_specialist_not_generic_security_gate \
-            tests.test_protocol_513_tool_routing_codeql_compression.Protocol513ToolRoutingCodeQLCompressionTests.test_codeql_provenance_distinguishes_execution_from_result_hosting \
-            tests.test_protocol_513_tool_routing_codeql_compression.Protocol513ToolRoutingCodeQLCompressionTests.test_codeql_database_identity_invalidation_and_query_governance \
-            tests.test_protocol_513_tool_routing_codeql_compression.Protocol513ToolRoutingCodeQLCompressionTests.test_codeql_build_and_hosted_analysis_obey_trust_and_resource_rules
-      - name: 513 compression
+        run: python -m unittest -v tests.test_protocol_59_review_rework
+      - name: Protocol 5.9 URI routing
         continue-on-error: true
-        run: |
-          python -m unittest -v \
-            tests.test_protocol_513_tool_routing_codeql_compression.Protocol513ToolRoutingCodeQLCompressionTests.test_tool_common_owner_is_smaller_and_specific_methods_are_split \
-            tests.test_protocol_513_tool_routing_codeql_compression.Protocol513ToolRoutingCodeQLCompressionTests.test_entrypoints_are_directionally_compressed_after_new_routing \
-            tests.test_protocol_513_tool_routing_codeql_compression.Protocol513ToolRoutingCodeQLCompressionTests.test_role_critical_workflow_surface_materially_decreases \
-            tests.test_protocol_513_tool_routing_codeql_compression.Protocol513ToolRoutingCodeQLCompressionTests.test_loaded_context_scenarios_are_progressively_disclosed \
-            tests.test_protocol_513_tool_routing_codeql_compression.Protocol513ToolRoutingCodeQLCompressionTests.test_convergence_extraction_preserves_hard_trigger
-      - name: Build skill package structure
+        run: python -m unittest -v tests.test_protocol_59_route_uri_safety
+      - name: Protocol core contracts
         continue-on-error: true
+        run: python -m unittest -v tests.test_protocol_contracts
+      - name: Effective compression historical contracts
+        continue-on-error: true
+        run: python -m unittest -v tests.test_protocol_effective_compression
+      - name: Engineering stewardship contracts
+        continue-on-error: true
+        run: python -m unittest -v tests.test_protocol_engineering_stewardship
+      - name: Portability contracts
+        continue-on-error: true
+        run: python -m unittest -v tests.test_protocol_portability
+      - name: Proxy-proof acceptance contracts
+        continue-on-error: true
+        run: python -m unittest -v tests.test_protocol_proxy_proof_acceptance
+      - name: Protocol tooling contracts
+        continue-on-error: true
+        run: python -m unittest -v tests.test_protocol_tooling
+      - name: Protocol 5.13 routing CodeQL compression
+        continue-on-error: true
+        run: python -m unittest -v tests.test_protocol_513_tool_routing_codeql_compression
+      - name: Protocol 5.13 live qualification contracts
+        continue-on-error: true
+        run: python -m unittest -v tests.test_protocol_513_live_tool_qualification
+      - name: Aggregate protocol regression suite
+        run: python -m unittest discover -s tests -v
+      - name: Build canonical skill packages
         run: python source/build_skills.py --output /tmp/protocol-dist
-      - name: Validate skill package structure
-        continue-on-error: true
+      - name: Validate generated skill packages independently
         run: python source/validate_packages.py --dist /tmp/protocol-dist
+      - name: Check patch whitespace
+        run: git diff --check
