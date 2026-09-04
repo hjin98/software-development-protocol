@@ -18,8 +18,17 @@ PROTOCOL_VERSION = (ROOT / "PROTOCOL_VERSION").read_text(encoding="utf-8").strip
 
 CORE = [
     "workflow-and-workplans.md",
+    "convergence-and-cycle-economy.md",
     "testing-and-validation.md",
     "protocol-versioning-and-compatibility.md",
+]
+
+TOOL_METHODS = [
+    "tool-assisted-engineering.md",
+    "tool-serena.md",
+    "tool-semgrep.md",
+    "tool-hypothesis.md",
+    "tool-codeql.md",
 ]
 
 CROSS_CUTTING = [
@@ -43,8 +52,7 @@ ROLE_SPECS = {
             "specification-and-implementation.md",
             "release-and-distribution.md",
             "repository-intake.md",
-            "tool-assisted-engineering.md",
-        ] + CROSS_CUTTING + ENGINEERING_FITNESS,
+        ] + TOOL_METHODS + CROSS_CUTTING + ENGINEERING_FITNESS,
         "templates": ["implementation_workplan_template.md"],
     },
     "software-implementation": {
@@ -57,8 +65,7 @@ ROLE_SPECS = {
             "release-and-distribution.md",
             "repository-intake.md",
             "git-and-version-control.md",
-            "tool-assisted-engineering.md",
-        ] + CROSS_CUTTING + ENGINEERING_FITNESS,
+        ] + TOOL_METHODS + CROSS_CUTTING + ENGINEERING_FITNESS,
         "templates": [],
     },
 }

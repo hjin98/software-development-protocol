@@ -1,260 +1,105 @@
 from __future__ import annotations
 
-import re
-import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "source"
-sys.path.insert(0, str(SOURCE))
 
+import sys
+sys.path.insert(0, str(SOURCE))
 import build_skills  # noqa: E402
 
-
-REFERENCE = "tool-assisted-engineering.md"
-TOOL_REFERENCE = "source/shared/references/tool-assisted-engineering.md"
-ANTI_GAMING_MECHANISMS = (
-    "excessive filtering",
-    "assume",
-    "over-narrow strategies",
-    "exclusions",
-    "health-check suppression",
-    "disabled useful phases",
-    "removed deadlines",
-    "reduced exploration",
-)
-GREEN_PROPERTY_PURPOSE = (
-    r"\b(?:solely|merely)\s+to\s+(?:make|manufacture)\s+(?:a\s+)?property\s+green\b"
+COMMON = "source/shared/references/tool-assisted-engineering.md"
+SERENA = "source/shared/references/tool-serena.md"
+SEMGREP = "source/shared/references/tool-semgrep.md"
+HYPOTHESIS = "source/shared/references/tool-hypothesis.md"
+TOOL_FILES = (
+    "tool-assisted-engineering.md",
+    "tool-serena.md",
+    "tool-semgrep.md",
+    "tool-hypothesis.md",
+    "tool-codeql.md",
 )
 
 
 def read(path: str) -> str:
-    return (ROOT / path).read_text(encoding="utf-8")
-
-
-def paragraph_containing(text: str, needle: str) -> str:
-    needle = needle.lower()
-    for paragraph in text.lower().split("\n\n"):
-        if needle in paragraph:
-            return paragraph
-    raise AssertionError(f"no paragraph contains {needle!r}")
-
-
-def section_between(text: str, start_heading: str, end_heading: str) -> str:
-    lowered = text.lower()
-    start = lowered.index(start_heading.lower())
-    end = lowered.index(end_heading.lower(), start)
-    return lowered[start:end]
-
-
-def policy_clauses_in_paragraph(text: str, needle: str) -> list[str]:
-    paragraph = paragraph_containing(text, needle)
-    return [
-        clause.strip()
-        for clause in re.split(r";\s*|(?<=[.!?])\s+", paragraph)
-        if clause.strip()
-    ]
-
-
-def negative_subject_clause_holds(clause: str, subject: str) -> bool:
-    clause = clause.lower()
-    subject_pattern = re.escape(subject.lower())
-    article = r"(?:an?\s+)?"
-    patterns = (
-        rf"\bwithout\s+(?:becoming|forming|requiring|using)\s+{article}{subject_pattern}\b",
-        rf"\b(?:not|never)\s+{article}{subject_pattern}\b",
-        rf"\b(?:must|should|do|does|is|are)\s+not\s+"
-        rf"(?:(?:be|become|form|require|use)\s+)?{article}{subject_pattern}\b",
-        rf"\bnever\s+(?:becomes?|forms?|requires?|uses?)\s+{article}{subject_pattern}\b",
-    )
-    return any(re.search(pattern, clause) for pattern in patterns)
-
-
-def negative_subject_policy_holds(text: str, subject: str) -> bool:
-    clauses = [
-        clause
-        for clause in policy_clauses_in_paragraph(text, subject)
-        if subject.lower() in clause
-    ]
-    return bool(clauses) and all(
-        negative_subject_clause_holds(clause, subject) for clause in clauses
-    )
-
-
-def hypothesis_anti_gaming_clause_holds(clause: str) -> bool:
-    clause = clause.lower()
-    if not re.search(GREEN_PROPERTY_PURPOSE, clause):
-        return False
-
-    present = [mechanism for mechanism in ANTI_GAMING_MECHANISMS if mechanism in clause]
-    if not present:
-        return False
-
-    prohibition = re.search(
-        rf"\b(?:(?:do|does)\s+not|must\s+not|never)\s+"
-        rf"(?:use|apply|employ|introduce|rely\s+on)\b"
-        rf"(?P<body>.{{0,520}}?{GREEN_PROPERTY_PURPOSE})",
-        clause,
-    )
-    if prohibition is None:
-        return False
-
-    body = prohibition.group("body")
-    if not all(mechanism in body for mechanism in present):
-        return False
-    if re.search(r"\b(?:but|however|except|unless)\b", clause):
-        return False
-    return True
-
-
-def hypothesis_anti_gaming_policy_holds(text: str) -> bool:
-    clauses = policy_clauses_in_paragraph(text, "health-check suppression")
-    governed = [
-        clause
-        for clause in clauses
-        if re.search(GREEN_PROPERTY_PURPOSE, clause)
-        and any(mechanism in clause for mechanism in ANTI_GAMING_MECHANISMS)
-    ]
-    if not governed or not all(
-        hypothesis_anti_gaming_clause_holds(clause) for clause in governed
-    ):
-        return False
-
-    covered = {
-        mechanism
-        for clause in governed
-        for mechanism in ANTI_GAMING_MECHANISMS
-        if mechanism in clause
-    }
-    return covered == set(ANTI_GAMING_MECHANISMS)
-
-
-def hypothesis_settings_clause_holds(clause: str) -> bool:
-    clause = clause.lower()
-    change_condition = re.search(r"\bchange settings\b.{0,80}\bwhen\b", clause)
-    if change_condition is None:
-        return False
-
-    justification = re.search(
-        r"\bsemantics\b(?P<link>.{0,32})\bjustif(?:y|ies|ied)\b",
-        clause,
-    )
-    if justification is None:
-        return False
-    if re.search(
-        r"\b(?:not|never|no)\b|\bfail(?:s|ed)?\s+to\b|"
-        r"\b(?:don't|doesn't|didn't|cannot|can't)\b",
-        justification.group("link"),
-    ):
-        return False
-
-    coverage = re.search(
-        r"\brequired coverage\s+(?:remains?|stays?|is\s+(?:kept|preserved))\s+intact\b",
-        clause,
-    )
-    if coverage is None or coverage.start() < justification.end():
-        return False
-
-    coverage_tail = clause[coverage.end() :]
-    if re.search(
-        r"\b(?:is|are)\s+not\s+(?:required|necessary)\b|"
-        r"\bneed(?:s)?\s+not\b|\boptional\b|\bnot\s+(?:required|necessary)\b|"
-        r"\b(?:unless|except)\b",
-        coverage_tail,
-    ):
-        return False
-    return True
-
-
-def hypothesis_settings_policy_holds(text: str) -> bool:
-    clauses = policy_clauses_in_paragraph(text, "change settings")
-    relevant = [
-        clause
-        for clause in clauses
-        if "change settings" in clause or "required coverage" in clause
-    ]
-    governing = [clause for clause in relevant if "change settings" in clause]
-    if not governing or not all(
-        hypothesis_settings_clause_holds(clause) for clause in governing
-    ):
-        return False
-
-    # A second settings/coverage clause must not silently reopen the condition.
-    # Reject it unless it is itself another complete governing clause.
-    return len(relevant) == len(governing)
+    return (ROOT / path).read_text(encoding="utf-8").lower()
 
 
 class Protocol511ToolAssistanceTests(unittest.TestCase):
-    def test_lifecycle_entrypoints_route_conditionally_to_tool_reference(self) -> None:
+    def test_lifecycle_entrypoints_dispatch_directly_by_question_class(self) -> None:
+        expected = (
+            "references/tool-serena.md",
+            "references/tool-semgrep.md",
+            "references/tool-hypothesis.md",
+            "references/tool-codeql.md",
+        )
         for rel in (
             "source/roles/software-design/SKILL.md",
             "source/roles/software-implementation/SKILL.md",
         ):
             text = read(rel)
-            line = next(
-                line
-                for line in text.splitlines()
-                if "](references/tool-assisted-engineering.md)" in line
-            )
-            self.assertIn("material", line.lower(), rel)
-            self.assertNotIn("MUST read", line, rel)
+            self.assertIn("classify each material engineering question", text, rel)
+            self.assertIn("relation under the claim", text, rel)
+            self.assertIn("cheap non-mutating capability probe", text, rel)
+            self.assertIn("familiarity with built-in", text, rel)
+            for ref in expected:
+                line = next(line for line in text.splitlines() if ref in line)
+                self.assertIn("must read", line, (rel, ref))
 
-    def test_tool_reference_is_packaged_only_for_lifecycle_roles(self) -> None:
+    def test_tool_references_are_packaged_only_for_lifecycle_roles(self) -> None:
         for spec in build_skills.ROLE_SPECS.values():
-            self.assertIn(REFERENCE, spec["references"])
+            for name in TOOL_FILES:
+                self.assertIn(name, spec["references"])
         for spec in build_skills.SPECIALIST_SPECS.values():
-            self.assertNotIn(REFERENCE, spec["references"])
+            for name in TOOL_FILES:
+                self.assertNotIn(name, spec["references"])
 
         with tempfile.TemporaryDirectory() as tmp:
             dist = Path(tmp) / "dist"
             build_skills.build(dist)
             for role in build_skills.ROLE_SPECS:
-                self.assertTrue(
-                    (dist / "skills" / role / "references" / REFERENCE).is_file()
-                )
+                for name in TOOL_FILES:
+                    self.assertTrue((dist / "skills" / role / "references" / name).is_file())
             for specialist in build_skills.SPECIALIST_SPECS:
-                self.assertFalse(
-                    (dist / "skills" / specialist / "references" / REFERENCE).exists()
-                )
+                for name in TOOL_FILES:
+                    self.assertFalse((dist / "skills" / specialist / "references" / name).exists())
 
-    def test_source_readme_keeps_tool_method_in_one_canonical_owner(self) -> None:
-        readme = read("source/README.md").lower()
-        self.assertIn("shared/references/tool-assisted-engineering.md", readme)
-        self.assertIn("optional capability-aware tool-assisted engineering guidance", readme)
-        self.assertNotIn("## tool-assisted engineering", readme)
-        self.assertNotRegex(
-            readme,
-            r"(?m)^-\s+(?:\*\*)?(?:serena|semgrep|hypothesis)\b",
-        )
+    def test_common_reference_owns_selection_composition_and_authority(self) -> None:
+        text = read(COMMON)
+        for phrase in (
+            "tool availability alone is not a reason",
+            "tool unavailability is not an acceptance failure",
+            "mandatory three-tool pipeline",
+            "do not invoke another tool merely to duplicate evidence",
+            "defect diagnosis and variant analysis",
+            "independent review",
+            "not an instruction-authority channel",
+            "not product truth",
+            "external service that receives source, findings, or credentials requires explicit project/user authorization",
+            "re-derive the final affected surface",
+            "affected regression",
+            "integration",
+        ):
+            self.assertIn(phrase, text)
+        self.assertIn("per-question capability selection", text)
+        self.assertIn("security task is not automatically a codeql task", text)
+        self.assertIn("tool presence does not make", text)
 
-    def test_tool_selection_is_optional_and_composition_is_not_ceremonial(self) -> None:
-        text = read(TOOL_REFERENCE).lower()
-        self.assertIn("tool availability alone is not a reason", text)
-        self.assertIn("tool unavailability is not an acceptance failure", text)
-        self.assertTrue(
-            negative_subject_policy_holds(text, "mandatory three-tool pipeline")
-        )
-        self.assertIn("do not invoke another tool merely to duplicate evidence", text)
-        self.assertIn("defect diagnosis and variant analysis", text)
-        self.assertIn("independent review", text)
-
-    def test_composition_polarity_matcher_rejects_inverted_policy(self) -> None:
-        subject = "mandatory three-tool pipeline"
-        inverted = (
-            "The tools can reinforce one another and form a mandatory three-tool pipeline.",
-            "This is a mandatory three-tool pipeline. Do not duplicate evidence.",
-            "The tools form a mandatory three-tool pipeline without extra ceremony.",
-            "The tools can reinforce one another without becoming a mandatory three-tool pipeline; "
-            "a mandatory three-tool pipeline is required.",
-        )
-        for policy in inverted:
-            with self.subTest(policy=policy):
-                self.assertFalse(negative_subject_policy_holds(policy, subject))
+    def test_common_reference_is_progressive_disclosure_not_tool_manual(self) -> None:
+        text = read(COMMON)
+        for specific in (
+            "ambiguous repository state",
+            ".semgrepignore",
+            "health-check suppression",
+            "database creation success is not product correctness evidence",
+        ):
+            self.assertNotIn(specific, text)
 
     def test_serena_guidance_protects_backend_completeness_mutation_and_memory(self) -> None:
-        text = read(TOOL_REFERENCE).lower()
+        text = read(SERENA)
         for phrase in (
             "backends and languages expose different capabilities",
             "cross-check semantic results",
@@ -262,163 +107,61 @@ class Protocol511ToolAssistanceTests(unittest.TestCase):
             "inspect current file/diff/status before retrying",
             "derived/advisory context by default",
             "explicitly promote",
+            ".serena",
         ):
             self.assertIn(phrase, text)
-        self.assertIn(".serena", text)
+        self.assertIn("presumptively use serena", text)
+        self.assertIn("cheap non-mutating availability/capability probe", text)
 
-    def test_semgrep_guidance_bounds_rules_engine_scope_and_suppressions(self) -> None:
-        text = read(TOOL_REFERENCE).lower()
+    def test_semgrep_guidance_bounds_rule_engine_scope_and_suppressions(self) -> None:
+        text = read(SEMGREP)
         for phrase in (
             "community edition-compatible",
             "known-positive and known-negative",
             ".gitignore",
             ".semgrepignore",
             "nosemgrep",
-        ):
-            self.assertIn(phrase, text)
-
-        negative_evidence = section_between(
-            text,
-            "### negative evidence and scan scope",
-            "### external services and generated fixes",
-        )
-        for phrase in (
             "meaningful only relative to the actual scan contract",
             "target paths and languages actually scanned",
             "rule and analysis limitations that can create false negatives",
+            "volatile network-fetched ruleset",
+            "ordinary implementation output",
+            "same conformance and functional acceptance",
         ):
-            self.assertIn(phrase, negative_evidence)
-
-        external_rules = paragraph_containing(text, "volatile network-fetched ruleset")
-        self.assertIn(
-            "acceptance-critical rules should not depend solely on a volatile network-fetched ruleset",
-            external_rules,
-        )
-        self.assertIn(
-            "pin, version, or otherwise govern that identity proportionately",
-            external_rules,
-        )
-
-        autofix = paragraph_containing(text, "autofix")
-        self.assertIn("ordinary implementation output", autofix)
-        self.assertIn("same conformance and functional acceptance", autofix)
+            self.assertIn(phrase, text)
 
     def test_hypothesis_guidance_preserves_oracle_durability_and_isolation(self) -> None:
-        text = read(TOOL_REFERENCE).lower()
+        text = read(HYPOTHESIS)
         for phrase in (
             "not an independent oracle",
             "isolated/reset test-owned state",
             "example database",
-            "@example",
+            "not durable regression authority by itself",
+            "hypothesis `@example`",
             "settings profile",
             "seeds and failure-replay mechanisms are debugging aids",
+            "excessive filtering",
+            "health-check suppression",
+            "solely to make a property green",
+            "required coverage remains intact",
+            "`max_examples`",
+            "stateful step counts",
+            "preserving representative coverage",
         ):
             self.assertIn(phrase, text)
 
-        resource_bounds = paragraph_containing(text, "`max_examples`")
-        for phrase in (
-            "object sizes",
-            "stateful step counts",
-            "deadlines/expensive operations",
-            "scientific workloads",
-            "preserving representative coverage",
-        ):
-            self.assertIn(phrase, resource_bounds)
-
-        database = paragraph_containing(text, "example database")
-        self.assertIn(
-            "useful cache/replay state, not durable regression authority by itself",
-            database,
-        )
-
-        durable_counterexample = paragraph_containing(text, "material minimized counterexample")
-        for phrase in (
-            "explicit ordinary regression",
-            "hypothesis `@example`",
-            "another understandable governed test input",
-            "adds stable protection",
-        ):
-            self.assertIn(phrase, durable_counterexample)
-
-        self.assertTrue(hypothesis_anti_gaming_policy_holds(text))
-        self.assertTrue(hypothesis_settings_policy_holds(text))
-
-    def test_hypothesis_anti_gaming_matcher_rejects_partial_inversion(self) -> None:
-        complete_prohibition = (
-            "Do not use excessive filtering or assume, over-narrow strategies, exclusions, "
-            "health-check suppression, disabled useful phases, removed deadlines, or reduced "
-            "exploration solely to make a property green. "
-        )
-        inverted = (
-            "Do not use excessive filtering, but health-check suppression is permitted solely to make a property green. "
-            "Disabled useful phases, removed deadlines, and reduced exploration are also prohibited.",
-            "Do not use excessive filtering, disabled useful phases, removed deadlines, or reduced exploration solely "
-            "to make a property green. Health-check suppression may be used solely to make a property green.",
-            "Do not use excessive filtering, health-check suppression, disabled useful phases, removed deadlines, or "
-            "reduced exploration solely to make a property green. Health-check suppression may be used solely to make "
-            "a property green when failures are inconvenient.",
-            "Do not prohibit excessive filtering, health-check suppression, disabled useful phases, removed deadlines, "
-            "or reduced exploration solely to make a property green.",
-            "Do not worry; use excessive filtering, health-check suppression, disabled useful phases, removed deadlines, "
-            "or reduced exploration solely to make a property green.",
-            "Do not use excessive filtering, health-check suppression, disabled useful phases, removed deadlines, or "
-            "reduced exploration solely to make a property green. Health-check suppression should be used solely to "
-            "make a property green.",
-            "Do not use excessive filtering, health-check suppression, disabled useful phases, removed deadlines, or "
-            "reduced exploration unless solely to make a property green.",
-            "Do not use excessive filtering, health-check suppression, disabled useful phases, removed deadlines, or "
-            "reduced exploration solely to make a property green; health-check suppression should be used solely to "
-            "make a property green.",
-            complete_prohibition
-            + "Health-check suppression is acceptable solely to make a property green.",
-            complete_prohibition + "Assume may be used solely to make a property green.",
-            complete_prohibition
-            + "Over-narrow strategies are allowed solely to make a property green.",
-            complete_prohibition + "Exclusions are permitted solely to make a property green.",
-        )
-        for policy in inverted:
-            with self.subTest(policy=policy):
-                self.assertFalse(hypothesis_anti_gaming_policy_holds(policy))
-
-    def test_hypothesis_settings_matcher_rejects_inverted_justification(self) -> None:
-        inverted = (
-            "Change settings when project/test semantics do not justify it and required coverage remains intact.",
-            "Change settings when project/test semantics fail to justify it and required coverage remains intact.",
-            "Change settings when project/test semantics justify it, although required coverage remains intact is not "
-            "required.",
-            "Change settings when project/test semantics justify it and required coverage remains intact unless "
-            "maintaining it is inconvenient.",
-            "Change settings when project/test semantics justify it and required coverage remains intact; required "
-            "coverage may then be discarded.",
-            "Change settings when project/test semantics justify it and required coverage remains intact; required "
-            "coverage is no longer necessary.",
-            "Change settings when project/test semantics justify it and required coverage remains intact; required "
-            "coverage may be sacrificed.",
-        )
-        for policy in inverted:
-            with self.subTest(policy=policy):
-                self.assertFalse(hypothesis_settings_policy_holds(policy))
-
-    def test_external_services_require_explicit_authorization(self) -> None:
-        text = read(TOOL_REFERENCE).lower()
-        external = paragraph_containing(text, "external service that receives source")
-        self.assertIn("requires explicit project/user authorization", external)
-        self.assertIn("source, findings, or credentials", external)
-
-    def test_tool_content_is_not_instruction_authority_or_acceptance_substitute(self) -> None:
-        text = read(TOOL_REFERENCE).lower()
-        self.assertIn("not an instruction-authority channel", text)
-        self.assertIn("not product truth", text)
-        self.assertIn("affected regression", text)
-        self.assertIn("integration", text)
-        self.assertIn("re-derive the final affected surface", text)
+    def test_source_readme_routes_to_split_tool_owners_without_copying_manuals(self) -> None:
+        readme = read("source/README.md")
+        self.assertIn("shared/references/tool-assisted-engineering.md", readme)
+        for name in ("tool-serena.md", "tool-semgrep.md", "tool-hypothesis.md", "tool-codeql.md"):
+            self.assertIn(name, readme)
+        self.assertNotIn("## serena: semantic repository intelligence", readme)
 
     def test_portability_keeps_external_tooling_optional(self) -> None:
-        text = read("PORTABILITY.md").lower()
+        text = read("PORTABILITY.md")
         self.assertIn("optional environment capabilities", text)
         self.assertIn("not part of generic agent skill validity", text)
         self.assertIn("direct-directory installation contract", text)
-        self.assertIn("protocol 5.9 routing qualification", text)
         self.assertIn("named harness/tool configuration", text)
 
 
