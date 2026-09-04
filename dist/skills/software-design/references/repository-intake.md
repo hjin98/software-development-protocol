@@ -32,19 +32,23 @@ For substantial work, identify the material surfaces that actually apply: public
 
 Do not create a mandatory matrix when most rows are irrelevant. Conversely, do not equate the Git diff with the behavioral surface when shared contracts propagate beyond changed files.
 
-## Bounded census when completeness is itself a claim
+Affected-surface expansion is not requirement expansion. Additional callers/consumers may require implementation or validation under existing product/Frozen architecture without creating new product capability or making the current implementation mechanism invariant.
 
-Progressive evidence-directed inspection remains the default. Switch to a bounded census only when recurrence has established a material defect family or when the product claim itself is finite and exhaustive, such as every authority-bearing transition, compatibility reader, persistence mutation, or other critical site in a defined semantic owner family satisfying one invariant.
+## Bounded census when completeness is a real claim
 
-Bound the census by invariant, semantic owner/authority, transition/lifecycle class, and plausible affected chain rather than the whole repository. State the completeness basis and material blind spots of symbol/reference tools, static rules, dynamic registration/configuration, generated code, external consumers, or runtime-only behavior. Cross-check where those limitations can hide family members.
+Progressive evidence-directed inspection remains the default. Switch to a bounded census when the **Tier-1 correctness claim itself is finite/exhaustive**, or when bounded sibling discovery is needed to remove, consolidate, or canonicalize a recurring Tier-2 realization safely. Recurrence by itself does not justify preserving the current mechanism or performing a census merely to complete it.
 
-If the family cannot be bounded with sufficient confidence, do not present a partial search as exhaustive. Escalate ownership/design when uncontrolled entry points are themselves the problem, or use broader executable/property/integration evidence appropriate to the claim. Temporary closure maps are allowed when they materially reduce omission risk; they are not universal persistent traceability artifacts.
+Bound the census by product/Frozen invariant, semantic owner/authority, transition/lifecycle class, and plausible affected chain rather than the whole repository. State the completeness basis and material blind spots of symbol/reference tools, static rules, dynamic registration/configuration, generated code, external consumers, or runtime-only behavior. Cross-check where those limitations can hide material members.
 
-## Prefer existing patterns
+If the family cannot be bounded with sufficient confidence, do not present a partial search as exhaustive. Reconsider ownership/design when uncontrolled entry points are themselves the problem, or use broader executable/property/integration evidence appropriate to the claim. Temporary closure maps are allowed when they materially reduce omission risk; they are not universal persistent traceability artifacts.
+
+## Prefer existing patterns and simpler ownership
 
 Inspect adjacent implementation before introducing a new abstraction. Reuse an existing component when it can own the responsibility cleanly.
 
-Do not split modules, introduce frameworks, or reorganize unrelated areas merely because the repository could be cleaner in general. Refactor when it materially improves the requested change or removes an identified failure surface.
+Do not split modules, introduce frameworks, or reorganize unrelated areas merely because the repository could be cleaner in general. Refactor when it materially improves the requested change, removes an identified failure surface, or collapses duplicated authorities/machinery.
+
+When a problem is created by the current solution, do not assume the current solution must survive. Prefer removal, narrowing, alteration, consolidation, or refactoring when that preserves product/Frozen semantics and reduces total system complexity.
 
 ## Generated artifacts
 

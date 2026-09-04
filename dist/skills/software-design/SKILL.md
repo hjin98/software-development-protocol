@@ -45,81 +45,66 @@ When a specialized trigger fires and availability is unknown, use a cheap non-mu
 - Scientific/numerical fidelity -> [Scientific software](references/scientific-software.md).
 - Substantial implementation workplan -> [Implementation workplan template](templates/implementation_workplan_template.md).
 
-## Product truth and doctrine
+## Product truth and the three-tier boundary
 
-Act as a steward of the stakeholder's durable software product. Workplans, tests, gates, metrics, reviews, and reports are constraints or evidence, not the objective. Interpret requirements non-adversarially according to their protected engineering purpose; do not exploit wording, fixtures, or enforcement gaps to obtain an easier local pass that defeats the intended product outcome. Truthful non-closure or evidence-backed redesign is preferable to counterfeit completion.
-
-Within accepted scope, optimize lexicographically:
+Act as a steward of the stakeholder's durable software product. Workplans, tests, gates, metrics, reviews, reports, and implementation machinery are constraints, evidence, or solutions; they are not the objective. Interpret requirements non-adversarially according to their protected engineering purpose. Truthful non-closure or evidence-backed redesign is preferable to counterfeit completion.
 
 ```text
 product engineering fitness > minimum justified product/system complexity > development economy
 ```
 
-Engineering fitness includes required capability, correctness/scientific fidelity, reliability/recovery/security/compatibility, resource feasibility, target-scale/hardware effectiveness, maintainability/operability, and material end-to-end performance. Do not weaken a material requirement for lower complexity or development cost. Among engineering-sufficient products, prefer the lowest justified total product/system complexity; then avoid redundant reasoning, rediscovery, low-information inspection, invalid reruns, and process waste. Stewardship remains bounded by task/contracts/affected surfaces; it does not authorize unrelated enhancement or speculative future-proofing.
+Classify authority before applying that hierarchy:
 
-## Diagnose the real problem
+- **Tier 1A — intrinsic product/problem invariants:** stakeholder/domain outcomes and governed contracts that define what the product must do.
+- **Tier 1B — Frozen high-level architecture:** material architecture/ownership/algorithm/data/resource/compatibility decisions Design explicitly fixes for this implementation cycle.
+- **Tier 2 — delegated solution space:** all lower-level realization. It remains replaceable unless explicitly promoted into Frozen architecture.
+- **Tier 3 — development economy:** optimize process only after Tier 1 is met by the minimum justified Tier-2 system.
 
-Trace the real execution path to the earliest violated invariant, ownership error, or material limitation. Distinguish a clean local defect from architecture/algorithm failure. Define material behavior/contracts, scientific/numerical invariants, reliability/security, workload scale, resource limits, target hardware, and latency/throughput requirements that bound an acceptable product.
+Functions, helpers, wrappers, retries, caches, state machines, synchronization, intermediate representations, previous patches, and implementation-created invariants do not promote implementation machinery into Tier 1 through existence, dependency, tests, documentation, review history, or prior workplan wording. Stewardship remains bounded by task/contracts/affected surfaces; it does not authorize unrelated enhancement or speculative future-proofing.
 
-Before adding wrappers, retries, adapters, translators, caches, compatibility paths, supervisors, or special cases, ask whether the owning mechanism should instead be reused, consolidated, refactored, replaced, simplified, or given a better algorithm/data representation. Do not redesign a clean local defect merely because redesign is possible.
+## Diagnose, simplify, then freeze
 
-Inspect progressively. Expand through evidence of ownership, dependency, contract, or behavioral impact rather than adjacency, and reuse established facts until invalidated.
+State the original stakeholder/research/computational problem independently of the current mechanism where possible. Distinguish it from Frozen high-level architecture and delegated solution detail. A problem created only by the current Tier-2 realization is itself a Tier-2 problem: before adding machinery, ask whether removing, narrowing, altering, consolidating, refactoring, replacing, or simplifying the cause makes the intermediate problem disappear.
 
-## Choose and freeze the design
+A first clean local defect may receive a direct owning-layer fix. But when repeated patches, duplicated/synchronized state, competing authorities, accumulating wrappers/fallbacks/special cases, repeated reconciliation, or an evident materially simpler realization shows structural complexity, Tier-2 simplification/re-derivation is **mandatory before another additive durable repair**. Detailed ownership, promotion, and justified-abstraction rules live in [Architecture and design](references/architecture-and-design.md).
 
-Freeze only material target decisions implementation must not invent: objective/root cause and protected concerns; behavior/invariants/non-goals; authoritative state/ownership; algorithm/data representation/scaling; architecture/dependency direction; resource/hardware/parallelism policy; persistence/recovery/security/compatibility semantics; affected behavioral surface/acceptance; and genuine redesign triggers.
+For substantial work, explicitly separate:
 
-For substantial or repeated work, inspect for duplicated functionality/state, multiple authorities, stale wrappers/fallbacks, and superseded mechanisms. Prefer semantic reuse, consolidation, refactoring, and deletion when engineering fitness permits. Retain justified specialization such as independent oracles, supported compatibility/migration, or materially different hardware/lifecycle semantics.
+1. **Problem / product invariants**;
+2. **Frozen high-level architecture**; and
+3. **Delegated solution space**.
 
-## Translate design without lossy compression
+Do not freeze a detail merely because Design discussed it. Promotion into Frozen architecture requires an explicit Design decision supported by material architectural value. Preserve necessary specialization when Tier-1 scientific, hardware, lifecycle, compatibility, recovery, or security semantics require it.
 
-An accepted workplan is a compressed implementation contract, not an invitation to replay the design search. Preserve each material **protected concern**, **required end state/constraint**, known **required implementation consequence**, and **acceptance evidence** strongly enough that implementation need not reconstruct the reasoning.
+## Workplan authority without solution ossification
 
-Keep authority explicit: **Frozen**, **Delegated**, and **Reopen only on evidence**. Distinguish required outcomes/consequences from a **suggested realization** and delegated mechanics. Known material consequences must not disappear merely to shorten the plan; generic protocol prose need not be copied into it.
+An accepted workplan is a compressed implementation contract, not a frozen proof script. Preserve still-binding product/problem invariants, Frozen high-level architecture, non-goals, task-specific acceptance boundaries, and evidence. Implementation obligations describe required outcomes/constraints; an equivalent simpler realization remains valid unless the realization itself is explicitly Frozen.
 
-Before accepting substantial work, close the handoff:
+The accepted plan is the **minimum known contract, not a ceiling** only for newly discovered affected behavior and logically necessary consequences of already-binding product/Frozen semantics. Discovery does not mint new product requirements. **Affected-surface expansion is not requirement expansion**: more callers/consumers/tests may expand implementation and validation without freezing the mechanism that exposed them.
 
-```text
-requirements + protected concerns + accepted design/invariants
-+ preservation/non-goals + known cross-module consequences
--> implementation obligations -> acceptance evidence
-```
+The supplied current handoff remains snapshot-complete for still-binding task-specific product/Frozen semantics and acceptance boundaries; obsolete realization history is not authority.
 
-The supplied current handoff must also be **snapshot-complete** for still-binding task-specific semantics: losing `.git`, prior conversation/review history, superseded revisions, or unsupplied external references must not remove a requirement. Current supplied protocol/specification/architecture/package composition remains valid; do not duplicate generic doctrine merely for portability.
+Reopen Design only when evidence shows a Frozen high-level decision must change, cannot satisfy the engineering envelope, or a genuine redesign trigger fires. Reopen only the affected design surface and preserve unrelated accepted work/evidence.
 
-When a material acceptance claim depends on a real orchestration, persistence/restart, authorization, compatibility/migration, scientific/configuration identity, policy/selection, state transition, or assembled consumer, identify the **required real semantic owner/path** and enough test-double constraints to prevent proxy acceptance. Evidence that **could remain green** while that owner is broken cannot establish the claim.
+## Acceptance and independent review
 
-## Workplan authority and bounded redesign
+Executable changes retain focused checks, **stage-local affected regression**, final affected-surface re-derivation/regression, integration through assembled real product/consumer boundaries, and repository/project-required checks. Green tests do not prove an omitted accepted obligation. Full production qualification remains separate.
 
-The workplan remains subordinate to explicit user/task requirements, safety/project instructions, and governed contracts outside scope. Repository code/tests are evidence of actual state, not automatic authority over an accepted target.
+When a material acceptance claim depends on a real owner/path, identify the **required real semantic owner/path** and enough test-double constraints to prevent proxy acceptance. Evidence that **could remain green** while that semantic owner is broken cannot establish the claim.
 
-Implementation may locally realize or reconcile the plan when frozen semantics/protected concerns survive. Accepted obligations are the **minimum known contract, not a ceiling**: newly discovered necessary consequences that preserve design must be incorporated and validated. Reopen design only when evidence shows a frozen material decision must change or cannot satisfy the engineering envelope; reopen only the affected surface and preserve unrelated accepted work/evidence.
+Independent review starts from the highest-information current evidence:
 
-## Proportionate acceptance
+1. **Contract/outcome conformance** — determine whether **literal compliance actually realizes the protected stakeholder outcome**. A deficient contract is a **workplan/design deficiency**; a miss under a sufficient contract is implementation nonconformance.
+2. **Independent engineering challenge** — inspect material correctness/scientific, durability, scaling/resources/performance, ownership/complexity, failure/security, affected-surface, testing, and design-premise risks.
 
-Use a workplan/gate when it materially reduces ambiguity, sequencing risk, defect accumulation, or downstream rework; do not add ceremony. A local coherent behavior change is normally one material stage; split only where an intermediate behavior/risk/dependency boundary materially reduces risk/rework.
+For every additive or preservation-oriented finding, identify the Tier-1/Frozen authority it protects. If the problem exists only because of delegated machinery, challenge that machinery under Tier 2 before requiring another patch. Equivalent implementation preferences with no material engineering benefit do not block acceptance.
 
-Executable changes require focused checks; **stage-local affected regression** after each material behavior-changing stage; final affected-surface re-derivation/regression; integration through assembled real product/consumer boundaries; and repository/project-required checks, using the broader/full suite when impact cannot be bounded confidently.
+## Convergence-aware review
 
-Semantic/workplan conformance never substitutes for executable evidence; green tests do not prove an omitted accepted obligation was implemented. Optimize test cost only after coverage is preserved. Full production qualification remains separate from routine functional acceptance.
+A first clean local defect remains local. Material sibling recurrence or a family-level blocker triggers [Convergence and development-cycle economy](references/convergence-and-cycle-economy.md), but recurrence does not make the current realization invariant. When recurrence also exposes solution complexity, simplify Tier 2 before another additive durable closure. Finite family census remains appropriate only when the actual Tier-1 correctness claim requires bounded completeness or safe simplification/canonicalization needs sibling discovery.
 
-## Independent review mode
-
-Independent review is a challenge, not acceptance of the implementation agent's summary. Start from the **highest-information current evidence** rather than replaying settled design from zero.
-
-1. **Contract/outcome conformance** — determine whether every material obligation is satisfied or legitimately reconciled and whether **literal compliance actually realizes the protected stakeholder outcome**. If the design was sufficient, omissions/violations are **implementation nonconformance**; a materially deficient contract is a **workplan/design deficiency**.
-2. **Independent engineering challenge** — **inspect beyond the plan** for material correctness/scientific, durability/operability, algorithm/scaling, resource/hardware/performance, ownership/complexity, failure/recovery/security, affected-surface, testing, qualification, and design-premise risks.
-
-For a real-owner claim, ask whether evidence could remain green while its semantic owner is broken. Material findings identify concern/evidence, affected surface, why it matters, required corrected end state/constraint, acceptance evidence, and routing. Route as **implementation nonconformance**, **workplan/design deficiency**, or **new independent issue**. Equivalent implementation preferences with no material engineering benefit do not block acceptance.
-
-**Evidence-directed review is an economy rule, not a scope cap.** Broaden when evidence shows a material deviation, undermines a premise, exposes unexpected behavior, fires a redesign trigger, or leaves material unresolved risk.
-
-## Convergence-aware review trigger
-
-A first clean local defect remains local. Material sibling recurrence or a family-level blocker triggers the detailed [Convergence and development-cycle economy](references/convergence-and-cycle-economy.md) method before another equivalent patch/review cycle. Incomplete/narrow/vacuous family closure is implementation nonconformance; genuine same-family recurrence after adequate closure triggers bounded Design reconsideration. Review should proportionately saturate cheap/high-information siblings in the directly implicated family, but evidence-directed sufficiency is not proof of zero conceivable defects.
-
-Final review normally challenges a review-ready exact candidate, but an **explicitly requested review still proceeds** to the highest useful depth even when required implementation closure/evidence is missing. **Ordinary implementation misses and review cycles do not require numbered authority revisions**; reconcile genuinely new still-binding task semantics into current authority before the next handoff.
+An **explicitly requested review still proceeds** to the highest useful depth even when closure/evidence is missing. **Ordinary implementation misses and review cycles do not require numbered authority revisions**.
 
 ## Completion
 
-For design, report the chosen design, material engineering envelope, protected concerns, important complexity decisions, implementation authority, acceptance obligations, and genuine unresolved risks. For review, report material findings and enough corrected-end-state/evidence information for lossless rework. Do not emit empty protocol categories or create process artifacts without independent engineering value.
+For design, report the problem/product invariants, Frozen high-level architecture, delegated solution space, important simplicity/redesign triggers, acceptance obligations, and genuine unresolved risks. For review, report material findings and enough corrected-end-state/evidence information for lossless rework. Do not create process artifacts without independent engineering value.

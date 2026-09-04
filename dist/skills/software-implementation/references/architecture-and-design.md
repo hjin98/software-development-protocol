@@ -1,59 +1,114 @@
 # Architecture and Design
 
-Architecture exists to help the software satisfy its global engineering goals: capability, correctness, scientific/domain fidelity, scalability, resource feasibility, robustness, target-hardware effectiveness, maintainability, and materially important performance.
+Architecture exists to help software satisfy the stakeholder's real engineering problem with the lowest justified total system complexity.
 
-Architecture is judged over the material operational and maintenance horizon of the accepted scope. A locally convenient design is not simpler in the engineering sense when it knowingly creates avoidable ownership ambiguity, operational fragility, maintenance debt, or supported-evolution cost that materially degrades the durable product. Conversely, stewardship does not justify speculative generalization or unrelated future-proofing.
+Architecture is judged over the material operational and maintenance horizon of the accepted scope. A locally convenient design is not simpler when it knowingly creates avoidable ownership ambiguity, operational fragility, maintenance debt, synchronization burden, or supported-evolution cost. Conversely, stewardship does not justify speculative generalization or unrelated future-proofing.
+
+## Three-tier authority model
+
+The protocol hierarchy is:
+
+```text
+product engineering fitness > minimum justified product/system complexity > development economy
+```
+
+The hierarchy is lexicographic only after authority is classified correctly.
+
+### Tier 1A: intrinsic product/problem truth
+
+Tier 1A is the stakeholder/domain problem the software must solve: required capability, correctness/scientific invariants, reliability/recovery/security/compatibility, target workload/scaling, CPU/RAM/VRAM/storage/I/O/wall-time limits, target hardware/portability, material latency/throughput, and governed external contracts.
+
+These requirements originate outside the implementation. They constrain every acceptable solution and may be high level. Do not weaken them merely because the current solution is inconvenient.
+
+### Tier 1B: cycle-scoped Frozen architecture
+
+For substantial architecture work, Software Design may deliberately freeze high-level architecture/ownership/algorithm/data-representation/resource/compatibility decisions for the current implementation cycle. This bounds the search space and prevents implementation from continuously reopening settled design.
+
+Tier 1B is solution-derived but temporarily invariant for the cycle. Implementation may not silently change it. Evidence may trigger bounded Design reconsideration; if a Frozen decision is reopened, preserve unrelated accepted design and evidence whose claims remain valid.
+
+### Tier 2: delegated solution machinery
+
+Everything beneath Tier 1A/1B is solution machinery by default: functions, helpers, internal APIs, wrappers, adapters, retries, caches, state machines, synchronization schemes, intermediate representations, local algorithms, implementation-created invariants, and previous patches.
+
+Such machinery does **not** acquire Tier-1 authority merely because it exists, is depended upon, is tested, documented, reviewed, patched, or appears in a previous implementation plan. Correctness of a currently used mechanism is not evidence of necessity of that mechanism.
+
+A detail may be promoted into Frozen architecture only through an explicit Software Design decision supported by material evidence that the architectural commitment is justified.
 
 ## Engineering fitness first
 
-Define the material engineering envelope before choosing architecture: required behavior, correctness/scientific invariants, reliability/recovery/security/compatibility, target workload and scaling variables, CPU/RAM/VRAM/storage/I/O/wall-time limits, hardware/portability requirements, and materially important latency/throughput.
-
-Reject designs that cannot satisfy this envelope cleanly enough for the actual product. Do not prefer a locally simple architecture that is globally unusable because of poor scaling, excessive resource use, weak hardware utilization, or missing capability.
+Define the Tier-1 engineering envelope before choosing architecture. Reject designs that cannot satisfy it cleanly enough for the actual product. Do not prefer a locally simple architecture that is globally unusable because of poor scaling, excessive resource use, weak hardware utilization, missing capability, scientific error, security weakness, or required compatibility loss.
 
 ## Minimum justified product complexity
 
-Among designs that satisfy the material engineering requirements, prefer the one with the lowest justified **total product/system complexity**: fewer unnecessary components, states, interfaces, dependencies, synchronization points, duplicated authorities, compatibility paths, runtime/operational stages, special cases, and maintenance burdens.
+Among designs satisfying Tier 1, prefer the lowest justified **total product/system complexity**: fewer unnecessary components, states, interfaces, dependencies, synchronization points, duplicated authorities, compatibility paths, runtime/operational stages, special cases, and maintenance burdens.
 
-Development economy is subordinate to engineering fitness and product simplicity. Process activities should be eliminated when they add no material information, confidence, or risk reduction, but never when their removal weakens the product or required acceptance.
+This is an active product policy, not merely a tie-breaker at initial design time. Necessary specialization remains valid when it protects a real Tier-1 requirement or when one canonical abstraction replaces broader duplicated machinery.
 
-Necessary specialization remains valid when it protects correctness, scientific fidelity, performance, hardware effectiveness, recovery, compatibility, portability, security, or another material requirement. A trusted reference implementation plus an optimized backend, or separate CPU/GPU kernels, may be globally better than forcing distinct responsibilities through one abstraction.
+## Solution-created problems are not product invariants
 
-## Architecture review
+An intermediate problem created only by the chosen realization remains Tier 2. For example, if a design creates two synchronized representations, "keep the representations synchronized" is not automatically a new product requirement. An alternative realization that removes one representation can eliminate the intermediate problem while preserving the actual product requirement.
 
-For nontrivial work, define what materially matters: root cause/objective, scope/non-goals, acceptance-critical behavior, invariants/conventions, authoritative state/ownership, algorithm/data flow/scaling, representation/data movement, resource/hardware/parallelism behavior, interfaces/dependencies, failure/recovery/security behavior, important alternatives/tradeoffs, justified specialization/complexity, affected behavioral surface, and genuine redesign triggers.
+Before adding machinery to repair a Tier-2 problem, distinguish:
 
-Reject a design when it violates a hard invariant, cannot meet material scale/resource/reliability/performance requirements, creates unclear ownership, duplicates authoritative state without need, or adds product complexity without material engineering benefit.
+1. the original Tier-1 requirement;
+2. the Frozen high-level architecture, if any;
+3. the lower-level choice that created the intermediate problem; and
+4. whether changing/removing/consolidating that choice makes the problem disappear.
+
+Do not preserve a solution merely because later solution code depends on it. Dependency created by a solution is evidence about the cost and shape of that solution, not evidence that the solution became part of the product objective.
+
+## Active complexity restoration
+
+A first clean local defect with a clean local cause receives a direct owning-layer repair. Do not invoke broad redesign merely because alternatives exist.
+
+However, Tier-2 simplification/re-derivation becomes **mandatory before another additive durable repair** when structural evidence shows that the current realization is accumulating unnecessary complexity. Evidence includes materially repeated patches around the same mechanism, patch-on-patch repair, wrappers/adapters/retries/fallbacks/special cases accumulating around one owner, duplicated or synchronized authoritative state, competing authorities, repeated reconciliation machinery, lifecycle/control states primarily managing internal machinery, tests dominated by reimplementing internal orchestration, repeated family closure without reducing the failure surface, or a materially simpler equivalent realization becoming evident.
+
+When triggered, reason in this order:
+
+```text
+recover Tier-1 product/problem invariants
+-> recover Frozen high-level architecture
+-> treat lower-level machinery as replaceable
+-> identify problems created only by the current realization
+-> remove / narrow / alter / consolidate / refactor where sufficient
+-> add machinery only for a genuinely missing required capability
+   or when one canonical mechanism replaces broader existing complexity
+```
+
+This ordering is semantic, not a mechanical requirement to attempt each verb or minimize lines of code. The burden is against additive preservation of avoidable machinery.
+
+## Justified abstraction and promotion
+
+A new mechanism or abstraction is justified when either:
+
+- Tier 1 requires a capability the simplified existing realization cannot supply cleanly; or
+- evidence shows the mechanism is sufficiently general/prevalent across a real problem class that making it canonical replaces multiple authorities, patches, states, or special cases and reduces total system complexity.
+
+Do not promote machinery because hypothetical future uses can be imagined. Promotion from Tier 2 to Frozen architecture requires explicit Design acceptance and a material architectural reason.
 
 ## Accepted design and implementation authority
 
-Once a substantial design is accepted into a governing workplan, implementation should not repeat the entire architecture search. The workplan should identify frozen material decisions, delegated implementation mechanics, and assumptions/redesign triggers that may reopen design.
+Once a substantial design is accepted, implementation should not repeat the whole architecture search. The workplan distinguishes:
 
-Repository evidence may reveal that a frozen assumption is false. Treat that as a design-invalidation question rather than silently changing the target or blindly forcing the plan onto incompatible reality.
+- **Problem/product invariants**;
+- **Frozen high-level architecture**;
+- **Delegated solution space**; and
+- **Reopen only on evidence** assumptions/triggers.
 
-A local realization or **local reconciliation** that preserves frozen architecture, ownership, algorithms, and semantics remains implementation work. A **material redesign** changes one of those frozen decisions and requires reopening design.
+An equivalent local realization that preserves the first two classes remains implementation work even when it removes/consolidates machinery that Design expected but did not freeze. A material redesign changes a Frozen high-level decision and requires Design reconsideration.
 
-When redesign is required, **reopen only the affected** design surface. Preserve unrelated accepted design, implementation stages, and evidence whose claims remain valid. Resume implementation from the earliest materially affected dependency rather than restarting the whole workplan.
+Repository evidence may invalidate a Frozen assumption. Treat that as a bounded design-invalidation question rather than silently changing the target or blindly forcing incompatible architecture.
 
-## Complexity regression and consolidation review
+## Recurrence and semantic defect families
 
-Substantial changes and repeated work in one subsystem should include affected-area structural review. Ask whether existing components can own the responsibility, equivalent functionality/state already exists, multiple authorities can be consolidated, derivable state can replace synchronized duplicates, stale wrappers/fallbacks/compatibility paths can be retired, or superseded machinery can be deleted.
+Recurrence is evidence about the shared owner/mechanism; it is not evidence that the current realization should survive.
 
-Prefer semantic reuse and consolidation rather than textual DRY. A new canonical component may reduce global complexity by replacing several authorities; forcing materially distinct hardware/scientific responsibilities into one generic abstraction may increase it.
+A first clean local defect remains local. Materially equivalent sibling recurrence should stop repeated instance patching and move reasoning to the shared semantic owner/mechanism. If recurrence also exposes structural complexity, the active simplicity rule fires before another additive durable closure.
 
-## Redesign boundary
+Use bounded semantic defect families and finite census when the **Tier-1 correctness claim itself** requires completeness, or when sibling discovery is necessary to remove/canonicalize the affected realization safely. Family closure is subordinate to Tier-1 product truth, Frozen architecture, and Tier-2 simplification; it must not turn an accidental mechanism into an invariant merely by completing its current "canonical realization."
 
-A local bug with a local cause should receive a clean local owning-layer fix. Redesign when repeated fixes accumulate around the same mechanism, ownership is wrong, duplicated state/logic causes failures, compatibility/fallback layers proliferate, testing requires parallel reconstruction of production behavior, resource failures repeat, or the current algorithm cannot meet material requirements cleanly.
-
-For accepted workplans, require evidence before reopening frozen design: an irreconcilable ownership/contract mismatch, material engineering infeasibility, representative measurement that invalidates a premise, or an explicit redesign trigger. Do not reopen settled design merely because another plausible architecture exists.
-
-## Convergence boundary for repeated defect families
-
-A first clean local defect remains a local owning-layer repair. When materially equivalent defects recur around the same invariant/authority/mechanism, establish the bounded semantic family and close it at the canonical owner, consolidating duplicate enforcement or deleting bypasses when that reduces the failure surface.
-
-After an adequate family closure has implemented the canonical realization and passed required family-level real-owner, affected-regression, integration, and structural evidence, a same-family material recurrence triggers bounded Software Design reconsideration before another ordinary sibling patch. An incomplete or artificially narrow family closure is instead implementation nonconformance that must be completed unless separate redesign evidence already exists.
-
-Design reconsideration does not automatically mean architecture churn or a new normative workplan revision. If frozen product/architecture/ownership semantics remain sound, Design may require a stronger implementation refactor, consolidation, API narrowing, or canonicalization under the same authority. Reopen current design authority only when a frozen material decision itself must change. Preserve justified specialization where distinct hardware, scientific, compatibility, lifecycle, or failure semantics make one abstraction worse.
+Post-simplification recurrence or evidence that a Frozen high-level decision itself is wrong triggers bounded Software Design reconsideration. Reopen only the affected design surface.
 
 ## Architecture documentation
 
-Permanent architecture documentation describes accepted current product structure, ownership, interfaces, data/control flow, important invariants, persistence/concurrency/security/resource boundaries, target-hardware assumptions where material, and accepted algorithms. Do not turn it into a log of development-process gates or temporary benchmark attempts.
+Permanent architecture documentation describes accepted current product structure, ownership, interfaces, data/control flow, important product/Frozen invariants, persistence/concurrency/security/resource boundaries, target-hardware assumptions where material, and accepted high-level algorithms. Do not turn it into a log of temporary proof machinery, development-process gates, or superseded patches.
