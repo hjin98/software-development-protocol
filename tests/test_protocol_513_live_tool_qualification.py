@@ -44,7 +44,9 @@ class Protocol513LiveToolQualificationTests(unittest.TestCase):
     def test_serena_scenario_is_the_initiating_regression(self) -> None:
         text = read("qualification/tool-routing/SCENARIOS.md")
         self.assertIn("minimum live regression", text)
-        self.assertIn("definition/caller/reference", text)
+        self.assertIn("definition/semantic owner", text)
+        self.assertIn("callers/references", text)
+        self.assertIn("symbol/reference/caller", text)
         self.assertIn("references/tool-serena.md", text)
         self.assertIn("serena semantic", text)
 
