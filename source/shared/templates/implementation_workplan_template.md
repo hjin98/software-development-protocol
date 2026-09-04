@@ -6,45 +6,53 @@ protocol_version: REPLACE_WITH_SKILL_PROTOCOL_VERSION
 
 # <Task> Workplan
 
-## Objective and protected concerns
+## Objective / problem invariants / non-goals
 
-<Concise stakeholder-relevant product outcome, durable-success criterion when material, evidence-grounded diagnosis/root cause, and the invariants/failure modes the implementation must preserve.>
+<State the original stakeholder, research, computational, scientific, or operational problem independently of the current implementation where possible. Record the Tier-1 product requirements, governed contracts, durable-success criteria, and explicit non-goals.>
 
-## Engineering envelope and product design
+## Frozen high-level architecture and engineering envelope
 
-<Material functionality/correctness/scientific/resource/scaling/hardware/performance/security/compatibility requirements, plus the globally justified ownership/algorithm/data/interface design and justified product complexity.>
+<Record only the material high-level architecture/ownership/algorithm/data-representation/resource/compatibility decisions Software Design deliberately freezes for this implementation cycle, plus material correctness/scientific/resource/scaling/hardware/performance/security/reliability requirements.>
 
-## Implementation obligations
+Ask explicitly:
 
-Record task-specific obligations, not generic protocol prose. An ordinary material obligation should preserve:
+- What high-level architecture is deliberately Frozen for this cycle?
+- Which details are intentionally **not** Frozen?
+- Would changing a listed detail alter high-level architecture, or only the delegated realization?
 
-- **Concern / rationale:** why this obligation exists.
-- **Required end state:** behavior, ownership, architecture, or observable result that must hold.
-- **Required consequences / constraints:** concrete consequences already determined by design, including preservation or forbidden behavior.
+## Implementation obligations and delegated solution space
+
+Record task-specific obligations, not generic protocol prose or a frozen proof script. An ordinary material obligation should preserve:
+
+- **Concern / rationale:** why the outcome matters.
+- **Required end state / constraint:** what must hold at product/Frozen-architecture level.
+- **Delegated solution space:** what implementation-local machinery may be replaced, consolidated, simplified, or deleted while preserving the end state.
 - **Acceptance evidence:** focused/regression/integration, numerical/resource/compatibility threshold, structural/absence check, or other proof.
 
 Attach only when material:
 
-- **Suggested realization:** useful but replaceable by an equivalent realization preserving frozen semantics.
-- **Acceptance boundary:** acceptance claim, required real semantic owner/path, allowed test doubles below/outside it, forbidden substitutions, and observable evidence when proxy acceptance is a material risk.
+- **Suggested realization:** useful guidance, explicitly replaceable by an equivalent simpler realization.
+- **Acceptance boundary:** required real semantic owner/path, allowed doubles, forbidden substitutions, and observable evidence when proxy acceptance is a material risk.
 - **Stage/dependency:** when ordering materially reduces risk or rework.
-- **Anti-shortcut / integrity constraint:** a known way local compliance or evidence manipulation could appear to pass while defeating the whole-product outcome.
+- **Anti-shortcut / integrity constraint:** a known way local compliance/evidence manipulation could appear to pass while defeating the stakeholder outcome.
 
-Known material consequences must not disappear merely to shorten the plan. The accepted obligations are the minimum known contract, not a ceiling: implementation incorporates newly discovered necessary local or affected-surface consequences that preserve frozen design and reopens design only when a frozen material decision must change.
+For simplification/refactor work, state what existing machinery/state/path should be removed, narrowed, altered, or consolidated. If net-new machinery is required, state which Tier-1/Frozen capability cannot be met cleanly without it, or which broader existing machinery it replaces to reduce total system complexity.
+
+The accepted plan is the minimum known contract, not a ceiling only for newly discovered affected behavior and logically necessary consequences of already-binding product/Frozen-architecture semantics. Affected-surface expansion does not itself create a new product requirement or freeze the current realization.
 
 ## Implementation authority
 
 ### Frozen
 
-<Material requirements, invariants, non-goals, architecture/ownership/algorithm/resource/compatibility decisions, acceptance boundaries, and other accepted target decisions implementation must preserve.>
+<List only Tier-1 product/problem requirements and deliberately Frozen high-level architecture/acceptance decisions implementation must preserve.>
 
 ### Delegated
 
-<Implementation-local mechanics intentionally left open where alternatives do not change frozen semantics.>
+<List implementation-local mechanics and solution machinery intentionally left replaceable. Existing code, helpers, wrappers, state machines, retries, caches, adapters, synchronization, or prior patches are delegated unless explicitly promoted above.>
 
 ### Reopen only on evidence
 
-<Material assumptions/decisions that may change only after a genuine redesign trigger. Reopen only the affected surface and preserve still-valid accepted work/evidence.>
+<List material Frozen assumptions/decisions that may change only after a genuine redesign trigger. Reopen only the affected surface and preserve still-valid accepted work/evidence.>
 
 ## Affected surface and task-specific acceptance
 
@@ -54,30 +62,10 @@ Generic functional-acceptance requirements are inherited from the protocol versi
 
 Production qualification: <required / deferred / unnecessary, with reason when materially relevant>.
 
-## Implementation sequence and redesign risks
+## Implementation sequence and genuine redesign / simplification triggers
 
-<List only coherent behavior/risk stages where ordering materially reduces ambiguity or rework. A local coherent behavior change is normally one material stage; do not split tightly coupled helper/caller/test edits merely by file/function. Each executable material stage still closes semantic/conformance plus focused and affected-regression functional acceptance before dependent work proceeds.>
+<List only coherent behavior/risk stages where ordering materially reduces ambiguity or rework. A local coherent behavior change is normally one material stage; do not split tightly coupled helper/caller/test edits merely by file/function.>
 
-<Material risks or evidence that should cause bounded design reconsideration.>
+<Record structural evidence that should trigger active Tier-2 simplification before another additive durable repair: repeated patches, patch-on-patch repair, wrapper/fallback/special-case accumulation, duplicated/synchronized authoritative state, competing authorities, repeated reconciliation machinery, or a materially simpler equivalent realization.>
 
-## Conditional convergence guidance
-
-For substantial work where repeated-family risk, scope diffusion, or finite critical-site completeness is materially plausible, record only task-specific convergence information that reduces ambiguity or rework. This may include a provisional **closure horizon** of material owners/contracts/state boundaries/consumers/invariant families (it is not a scope ceiling); the semantic owner/invariant/failure-family key whose recurrence would require family-level closure; a bounded census/closure basis or temporary closure map when completeness itself is acceptance-critical; the condition under which recurrence after adequate family closure requires bounded Software Design reconsideration; and task-specific real-owner or acceptance-liveness constraints.
-
-Keep this guidance conditional. A first clean local defect does not require a family matrix, and ordinary workplans do not require IDs, ledgers, persistent closure maps, whole-repository scans, or extra review artifacts merely for protocol compliance.
-
-## Handoff closure
-
-Before accepting a substantial workplan, reconcile:
-
-```text
-explicit requirements + protected concerns + accepted design/invariants
-+ preservation/non-goals + known cross-module consequences
--> implementation obligations -> acceptance evidence
-```
-
-Confirm that no material requirement, protected concern, frozen design decision, known consequence, or required acceptance claim was lost in compression. This is reasoning closure, not a mandatory persistent traceability artifact.
-
-Apply the **snapshot-loss counterfactual** before final Design -> Implementation handoff: conceptually remove `.git`, prior chat/session and PR/issue/review history, superseded revisions not included in the handoff, and external links/resources not actually supplied. The remaining supplied current artifact set must still contain every still-binding task-specific requirement, decision, acceptance boundary, and redesign trigger.
-
-Consolidate accepted amendments/review corrections into supplied current authority before handoff. History-only or unsupplied-external references may remain provenance/navigation, but are not sufficient normative storage. Current protocol/specification/architecture/package composition remains valid when those authorities are current, explicit, and included in the supplied handoff artifact set; do not duplicate generic protocol doctrine merely for snapshot completeness.
+<Record separately the evidence that would require bounded Design reconsideration because a **Frozen high-level architecture** decision itself must change.>
