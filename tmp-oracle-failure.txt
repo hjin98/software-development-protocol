@@ -1,0 +1,35 @@
+test_actual_common_overlap_and_model_limit_mutations_are_rejected (tests.test_protocol_513_oracle_family_closure.Protocol513OracleFamilyClosureTests.test_actual_common_overlap_and_model_limit_mutations_are_rejected) ... FAIL
+test_actual_role_capability_probe_and_fallback_mutations_are_rejected (tests.test_protocol_513_oracle_family_closure.Protocol513OracleFamilyClosureTests.test_actual_role_capability_probe_and_fallback_mutations_are_rejected) ... ok
+test_actual_role_direct_entry_mutation_is_rejected (tests.test_protocol_513_oracle_family_closure.Protocol513OracleFamilyClosureTests.test_actual_role_direct_entry_mutation_is_rejected) ... ok
+test_actual_role_route_mutations_reject_every_relation_class (tests.test_protocol_513_oracle_family_closure.Protocol513OracleFamilyClosureTests.test_actual_role_route_mutations_reject_every_relation_class) ... ok
+test_capability_probe_and_fallback_boundaries_remain_conditional (tests.test_protocol_513_oracle_family_closure.Protocol513OracleFamilyClosureTests.test_capability_probe_and_fallback_boundaries_remain_conditional) ... ok
+test_current_distributed_routing_chain_is_accepted_for_both_roles (tests.test_protocol_513_oracle_family_closure.Protocol513OracleFamilyClosureTests.test_current_distributed_routing_chain_is_accepted_for_both_roles) ... ok
+test_historical_511_actual_owner_mutations_are_rejected (tests.test_protocol_513_oracle_family_closure.Protocol513OracleFamilyClosureTests.test_historical_511_actual_owner_mutations_are_rejected) ... FAIL
+test_historical_511_current_split_owners_are_accepted (tests.test_protocol_513_oracle_family_closure.Protocol513OracleFamilyClosureTests.test_historical_511_current_split_owners_are_accepted) ... ok
+test_historical_511_hypothesis_anti_gaming_inversion_basis (tests.test_protocol_513_oracle_family_closure.Protocol513OracleFamilyClosureTests.test_historical_511_hypothesis_anti_gaming_inversion_basis) ... ok
+test_historical_511_hypothesis_settings_inversion_basis (tests.test_protocol_513_oracle_family_closure.Protocol513OracleFamilyClosureTests.test_historical_511_hypothesis_settings_inversion_basis) ... ok
+test_historical_511_mandatory_pipeline_inversion_basis (tests.test_protocol_513_oracle_family_closure.Protocol513OracleFamilyClosureTests.test_historical_511_mandatory_pipeline_inversion_basis) ... ok
+test_model_limit_cross_check_boundary_remains_proportionate (tests.test_protocol_513_oracle_family_closure.Protocol513OracleFamilyClosureTests.test_model_limit_cross_check_boundary_remains_proportionate) ... ok
+test_specialist_selection_boundaries_are_live (tests.test_protocol_513_oracle_family_closure.Protocol513OracleFamilyClosureTests.test_specialist_selection_boundaries_are_live) ... ok
+
+======================================================================
+FAIL: test_actual_common_overlap_and_model_limit_mutations_are_rejected (tests.test_protocol_513_oracle_family_closure.Protocol513OracleFamilyClosureTests.test_actual_common_overlap_and_model_limit_mutations_are_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/software-development-protocol/software-development-protocol/tests/test_protocol_513_oracle_family_closure.py", line 609, in test_actual_common_overlap_and_model_limit_mutations_are_rejected
+    self.assertFalse(
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_historical_511_actual_owner_mutations_are_rejected (tests.test_protocol_513_oracle_family_closure.Protocol513OracleFamilyClosureTests.test_historical_511_actual_owner_mutations_are_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/software-development-protocol/software-development-protocol/tests/test_protocol_513_oracle_family_closure.py", line 420, in test_historical_511_actual_owner_mutations_are_rejected
+    self.assertFalse(
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.010s
+
+FAILED (failures=2)
+exit_status=1
