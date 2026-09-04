@@ -45,7 +45,8 @@ def clauses(text: str) -> list[str]:
 
 
 def family_identity(text: str) -> bool:
-    scope = section(text, "## semantic defect families", "## family closure after recurrence") or text.lower()
+    lowered = text.lower()
+    scope = section(lowered, "## semantic defect families", "## family closure after recurrence") or lowered
     required = (
         "family membership is not textual similarity",
         "separate files",
@@ -58,7 +59,7 @@ def family_identity(text: str) -> bool:
     if not all(x in scope for x in required):
         return False
     return not any(
-        x in scope
+        x in lowered
         for x in (
             "family membership is textual similarity",
             "separate files make defects independent",
