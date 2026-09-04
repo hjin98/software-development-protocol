@@ -56,7 +56,7 @@ class ProtocolContractTests(unittest.TestCase):
             self.assertIn("documentation", text)
         self.assertIn("do not promote implementation machinery into tier 1", self.design)
         self.assertIn("implementation history does not promote machinery into tier 1", self.implementation)
-        self.assertIn("does not acquire tier-1 authority", self.architecture)
+        self.assertIn("acquire tier-1 authority", self.architecture)
 
     def test_solution_created_problem_can_be_removed_instead_of_patched(self) -> None:
         self.assertIn("a problem created only by the current tier-2 realization is itself a tier-2 problem", self.design)

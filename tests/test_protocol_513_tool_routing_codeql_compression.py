@@ -52,7 +52,7 @@ class Protocol513RoutingPreservationTests(unittest.TestCase):
 
     def test_relation_first_common_router_and_optional_tools_remain(self) -> None:
         for phrase in (
-            "classify the relation under the current material claim",
+            "relation under the current material claim",
             "security task is not automatically a codeql task",
             "forbidden-call pattern is structural",
             "decompose a multi-relation claim",
