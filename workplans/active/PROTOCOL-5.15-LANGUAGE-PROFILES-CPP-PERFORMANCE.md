@@ -4,356 +4,401 @@ workplan_id: PROTOCOL-5.15-LANGUAGE-PROFILES-CPP-PERFORMANCE
 protocol_version: 5.14.0
 ---
 
-# Protocol 5.15 Language Profiles, C++ Tooling, and Performance Engineering Workplan
+# Protocol 5.15 Language Engineering Profiles and Cross-Language Performance Workplan
 
 ## Objective / problem invariants / non-goals
 
 ### Original problem
 
-Protocol 5.14 has a strong language-agnostic product-engineering doctrine, but several operational rules were shaped by Python scientific-software practice. The protocol needs one language/runtime adaptation mechanism that preserves the shared lifecycle, authority, simplicity, testing, scientific-fidelity, and evidence rules while making Python and C++ implementation guidance genuinely appropriate to their different execution models.
+Protocol 5.14 has a strong language-agnostic engineering doctrine, but it was developed primarily in Python scientific-software work. Most of its governing principles already transfer cleanly to C++, while some operational guidance encodes Python execution assumptions directly and the current Protocol 5.15 draft over-corrects by placing several actually language-agnostic performance concepts inside the C++ profile.
 
-The C++ side also needs a high-return development and performance methodology rather than only syntax-level language guidance. That methodology must cover semantic navigation, static/structural analysis, debugger use, memory/lifetime/race guarding, generative/fuzz testing, optimized numerical kernels, compiler/vectorization/SIMD optimization, shared-memory and distributed parallelism, and optional accelerator execution.
-
-The product outcome is a single protocol that can develop Python, C++, and mixed Python/C++ scientific software efficiently and correctly, selecting tools and optimization mechanisms by the engineering claim rather than running a fixed tool pipeline.
+The required outcome is one protocol that is structurally capable of producing excellent Python, C++, and mixed Python/C++ software while preserving all prior Protocol 5 doctrine. Shared references must continue to own the durable engineering principles; language profiles must contain only the justified consequences of each language/runtime/build model. The skills should optimize product performance and engineering quality using the minimum justified code/system complexity rather than either (a) translating Python habits into C++, (b) forcing C++ machinery into Python, or (c) duplicating shared doctrine across language branches.
 
 ### Product invariants
 
-1. **One protocol, shared doctrine.** Language choice must not fork lifecycle, Tier-1/Tier-2 authority, workplan semantics, active simplicity, acceptance, scientific correctness, or development-economy doctrine.
-2. **Language/runtime-specific execution semantics are explicit.** Rules whose meaning depends on interpreter, compiler, ABI, memory lifetime, process model, vector ISA, or build configuration route through a language/runtime profile.
-3. **Mixed-language composition is first-class.** Python orchestration plus C++ numerical kernels may activate both profiles in one affected surface.
-4. **Performance remains measurement-directed and scientifically constrained.** Algorithmic complexity, data representation, data movement, locality, representative profiling, and numerical equivalence outrank low-level optimization fashion.
-5. **C++ correctness includes undefined-behavior, lifetime, bounds, initialization, aliasing, and race safety.** Optimizer-dependent success does not excuse invalid semantics.
-6. **Compiler/build configuration is part of C++ performance identity.** Debug, sanitizer, coverage, and release/LTO/PGO builds are not interchangeable evidence.
-7. **Numerical semantics outrank compiler speed flags.** Fast-math, reassociation, contraction, mixed precision, denormal behavior, and reduction-order changes require accepted scientific equivalence evidence.
-8. **Optimized libraries are preferred over reinvention when they satisfy the contract.** Established BLAS/LAPACK/FFT/sparse/kernel libraries should normally precede hand-written low-level kernels.
-9. **CPU performance support is ordinary protocol capability.** The protocol must natively reason about compiler optimization, vectorization/SIMD, threads, OpenMP-like shared-memory parallelism, process isolation, and MPI-class distributed execution where the target architecture requires it.
-10. **GPU/accelerator execution is architecture-opt-in.** CUDA, HIP, SYCL, OpenCL, or other accelerator backends are activated only when the user/project explicitly includes accelerator support in Tier-1 requirements or Frozen architecture. Mere hardware availability does not create a requirement.
-11. **No tool monoculture.** The protocol may recommend high-return defaults, but selection remains capability- and claim-directed with concrete fallbacks.
+1. **One protocol, one doctrine.** Product truth, Tier-1/Frozen/Tier-2 authority, active simplicity, workplan semantics, affected-surface reasoning, proxy-proof acceptance, scientific correctness, security, storage, release, documentation, convergence, and development-economy rules remain language-agnostic and canonical.
+2. **Shared owner before language specialization.** A language profile may refine how a shared requirement is realized; it must not redefine, weaken, duplicate, or outrank the shared requirement.
+3. **Language-native engineering.** Python code should exploit Python's high-level runtime/library strengths; C++ code should exploit C++'s static type/lifetime/value/compile-time and native-performance strengths. Equivalent product behavior does not imply mechanically similar source structure.
+4. **Performance-aware by default, complexity escalation by evidence.** Prefer obviously lower-work/lower-movement/lower-allocation and established optimized primitives when they do not materially increase complexity. Require representative evidence before adding durable complexity such as bespoke SIMD, new parallel runtimes, architecture-specific dispatch, PGO/LTO policy, custom allocators, cross-language rewrites, or accelerator backends.
+5. **Minimum justified codebase/system complexity remains lexicographically below product fitness.** Performance improvements that materially complicate ownership, portability, build/release, failure behavior, or scientific semantics must justify their total-system cost; convenience or fewer source lines does not excuse poor runtime fitness.
+6. **Mixed-language composition is first-class.** A Python orchestration/API layer plus C++ kernels may activate both profiles. Boundary cost, ownership, error translation, build/package integration, and data movement are part of the architecture rather than incidental glue.
+7. **Capability-based tool routing remains shared.** Tool choice follows the relation under the engineering claim. Language profiles map generic capability classes to appropriate language-specific tools and build/runtime evidence.
+8. **Scientific semantics remain authoritative over optimization.** Backend replacement, vectorization, parallel reduction, compiler floating-point transforms, mixed precision, and accelerators require accepted exact/tolerance/invariant evidence where they can change scientific results.
+9. **CPU performance mechanisms are ordinary supported capabilities, not universal product requirements.** Tuned kernels, vectorization, shared-memory concurrency, process isolation, and distributed execution are selected by workload/architecture, not enabled merely because modern machines support them.
+10. **GPU/accelerator support is architecture-gated.** GPU probing, dependencies, implementation, profiling, and qualification activate only when accelerator support is a Tier-1 requirement or explicitly Frozen architecture decision.
+11. **Tool/backend identities remain delegated unless independently governed.** Serena, clangd, sanitizers, BLAS vendors, MPI implementations, profilers, and similar mechanisms are preferred or routed because of capability, not promoted into Tier 1 through protocol wording.
 
 ### Non-goals
 
-- Do not create separate Python and C++ lifecycle roles or parallel protocols.
-- Do not require every C++ project to implement threads, OpenMP, MPI, subprocess execution, GPU support, or multiple numerical backends. Protocol support is broader than any one product's required architecture.
-- Do not prescribe one build system, compiler, debugger, test framework, profiler, BLAS vendor, FFT library, MPI implementation, or accelerator stack globally.
-- Do not require hand-written intrinsics, AVX-512-only binaries, custom allocators, PGO, LTO, GPU kernels, or assembly without representative evidence that they address a material Tier-1 requirement.
-- Do not weaken Python-specific guidance merely to obtain superficially language-neutral prose.
-- Do not turn sanitizer/analyzer availability into ceremonial mandatory gates unrelated to the affected claim.
+- Do not create separate Python/C++ lifecycle roles, duplicated protocol trees, or language-specific copies of generic architecture/testing/scientific/security doctrine.
+- Do not require every C++ project to use OpenMP, MPI, intrinsics, LTO, PGO, sanitizers, multiple numerical backends, or GPU support.
+- Do not require every Python project to use NumPy, multiprocessing, JIT compilation, native extensions, or a particular framework when the workload does not justify them.
+- Do not prescribe one compiler, standard library, build system, test framework, debugger, profiler, BLAS/FFT implementation, MPI implementation, property-testing library, or accelerator stack globally.
+- Do not move clearly language-agnostic principles into profiles merely because their current examples arose in Python or C++.
+- Do not retain language-specific hard requirements in generic shared references when the same requirement can be stated generically and specialized in a profile.
+- Do not create a reference page per tool or optimization technique without independent methodological value.
 
 ## Frozen high-level architecture and engineering envelope
 
 ### Frozen architecture
 
-1. **Shared core + conditional language/runtime profiles.** Existing shared owners continue to govern workflow, architecture, testing, scientific correctness, performance methodology, storage, security, and orchestration. Add compact Python and C++ profile owners plus minimal profile routing.
-2. **Profile activation follows the affected semantic/runtime/build surface.** File extension is evidence, not authority. Generated bindings, headers, CUDA/SYCL translation units, embedded interpreters, and mixed targets may activate multiple profiles.
-3. **Generic performance remains canonical.** `performance-and-parallelism.md` owns language-neutral optimization order, benchmark discipline, resource budgets, scaling, data movement, and accelerator policy. Python-only and C++-specific execution rules belong in profiles.
-4. **Tool routing remains per engineering question.** Semantic navigation, structural relations, interprocedural flow, lifetime/memory safety, races, runtime state, and performance each route to the highest-information available tool that directly models the claim.
-5. **High-return C++ tooling is layered, not duplicated.** Reuse Serena, Semgrep, and CodeQL when their C++ support models the question; add compiler-native C++ tools where they provide materially stronger semantic, memory, debugger, or performance evidence.
-6. **CPU optimization ladder is first-class.** The protocol explicitly supports tuned numerical kernels, compiler optimization, auto-vectorization/SIMD, shared-memory parallelism, and distributed MPI-class execution where the product architecture requires scaling beyond one process/node.
-7. **GPU remains conditional.** Accelerator-specific tooling and implementation are routed only when accelerator support is Tier-1/Frozen. CPU-only work must not inherit CUDA/OpenCL/SYCL obligations.
-8. **Protocol 5.15 is a backward-compatible minor strengthening.** Existing workplans remain version-bound.
+Protocol 5.15 uses three layers:
 
-### C++ engineering envelope
+```text
+shared doctrine / domain owners
+        |
+        v
+thin language-profile routing
+        |
+        +--> Python engineering profile
+        +--> C++ engineering profile
+        +--> both for mixed-language boundaries
+```
 
-The C++ profile must cover, proportionately to the affected claim:
+1. **Shared canonical owners remain authoritative.** Existing references continue to own workflow/workplans, architecture/simplicity, testing/acceptance, tool-capability selection, performance/scaling, concurrency/orchestration, scientific fidelity, storage/I/O, security/trust, release/distribution, configuration, documentation, and protocol versioning.
+2. **Add one thin language-profile router plus compact Python and C++ engineering profiles.** The router classifies affected runtime/build surfaces and sends only language-dependent questions to the relevant profile(s). It must not become a second policy layer.
+3. **Profiles are differential.** They contain language/runtime/build-specific idioms, hazards, tools, packaging, and optimization realizations. They inherit shared doctrine by reference and do not restate it except for short local cross-links needed to explain the specialization.
+4. **Shared performance owns the conceptual optimization hierarchy.** Generic performance doctrine owns algorithm/work reduction, data representation/movement/locality, established optimized kernels, vectorization as a capability, parallelism classes and oversubscription, accelerator gating, benchmark comparability, and performance-versus-complexity evidence. Profiles map those concepts into Python- and C++-appropriate realization.
+5. **Shared concurrency owns execution-class semantics.** Shared-memory execution, process isolation, distributed-memory execution, nested parallelism, failure/cancellation, resource ownership, and deterministic aggregation are generic concepts. Python and C++ profiles explain how their runtime models change the preferred mechanisms.
+6. **Shared tool-assisted engineering owns relation classes.** Semantic navigation, structural analysis, broad invariant generation, interprocedural flow, runtime state, memory/resource diagnosis, race diagnosis, and performance diagnosis are capability classes. Existing generic tool methods remain canonical where cross-language; profile-local methods cover genuinely language-specific evidence.
+7. **Language-specific normative content is not allowed to leak into shared references without qualification.** A shared reference may use Python/C++ examples, but the durable rule must be stated generically. Tool-specific references such as Hypothesis may remain intentionally language-specific because their subject is the tool itself.
+8. **Mixed-language composition uses simultaneous profiles, not a third lifecycle.** Boundary-specific rules live in the thin router or a compact shared boundary section; they must not duplicate both full profiles.
+9. **Protocol 5.15 is a backward-compatible minor strengthening.** It changes no lifecycle or governing doctrine and does not reinterpret older workplans implicitly.
 
-- optimized versus debug/instrumented build identity;
-- compiler/toolchain/version/flags/target ISA/standard-library/runtime identity;
-- `compile_commands.json` or equivalent compilation database where semantic tooling needs exact translation-unit configuration;
-- RAII, ownership, lifetime, non-owning views, bounds, initialization, aliasing/alignment, exception-safety, and data-race concerns;
-- layout/stride/contiguity, AoS/SoA, indirection, allocation/copy/move behavior, cache locality, false sharing, and NUMA effects;
-- optimized numerical libraries such as BLAS/LAPACK-family kernels, FFTW-class FFTs, sparse/domain libraries, and vendor-tuned equivalents;
-- compiler optimization, inlining, devirtualization, LTO/PGO where justified, and vectorization diagnostics;
-- ISA-level optimization including SSE/AVX/AVX2/AVX-512 on x86 and NEON/SVE-class vectorization on Arm, preferably through libraries/autovectorization or safe dispatch before hand intrinsics;
-- native C++ threads, task/thread-pool runtimes, OpenMP-like shared-memory execution, subprocess/process isolation, and MPI-class distributed execution;
-- optional GPU backends such as CUDA, HIP, SYCL, OpenCL, or project-equivalent accelerator frameworks only when architecture-authorized;
-- ABI/API/shared-library/header/template/ODR implications;
-- Python/C++ FFI boundaries when present;
-- debugger, sanitizer, profiler, hardware-counter, compiler-diagnostic, semantic-analysis, structural-analysis, and interprocedural-analysis evidence.
+### Shared engineering envelope: performance with minimum justified complexity
+
+The shared performance owner must distinguish two optimization classes.
+
+**Efficiency by construction — no benchmark prerequisite when the choice is clearly semantically equivalent and does not add material complexity:**
+
+- eliminate redundant work, parsing, I/O, copies, allocation, conversions, and synchronization;
+- select appropriate asymptotic algorithms/data structures;
+- preserve locality and avoid unnecessary materialization;
+- reuse established optimized library primitives already compatible with the product;
+- batch or stream work where doing so simplifies or preserves the architecture;
+- avoid accidental nested oversubscription.
+
+**Complexity-increasing optimization — representative evidence required before durable adoption:**
+
+- new bespoke native kernels or language boundaries;
+- explicit SIMD/intrinsics or architecture dispatch machinery;
+- additional thread/process/MPI runtimes or hybrid parallel layers;
+- custom allocation/pooling solely for speed;
+- LTO/PGO as a governed build/release dependency rather than a local compiler experiment;
+- backend proliferation or fallback matrices;
+- accelerator implementation;
+- scientific approximation/precision changes.
+
+The benchmark must measure the user-visible or materially owning path and include the complexity/portability/resource tradeoff, not merely kernel throughput.
+
+### Python engineering profile envelope
+
+The Python profile must optimize for Python's actual strengths and costs rather than emulate C++.
+
+- Prefer clear high-level language/standard-library/project abstractions; use context managers and deterministic resource scopes where they simplify lifetime handling; use iterators/generators/streaming where they reduce materialization; use data classes/protocol/type annotations or equivalent constructs when they improve API clarity without creating parallel schema machinery.
+- Avoid unnecessary dynamic metaprogramming, reflection, wrapper layers, object churn, or abstraction whose only effect is indirection.
+- Keep large dense numerical work in established compiled/vectorized kernels where practical. Treat NumPy/SciPy/framework operations as compiled execution only when they actually avoid Python elementwise work; `numpy.vectorize`/`frompyfunc` remain convenience, not acceleration.
+- Account for dtype, shape, stride, contiguity, broadcasting, temporary arrays, Python-object crossings, serialization, and FFI copies on hot paths.
+- Choose threads when dominant work releases the GIL or is I/O/shared-read-heavy; choose processes for genuinely Python-bytecode-bound CPU work when serialization/duplication cost is acceptable; do not copy C++'s thread-first assumptions into Python.
+- Escalate to JIT/native extension/Cython-like/custom C++ kernels only when the remaining bottleneck and total integration cost justify it.
+- Use Python-appropriate runtime/debug/profiling evidence when needed: debugger-class tools for runtime state, `tracemalloc`/allocation-memory profilers for resource questions, sampling or Python profilers for CPU hotspots, and Hypothesis for broad property/state invariants. Exact tools remain delegated.
+- Preserve normal Python packaging/import/environment semantics and test the installed/packaged consumer path where release claims depend on them.
+
+### C++ engineering profile envelope
+
+The C++ profile must optimize for C++'s actual strengths and hazards rather than emulate Python.
+
+- Prefer RAII, explicit ownership, value semantics, const-correct interfaces, moves, spans/views, standard containers/algorithms, and clear lifetime boundaries when they reduce complexity and data movement.
+- Prefer stack/value ownership and deterministic destruction when semantically appropriate; do not introduce manual `new`/`delete`, raw owning pointers, custom ownership protocols, or bespoke allocators without a material need.
+- Use templates/concepts/static polymorphism when they reduce duplicated code or remove material runtime cost cleanly; avoid template/metaprogramming complexity whose engineering cost exceeds its product benefit. Dynamic polymorphism remains valid when runtime substitution is the actual product model.
+- Follow the project's accepted error/API contract (exceptions, expected/status/result types, error codes, assertions) rather than imposing one universal C++ error style; preserve exception safety and resource ownership across failure paths.
+- Treat compiler/toolchain/build configuration, ABI, headers/templates, compile definitions, standard library/runtime, and target ISA as part of the affected surface when they can change behavior or performance.
+- Treat undefined behavior, lifetime/bounds/initialization defects, invalid alias/alignment promises, signed-overflow dependence, and data races as correctness defects before optimization.
+- Prefer tuned numerical libraries and compiler auto-vectorization before explicit intrinsics when they satisfy the contract; use architecture dispatch or target-specific builds only when portability/architecture authority justifies them.
+- Prefer native threads/task runtimes or OpenMP-like shared-memory execution according to workload shape; use processes primarily for isolation/process architecture; use MPI-class execution when distributed-memory/multi-node architecture is required. Compose these with BLAS/FFT thread pools explicitly.
+- Use compiler-native semantic/static evidence, sanitizer-class runtime checks, debugger-class tools, sampling/hardware-counter profilers, vectorization reports, property/fuzz tools, and existing Serena/Semgrep/CodeQL capabilities according to the claim. Exact tool identity remains delegated.
+
+### Mixed Python/C++ boundary envelope
+
+When both profiles apply:
+
+- keep one clear owner for each object/buffer/resource and define lifetime across the boundary;
+- prefer compatible buffer/array views and zero-copy transfer only when lifetime/stride/alignment contracts remain explicit and safe;
+- batch calls when language-boundary dispatch dominates;
+- account for exception/error translation, GIL acquisition/release, callback direction, thread ownership, and interpreter shutdown where material;
+- benchmark end-to-end boundary cost before rewriting large components merely to move language boundaries;
+- test the packaged/imported extension or real consumer path, not only direct kernel invocation;
+- treat generated binding code as derived unless the project governs it as source.
 
 ## Implementation obligations and delegated solution space
 
-### O1 — Refactor generic versus language-specific performance doctrine
+### O1 — Perform a protocol-wide language-specificity census before editing
 
-**Concern / rationale:** The current generic performance owner contains Python-only GIL, process, NumPy/SciPy, `numpy.vectorize`, and Python-worker guidance alongside universal optimization rules.
+**Concern / rationale:** The current draft focuses mainly on performance, but Python-specific normative wording also exists in tool routing and security examples/rules. A partial extraction would leave inconsistent doctrine ownership.
 
-**Required end state / constraint:** Keep generic guidance runtime-neutral: remove redundant work; improve asymptotics; improve representation/layout; reduce movement/allocation; prefer optimized kernels; improve locality/vectorization; add concurrency only where it helps; add accelerators only when architecture-authorized and worthwhile. Preserve all Python behavior in the Python profile and add C++ semantics in the C++ profile.
+**Required end state / constraint:** Inspect all canonical shared references and role/README routing surfaces for language-specific normative statements. Classify each occurrence as:
 
-**Acceptance evidence:** No Python-only execution rule remains phrased as universal; no C++ profile duplicates generic optimization doctrine.
+1. genuinely shared and generalizable;
+2. a language-specific realization that belongs in a profile;
+3. an intentionally language-specific tool/reference (for example Hypothesis);
+4. a harmless example whose generic rule is already clear.
 
-### O2 — Add deterministic language/runtime profile routing
+Generalize or route categories 1-2. Do not mechanically purge language names from examples.
 
-**Required end state / constraint:** Add a compact routing owner that distinguishes Python orchestration, Python numerical/native-library execution, C++ compiled targets, mixed Python/C++ boundaries, and accelerator translation/runtime surfaces. Multiple profiles may activate together.
+**Expected surfaces:** at minimum `performance-and-parallelism.md`, `tool-assisted-engineering.md`, both role entrypoints, `source/README.md`, root `README.md`, `PORTABILITY.md`, `security-and-trust-boundaries.md`, `testing-and-validation.md`, `concurrency-and-orchestration.md`, `release-and-distribution.md`, and qualification scenarios.
 
-**Acceptance evidence:** Qualification covers Python-only, C++-only, mixed Python/C++, and architecture-authorized accelerator examples.
+**Acceptance evidence:** no remaining unqualified Python/C++ implementation requirement in a generic owner unless the owner itself is intentionally language/tool specific.
 
-### O3 — Preserve and consolidate Python-specific performance rules
+### O2 — Implement the thin language-profile router and precedence rule
 
-Preserve interpreter-loop avoidance for large dense numerical work; NumPy/SciPy/framework-kernel preference; `numpy.vectorize`/`frompyfunc` non-acceleration; GIL-aware thread/process decisions; serialization/process-transfer cost; dtype/stride/materialization concerns; and escalation to JIT/native/custom kernels only after profiling justifies the complexity.
+**Required end state / constraint:** Introduce a compact canonical route stating:
 
-### O4 — Establish the high-return C++ tool-routing stack
+```text
+shared domain rule -> active language profile(s) -> implementation-local choice
+```
 
-**Concern / rationale:** C++ needs different semantic and runtime evidence than Python. The protocol should privilege tools that substantially reduce reasoning ambiguity or catch defect classes ordinary tests miss.
+For material executable work, identify every implementation/runtime language materially affected and read the corresponding profile only when language semantics can change the engineering decision. Documentation-only or purely generic architecture questions need not load profiles.
 
-**Required end state / constraint:** Add C++ claim-directed routing with the following priority model.
+The router must explicitly handle Python-only, C++-only, Python calling C++, C++ embedding Python, generated bindings, and accelerator translation/runtime surfaces. File suffix alone is insufficient.
 
-#### A. Semantic code understanding — highest default return
+**Anti-shortcut:** Do not duplicate this routing logic independently in Design and Implementation entrypoints beyond short links to the canonical router.
 
-1. **Serena remains the primary semantic repository-navigation tool** when available. Its C/C++ mode is backed by `clangd` by default and may use `ccls`; prefer a correct compilation database such as `compile_commands.json` so macros, includes, standards, compile definitions, and generated headers match the actual target.
-2. **clangd/compiler AST information is the semantic foundation** when Serena is unavailable or a direct compiler-language-server answer is more appropriate.
-3. **Semgrep remains the structural-pattern tool** for syntax/AST-pattern questions where its active engine sufficiently supports the project; do not use it for claims requiring full C++ type/lifetime/build semantics that clang-based analysis models better.
-4. **CodeQL remains the interprocedural/data-flow tool** for supported C/C++ builds when the claim depends on cross-function source-to-sink or program relations.
+### O3 — Refactor generic performance doctrine around shared concepts
 
-Do not replace Serena with a parallel C++ navigation framework merely because C++ has compiler AST tooling; Serena should reuse that tooling through clangd where practical.
+**Concern / rationale:** Tuned numerical kernels, vectorization, shared/process/distributed parallelism, profiling, and accelerator gating are not C++ doctrines. Python frequently reaches the same optimized backends through different interfaces.
 
-#### B. Local C++ static quality and compiler semantics — very high return
+**Required end state / constraint:** Keep these concepts in `performance-and-parallelism.md`:
 
-Use compiler diagnostics and clang-tidy-like AST-backed checks for local semantic/code-quality classes such as suspicious conversions, lifetime/ownership patterns, misuse of language/library APIs, portability problems, modernize/performance checks, and project-governed style/bug patterns when these checks directly model the risk. Existing GCC/MSVC/vendor equivalents remain valid.
+- work/asymptotic/data-layout/data-movement optimization order;
+- efficiency-by-construction versus evidence-required complexity escalation;
+- established optimized kernels/libraries before bespoke low-level machinery when they satisfy product constraints;
+- vectorization/compiled execution as a capability, not a Python- or C++-specific syntax rule;
+- representative profiling before non-obvious optimization;
+- shared-memory, process-isolation, distributed-memory, and nested-parallel execution classes;
+- benchmark comparability and longitudinal regression;
+- GPU/accelerator architecture gate.
 
-Compiler warnings are evidence, not proof of correctness. Do not globally enable every warning/check if the result is untriageable noise; govern a high-signal project set and prevent newly introduced relevant warnings.
+Language profiles map these to concrete realizations.
 
-#### C. Memory/lifetime/UB guarding — highest runtime defect return
+### O4 — Build a full Python engineering profile, not only a performance appendix
 
-- **ASan-class instrumentation** for out-of-bounds, use-after-free, use-after-scope/return, double/invalid free, and related memory defects.
-- **UBSan-class instrumentation** for relevant undefined-behavior classes.
-- **MSan-class instrumentation** when uninitialized-memory behavior is material and the platform/dependency environment can support it economically.
-- **Leak analysis** through sanitizer support or a compatible memory checker when leaks are part of the product/resource claim.
-- **Valgrind-like dynamic analysis** is a fallback/complement when sanitizer instrumentation is unavailable or when its specific memory/profiling capability provides additional value; it is not the default merely because it is traditional.
+**Required end state / constraint:** The Python profile must cover language-native abstraction/API/resource style, interpreter/object-model costs, numerical execution, concurrency, testing/tooling, packaging, and mixed-boundary behavior as defined in the engineering envelope.
 
-Sanitizer builds are correctness builds, not production-performance evidence.
+It must preserve all valid existing Python rules while explicitly avoiding two failure modes:
 
-#### D. Concurrency guarding
+- **C++-in-Python:** excessive manual lifecycle/state machinery, low-level loops, thread assumptions, or native rewrites when high-level Python/library code is simpler and sufficient;
+- **Python-performance denial:** retaining Python-level work on a dominant numerical path merely because the code is concise when an established compiled/vectorized realization is materially better and no more complex overall.
 
-Use **TSan-class race detection** when changed shared-memory ownership/synchronization creates a material race risk and the platform supports it. Combine with deterministic concurrency tests, stress repetition, and state-transition reasoning from the shared concurrency owner. Race-tool silence does not prove all schedules safe.
+### O5 — Build a full C++ engineering profile, not only a performance/tool appendix
 
-#### E. Debugger and crash forensics
+**Required end state / constraint:** The C++ profile must cover idiomatic ownership/lifetime/value design, compile-time/runtime abstraction choice, error contracts, build/ABI, memory/UB/race safety, numerical kernels, vectorization/SIMD, concurrency, tooling, packaging, and mixed-boundary behavior.
 
-Use **GDB/LLDB-class debuggers** for runtime state questions that require stack/frame inspection, breakpoints/watchpoints, core dumps, signals, thread state, or optimized-crash diagnosis. Prefer debugger evidence over speculative logging when the defect is reproducible locally and debugger access directly exposes the failing state.
+It must explicitly avoid:
 
-Do not make interactive debugging a routine gate when tests/static evidence already establish the claim more cheaply.
+- **Python-in-C++:** pervasive heap/dynamic dictionaries/late binding/wrapper layers or process-based parallelism copied from Python where static/value/native C++ constructs are cleaner;
+- **C++ cleverness for its own sake:** template metaprogramming, bespoke allocators, intrusive ownership, custom SIMD, or abstraction scaffolding without a material correctness/performance/complexity benefit.
 
-#### F. Generative/fuzz testing
+### O6 — Preserve generic optimized-kernel doctrine and specialize the library maps
 
-Keep Hypothesis as the Python-specific property/stateful tool. For native C++, route broad input/state invariants to an available property/generative framework or deterministic generator; route parser/decoder/binary-format/memory-boundary surfaces to libFuzzer/AFL++-class fuzzing when appropriate. Fuzzing and semantic property testing are complementary, not interchangeable.
+**Shared rule:** Prefer an established validated optimized primitive when the algorithm maps cleanly and the dependency satisfies precision, portability, licensing, deployment, and ownership requirements.
 
-**Acceptance evidence:** Qualification distinguishes semantic navigation, structural pattern, local compiler-semantic analysis, interprocedural flow, memory/UB, races, debugger state, and fuzz/property questions instead of routing all C++ work through one tool sequence.
+**Python map:** NumPy/SciPy and established framework kernels, including tuned BLAS/LAPACK/FFT/sparse backends underneath them where relevant. Avoid assuming a Python API is fast merely because it is vector-looking; materialization and Python-object paths still require profiling.
 
-### O5 — Make optimized numerical kernels the default implementation tier where applicable
+**C++ map:** BLAS/LAPACK-family interfaces, FFTW-class FFTs, sparse/eigensolver/domain libraries, and vendor-tuned equivalents such as OpenBLAS/BLIS/oneMKL/AOCL/Accelerate or project-approved alternatives. Distinguish the mathematical/interface contract from the selected performance backend.
 
-**Concern / rationale:** Scientific C++ should normally exploit mature tuned kernels before reproducing them manually.
+**Acceptance evidence:** the same dense-linear-algebra or FFT product problem routes to the shared optimized-kernel principle, then to different language-specific realizations without duplicating the principle.
 
-**Required end state / constraint:** For dense linear algebra, prefer BLAS/LAPACK-class APIs or an established C++ abstraction backed by tuned BLAS/LAPACK when the operation maps cleanly. For FFTs, prefer FFTW-class or platform/vendor-equivalent tuned implementations. Apply the same principle to sparse solvers, eigensolvers, convolutions, and domain kernels: established validated libraries outrank custom kernels when they satisfy precision, layout, licensing, portability, and deployment requirements.
+### O7 — Preserve generic parallelism classes and specialize runtime selection
 
-The protocol must distinguish **reference interfaces** from **performance backends**. Reference BLAS/LAPACK semantics do not imply the untuned reference implementation should be shipped for performance-sensitive work; choose an appropriate tuned backend such as OpenBLAS, BLIS, oneMKL, Accelerate, AOCL, vendor libraries, or project-equivalent according to supported platforms.
+**Shared owner:** concurrency/orchestration + performance own resource topology, deterministic aggregation, nested parallelism, failure/cancellation, oversubscription, process isolation, and distributed-memory semantics.
 
-Account for library threading. A threaded BLAS/FFT backend nested under OpenMP, native thread pools, MPI ranks, or Python workers can oversubscribe the machine.
+**Python specialization:** GIL-aware thread/process selection; native-library thread pools; serialization/shared-memory costs; MPI through project-appropriate Python interfaces when distributed execution is Frozen.
 
-**Acceptance evidence:** A numerical-kernel optimization scenario first evaluates mapping to a tuned library before hand-writing SIMD or parallel loops, while allowing custom kernels when the algorithm cannot be expressed efficiently by available primitives.
+**C++ specialization:** native threads/task pools for irregular shared-memory work; OpenMP-like execution for regular loop/data parallelism where appropriate; processes for isolation/process architecture; MPI-class execution for distributed/multi-node architecture; hybrid MPI + threads/OpenMP + BLAS/FFT composition.
 
-### O6 — Add a C++ compiler/vectorization/SIMD optimization ladder
+**Anti-shortcut:** Do not make MPI or GPU a C++-only concept; both are architecture capabilities usable from Python or C++ through different interfaces.
 
-**Required end state / constraint:** The C++ profile must apply this order unless representative evidence justifies deviation:
+### O8 — Preserve generic accelerator gating and specialize accelerator realizations
 
-1. correct algorithm and data representation;
-2. remove unnecessary allocations, copies, indirection, conversions, virtual dispatch, and synchronization on hot paths;
-3. use tuned library kernels where applicable;
-4. establish a production-like optimized compiler baseline;
-5. inspect compiler optimization/vectorization diagnostics and profiler/hardware evidence;
-6. improve loop/data form so the compiler can vectorize safely;
-7. use portable C++/library SIMD abstractions or function multiversioning/runtime dispatch when portability matters;
-8. use explicit ISA intrinsics only when a dominant kernel remains materially limited and the complexity is justified;
-9. consider LTO/PGO and target-specific tuning after representative profiling demonstrates value.
+**Shared rule:** No accelerator obligations exist unless Tier-1/Frozen architecture enables accelerator support. When enabled, acceptance requires end-to-end benefit, numerical/reference equivalence, transfer/synchronization cost, memory bounds, backend/device identity, and target-hardware evidence.
 
-Do not globally compile a portable product for AVX-512 merely because the development machine supports it. When multiple deployed CPUs matter, prefer conservative baseline binaries plus safe runtime dispatch/multiversioning or a library that performs its own dispatch. Hardware-specific builds are valid when target ISA is explicitly part of the product/Frozen architecture.
+**Python examples:** CuPy/JAX/PyTorch/Numba or project-equivalent accelerator execution when already compatible with the architecture.
 
-Compiler flags that change floating-point semantics are scientific/algorithm decisions, not ordinary optimization knobs.
+**C++ examples:** CUDA, HIP, SYCL, OpenCL, Kokkos/RAJA-like portability layers, or project-equivalent execution according to the supported hardware/portability contract.
 
-**Acceptance evidence:** Qualification includes a missed-vectorization scenario, an AVX-512 portability scenario, and an architecture-specific build scenario where AVX-512 is legitimately Frozen.
+Prefer optimized accelerator libraries before custom kernels when operations map cleanly. Exact frameworks remain delegated.
 
-### O7 — Define first-class CPU parallelization selection
+### O9 — Generalize tool-capability routing and then map language-specific tools
 
-**Concern / rationale:** C++ has inexpensive shared-memory concurrency but also multiple parallel runtimes whose composition can degrade correctness and performance.
+**Concern / rationale:** The current deterministic route `broad Python input/state invariant -> Hypothesis` encodes a concrete Python tool where the parent engineering question is generic.
 
-**Required end state / constraint:** The protocol must understand these mechanisms natively while selecting only those justified by the product architecture and workload.
+**Required end state / constraint:** `tool-assisted-engineering.md` and role routing must express generic relation classes first, then route to concrete methods:
 
-#### Native threads / task runtimes
+- literal/path/text relation -> ordinary repository search/read;
+- symbol owner/definition/reference/caller relation -> Serena or another supported semantic capability according to existing policy;
+- AST/syntax/structural relation -> Semgrep where supported;
+- broad/combinatorial input/state invariant -> language-appropriate property/generative method; Python -> Hypothesis when available; C++ -> project property/generative method or bounded deterministic generation;
+- interprocedural flow/taint/source-to-sink -> CodeQL where supported;
+- runtime state/crash -> language-appropriate debugger when it materially reduces uncertainty;
+- memory/lifetime/UB/resource -> language-appropriate runtime/static instrumentation;
+- race/synchronization -> language-appropriate race/concurrency evidence;
+- performance bottleneck/vectorization -> language-appropriate profiler/compiler/hardware evidence.
 
-Use `std::thread`/`std::jthread`/task-pool or project-equivalent execution for irregular task parallelism, long-lived pools, custom ownership/control, asynchronous pipelines, or workloads not naturally expressed as loop parallelism. Prefer bounded pools over thread-per-small-task creation.
+Existing Serena/Semgrep/CodeQL/Hypothesis references remain canonical for their own tool methods. Do not create a second Serena/clangd navigation architecture.
 
-#### OpenMP-like shared-memory parallelism
+**Python mapping:** existing Serena/Semgrep/CodeQL/Hypothesis plus Python debugger/profiler/memory tools as appropriate; exact tool names beyond existing governed methods remain delegated.
 
-Use OpenMP or an equivalent compiler/runtime model for regular loop/data parallelism and scientific kernels when it materially reduces implementation complexity and performs well on supported toolchains. Treat scheduling, reductions, nested regions, affinity, and library threading as explicit performance/correctness concerns.
+**C++ mapping:** existing Serena/Semgrep/CodeQL where supported; compiler diagnostics and clang-tidy-class AST checks; ASan/UBSan-class checks for relevant memory/UB risk; TSan-class checks for relevant shared-memory race risk; MSan/leak analysis when material and economically supportable; GDB/LLDB-class debugger for runtime state; sampling profilers/vectorization reports/hardware counters for performance; libFuzzer/AFL++-class fuzzing where the input surface warrants it. These are capability examples, not a fixed pipeline.
 
-#### Processes/subprocesses
+### O10 — Add the C++ compiler/vectorization/SIMD realization without moving generic doctrine
 
-Do not use subprocesses as the default C++ CPU-speed mechanism. Use separate processes when isolation, failure containment, independent address spaces, external executables, privilege/runtime boundaries, or project architecture require them. Account for IPC, serialization/copying, startup, NUMA, and duplicated memory.
+The C++ profile should use this evidence-directed realization order after the shared performance owner has selected vectorization/compiled optimization as relevant:
 
-#### MPI-class distributed memory
+1. production-like optimized compiler baseline;
+2. compiler optimization/vectorization diagnostics plus representative profiler evidence;
+3. data/loop changes that allow safe auto-vectorization;
+4. established portable SIMD/library abstraction or runtime multiversioning when portability matters;
+5. explicit SSE/AVX/AVX2/AVX-512 or NEON/SVE-class intrinsics only for a still-dominant kernel with justified complexity;
+6. LTO/PGO/target tuning after representative evidence if they become durable build policy.
 
-Treat MPI as first-class protocol capability for distributed-memory or multi-node HPC. Activate product-level MPI implementation when Tier-1/Frozen architecture includes multi-process or multi-node scaling, or representative single-node limits require Design to select distributed execution. Explicitly reason about domain/data decomposition, communication volume, collectives, synchronization, rank-local threading, I/O, failure assumptions, and MPI + OpenMP/thread hybrid oversubscription.
+A portable product must not silently become AVX-512-only because the development machine supports it. An architecture-specific build may use AVX-512 when the target ISA is explicitly product/Frozen authority.
 
-MPI is not required for ordinary single-node software merely because it is available.
+No alias/alignment/restrict-like promise may be introduced solely to induce vectorization without a proved lifetime/layout contract.
 
-#### Nested parallelism
+### O11 — Make language-native abstraction quality an explicit review dimension
 
-Model the whole stack: MPI ranks × outer pools/OpenMP threads × BLAS/FFT threads × accelerator jobs. Defaults must not independently claim all cores at each layer.
+**Concern / rationale:** A protocol can preserve functionality and performance while still generating structurally poor code by translating idioms between languages.
 
-**Acceptance evidence:** Qualification differentiates irregular native-thread work, regular OpenMP work, process-isolation work, MPI distributed work, and nested BLAS/OpenMP/MPI cases.
+**Required end state / constraint:** Design, Implementation final reconciliation, and independent review must ask for materially affected executable work:
 
-### O8 — Keep GPU/accelerator support explicitly architecture-gated
+- Is the realization idiomatic for the active language/runtime and compatible with the project's existing style/architecture?
+- Does it use the language's simpler native ownership/resource/data/abstraction mechanisms instead of reproducing another language's compensating machinery?
+- Does an abstraction reduce total complexity or duplicate it?
+- Is a performance-critical abstraction actually zero/low-cost enough for its role, or is the runtime cost accepted by Tier-1 requirements?
+- Would a simpler language-native realization satisfy the same product/Frozen contract?
 
-**Required end state / constraint:** Accelerator implementation/tooling is activated only if the user/project explicitly specifies GPU/accelerator support in Tier-1 requirements or Frozen architecture. If absent, the protocol must not require GPU probing, CUDA builds, device tests, or accelerator dependencies.
+This is an engineering challenge, not a style-policing gate. Equivalent stylistic preferences with no material correctness/performance/maintenance benefit do not block acceptance.
 
-When activated, select the backend according to the supported hardware/portability contract:
+### O12 — Generalize security wording where the current shared owner leaks Python APIs
 
-- **CUDA** for NVIDIA-specific/high-control execution;
-- **HIP** for AMD-oriented or CUDA-like portability where supported;
-- **SYCL** for C++ heterogeneous portability where the product accepts the ecosystem/toolchain;
-- **OpenCL** where its device/runtime portability or existing architecture makes it appropriate;
-- another established project-specific accelerator framework when already authoritative.
+**Concern / rationale:** `security-and-trust-boundaries.md` correctly owns generic trust doctrine but currently contains Python-specific normative wording such as `shell=False` and pickle-specific hard rules.
 
-Prefer optimized accelerator libraries (cuBLAS/cuSOLVER/cuFFT, rocBLAS/rocSOLVER/rocFFT, oneMKL/SYCL libraries, etc.) before custom kernels when operations map cleanly.
+**Required end state / constraint:** Keep generic rules in the shared security owner:
 
-Accelerator acceptance must include CPU/reference numerical equivalence, host-device transfer/synchronization cost, kernel execution, memory capacity, device/runtime identity, and end-to-end benefit. GPU qualification cannot be inferred from CPU tests.
+- prefer direct argument-vector/process APIs over shell interpretation;
+- do not execute untrusted deserialization/object-construction formats;
+- bound parser/input/resource amplification;
+- treat compiler/build/package hooks as privileged execution.
 
-GPU profiling/debugging tools such as Nsight-class or vendor-equivalent tools become relevant only inside this architecture-gated path.
+Language-specific examples may remain, but Python-specific API directives belong in the Python profile or must be clearly examples of the generic rule. C++ profile may add relevant parser/loader/system-call/build-hook consequences without duplicating trust doctrine.
 
-### O9 — Add performance profiling and hardware-counter routing
+### O13 — Preserve scientific doctrine as shared authority across both profiles
 
-**Required end state / constraint:** For C++ performance questions, use representative profiling before optimization. Route according to the bottleneck:
+Do not move numerical invariants/tolerances/reference-oracle/approximation/provenance rules into a language profile. Profiles only map where language/runtime/compiler choices can perturb those semantics.
 
-- wall-time/function/call-stack profiling: `perf`/Instruments/VTune/vendor-equivalent sampling tools;
-- allocation/heap behavior: allocator profilers, heaptrack/massif-class tools, or project-equivalent evidence;
-- CPU microarchitecture: hardware counters for cycles, instructions, cache/TLB misses, branch behavior, vector utilization, memory bandwidth, and stalls where they materially explain the bottleneck;
-- compiler vectorization/optimization reports when transformation decisions are the question;
-- MPI/OpenMP runtime profiling only when distributed/shared-runtime overhead is material;
-- accelerator profilers only when accelerator support is architecture-authorized.
+Python profile examples include dtype/backend changes, compiled library replacement, multiprocessing ordering, JIT, and accelerator substitutions.
 
-Do not demand hardware counters for a bottleneck already established more cheaply. Sampling profilers should normally precede instrumentation-heavy microarchitectural investigation.
+C++ profile examples include floating-point contraction/reassociation, `fast-math`-class flags, vector reductions, OpenMP/MPI reduction order, vendor BLAS/FFT changes, mixed precision, and accelerator substitutions.
 
-### O10 — Extend compiled-build and benchmark comparability
+Do not widen tolerances merely to bless a faster realization.
 
-For C++ performance evidence record only material dimensions needed for fair comparison, including compiler/toolchain version, optimization/build type, target ISA, LTO/PGO state when used, sanitizer/coverage instrumentation state, relevant standard/runtime libraries, numerical backend, thread/runtime settings, and hardware.
+### O14 — Reconcile release/build/package integration without duplicating the release doctrine
 
-Reject debug-versus-release, sanitizer-versus-native, or materially different backend comparisons as speedup evidence unless the comparison itself is the stated question.
+`release-and-distribution.md` remains language-agnostic: build what users receive and exercise the supported consumer path.
 
-### O11 — Protect scientific semantics across libraries, SIMD, parallel reductions, and compiler optimization
+Python profile specializes interpreter/package/import/environment and native-extension packaging when present.
 
-The existing scientific owner remains authoritative. C++ profile guidance must explicitly route numerical backend changes, vectorized reductions, OpenMP/MPI reductions, FMA/reassociation, mixed precision, and accelerator substitutions through accepted exact/tolerance/invariant checks on final scientific observables.
+C++ profile specializes compiler/build configuration, shared/static libraries, exported interfaces, headers/templates, runtime dependencies, ABI compatibility only where the product promises it, and supported platform/toolchain combinations.
 
-Do not widen tolerances solely because a faster backend changes results. Retain a trusted reference path where practical for bounded equivalence testing.
+Mixed Python/C++ products must test the installed extension through the packaged Python import/call path plus any direct C++ consumer boundary that is independently supported.
 
-### O12 — Reconcile compiled packaging/ABI and mixed Python/C++ boundaries
+### O15 — Reconcile documentation, portability, qualification, and package generation
 
-Build and test what users receive. Where governed, validate shared-library dependencies, exported interfaces, ABI compatibility, header/template consumers, and supported compiler/platform combinations. Mixed Python extension artifacts must be tested through packaged import/call boundaries and account for ownership, zero-copy buffers, strides, exceptions, GIL behavior, and batching.
+Implementation must update every duplicated/exposed routing surface, including:
 
-### O13 — Generalize property/generative routing while preserving Hypothesis
+- `source/PROTOCOL_VERSION`;
+- `source/README.md` and root `README.md`;
+- both core role `SKILL.md` files;
+- `PORTABILITY.md`;
+- `source/shared/references/performance-and-parallelism.md`;
+- `source/shared/references/concurrency-and-orchestration.md` where generic parallelism routing needs clarification;
+- `source/shared/references/tool-assisted-engineering.md` and existing tool method pages as needed;
+- `source/shared/references/security-and-trust-boundaries.md` for genericized language leakage;
+- `source/shared/references/testing-and-validation.md` only where generic property/runtime/tool evidence semantics need clarification;
+- `source/shared/references/scientific-software.md` only for minimal cross-links if required; do not duplicate its doctrine;
+- `source/shared/references/release-and-distribution.md` only for generic compiled-artifact wording that belongs there;
+- new thin language router + Python/C++ profile references;
+- `source/shared/references/protocol-versioning-and-compatibility.md`;
+- `source/build_skills.py`;
+- `qualification/tool-routing/SCENARIOS.md`, portability/reference-routing qualification where affected, and repository tests such as `tests/test_protocol_portability.py`;
+- generated `dist/` artifacts and indexes.
 
-Introduce a language-neutral parent rule for broad/combinatorial invariants. Python routes to Hypothesis where appropriate. C++ routes to project-available property/generative/fuzz mechanisms according to the claim. Do not invent a mandatory C++ property-testing dependency solely for protocol symmetry.
-
-### O14 — Package and qualify the new methodology coherently
-
-Implementation must:
-
-- bump target protocol to `5.15.0`;
-- update README/versioning summaries;
-- add the minimum language/tool profile references needed by core roles;
-- update `source/build_skills.py` so routed references ship with installed bundles;
-- update routing/qualification tests for Python, C++, mixed-language, sanitizer/debugger/profiler, numerical-kernel, SIMD, CPU-parallel, MPI, and architecture-gated GPU scenarios;
-- regenerate `dist/` and preserve source/generated parity.
-
-Do not create one reference page per tool unless the method is substantial enough to justify independent routing. Prefer one compact C++ tooling/performance profile with dedicated pages only for tools already generic across languages (Serena, Semgrep, CodeQL, Hypothesis).
-
-## High-return C++ tool priority
-
-The protocol should communicate this default priority, while still routing by claim:
-
-1. **Serena + clangd + accurate compilation database** — semantic ownership/callers/references and large-repository navigation.
-2. **Compiler diagnostics + clang-tidy-class AST analysis** — cheap continuous C++ semantic/quality signal.
-3. **ASan + UBSan** on affected executable surfaces — exceptionally high return for C++ memory/UB defects.
-4. **TSan** when shared-memory concurrency changes materially affect race risk.
-5. **GDB/LLDB** when runtime state/crash diagnosis requires an actual debugger.
-6. **Sampling profiler + compiler vectorization reports** for performance work before source-level micro-optimization.
-7. **Semgrep** for bounded structural families and forbidden/legacy constructs where its C++ parser/engine is adequate.
-8. **CodeQL** for supported interprocedural/data-flow relations and security/quality questions whose value justifies extraction/build cost.
-9. **libFuzzer/AFL++-class fuzzing or project property frameworks** for parsers, binary formats, state/input families, and robust boundary exploration.
-10. **Valgrind/advanced microarchitectural/vendor profilers** as targeted complements/fallbacks, not automatic baseline steps.
-
-The ordering is not a mandatory pipeline. A TSan question may jump directly to TSan; a structural census may route directly to Semgrep; a performance task may go directly from representative benchmark to profiler.
+Bundle the minimum references required for deterministic routing. Do not put every language/tool reference into unrelated specialists solely for completeness.
 
 ## Implementation authority
 
 ### Frozen
 
-- Protocol 5 hierarchy and two-role lifecycle remain unchanged.
-- One shared protocol with conditional Python/C++ profiles; no parallel lifecycle trees.
-- Profile activation follows affected runtime/build semantics and may be simultaneous.
-- Serena is reused for C++ semantic navigation through supported language-server capability rather than replaced by redundant machinery.
-- Compiler-native C++ tooling is first-class where it materially improves semantic correctness, memory safety, debugging, race detection, or performance diagnosis.
-- Optimized numerical libraries precede hand-written kernels when they satisfy the scientific/product contract.
-- CPU vectorization and shared-memory parallelism are ordinary supported performance mechanisms; MPI is first-class for architecture-relevant distributed execution.
-- GPU/accelerator support is activated only when explicitly Tier-1/Frozen by the user/project.
-- Scientific semantics remain authoritative over fast-math, backend, SIMD, and parallel-reduction changes.
-- Protocol target is 5.15.0 and remains backward-compatible with prior Protocol 5 workplans by explicit version binding.
+- Protocol 5 governing hierarchy, two-role lifecycle, accepted-workplan semantics, active simplicity, convergence, snapshot completeness, proxy-proof acceptance, and development-economy doctrine remain unchanged.
+- Shared canonical domain owners outrank and constrain language profiles.
+- One thin language router plus differential Python/C++ engineering profiles; no parallel protocols.
+- Language profiles cover general language-native engineering, not only performance.
+- Shared performance owns common optimization concepts; profiles own language-specific realization.
+- Shared concurrency owns execution classes; profiles own runtime-specific selection.
+- Shared tool-assisted engineering owns relation/capability classes; profiles/tool references own language/tool-specific methods.
+- Mixed Python/C++ surfaces activate both profiles and explicit boundary reasoning.
+- GPU/accelerator obligations are activated only by Tier-1/Frozen architecture.
+- Scientific semantics remain shared authority over all language/backend/compiler optimizations.
+- Protocol target is 5.15.0 and is backward-compatible under existing version-binding rules.
 
 ### Delegated
 
-- Exact compiler, build system, debugger, sanitizer implementation, profiler, property framework, BLAS/LAPACK backend, FFT library, thread pool, OpenMP runtime, MPI implementation, and accelerator backend.
-- Whether compiler-native methodology lives entirely in the C++ profile or a small reusable tool reference is extracted after implementation shows repeated cross-profile use.
-- Exact SIMD abstraction and runtime dispatch mechanism.
-- Whether a downstream product uses threads, OpenMP, MPI, processes, or a hybrid, unless that choice is explicitly Frozen by its own architecture.
-- Exact tuned numerical library where multiple conforming backends satisfy the supported platform and licensing envelope.
+- Exact names and internal structure of the thin router and two profile files, provided canonical ownership and progressive disclosure remain clear.
+- Exact compiler, build system, sanitizer, debugger, profiler, property/fuzz framework, BLAS/LAPACK/FFT backend, thread/task runtime, MPI implementation, accelerator framework, SIMD abstraction, and package manager.
+- Serena versus another equally reliable supported semantic backend in a concrete environment, subject to existing deterministic capability-routing policy; reuse existing Serena capability when it is available/suitable rather than building duplicate machinery.
+- Exact C++ exception/result/error style when project/product authority has not already fixed it.
+- Exact Python type/data-class/protocol mechanisms when project architecture has not already fixed them.
+- Whether a downstream product uses serial execution, threads, OpenMP-like runtime, processes, MPI, or a hybrid unless that product's architecture freezes the choice.
+- Exact architecture dispatch and CPU feature-selection mechanism.
 
 ### Reopen only on evidence
 
 Reopen Design only if implementation evidence shows:
 
-- installed skill packaging cannot support deterministic conditional profile/tool routing without substantial always-loaded duplication;
-- Serena/clangd cannot provide the required C++ semantic capability for the intended installed environments and a different primary semantic architecture is materially necessary;
-- the CPU-first generic performance hierarchy conflicts with an explicitly accelerator-first product architecture;
-- mixed-language projects cannot be represented cleanly through simultaneous profiles;
-- a Frozen portability target makes the proposed CPU vectorization/backend strategy infeasible without changing architecture.
+- shared doctrine cannot be kept canonical without materially duplicating it in language profiles;
+- deterministic profile routing cannot be packaged without unacceptable always-loaded duplication or ambiguity;
+- mixed-language boundaries require a materially different authority/lifecycle model rather than simultaneous profiles;
+- a Frozen platform/portability requirement makes the shared optimization model infeasible;
+- an explicitly accelerator-first architecture conflicts irreconcilably with the shared CPU/default route and requires a different high-level performance architecture.
 
-Do not reopen for ordinary absence of an optional analyzer, sanitizer, profiler, numerical backend, MPI implementation, or GPU runtime; use the concrete fallback policy.
+Ordinary absence or weakness of a tool/backend is not redesign; use capability fallback. Ordinary project preference for a different idiom/tool is delegated unless it changes product/Frozen architecture.
 
 ## Affected surface and task-specific acceptance
 
-Expected canonical source includes:
+The affected surface must be re-derived after implementation. Initial expected surfaces are those listed in O15 plus generated skill bundles.
 
-- `source/PROTOCOL_VERSION`;
-- `source/README.md`;
-- both core role `SKILL.md` files;
-- `source/shared/references/performance-and-parallelism.md`;
-- Python and C++ language/runtime profile reference(s);
-- `testing-and-validation.md` where sanitizer/generative/build-mode semantics belong;
-- `tool-assisted-engineering.md` and relevant existing tool pages;
-- `concurrency-and-orchestration.md` for CPU parallel-runtime cross-routing without duplication;
-- `scientific-software.md` only for minimal cross-routing if needed; its numerical doctrine remains canonical;
-- `release-and-distribution.md` for compiled artifacts;
-- `protocol-versioning-and-compatibility.md`;
-- `source/build_skills.py`;
-- routing/qualification tests and scenarios;
-- generated `dist/`.
+Task-specific acceptance must demonstrate:
 
-Task-specific acceptance must demonstrate at least:
-
-1. Python behavior remains reachable and unchanged in substance.
-2. C++ semantic navigation routes to Serena/clangd and uses compilation-database semantics where needed.
-3. Structural C++ family analysis can route to Semgrep without pretending it has full compiler semantics.
-4. Interprocedural C++ flow can route to CodeQL when supported.
-5. Memory/lifetime and UB scenarios distinguish ASan/UBSan from ordinary unit tests.
-6. Race-risk scenarios distinguish TSan from generic profiling.
-7. Crash-state scenarios route to debugger use when debugger evidence is the highest-value model.
-8. A dense linear-algebra optimization considers tuned BLAS/LAPACK before custom SIMD.
-9. An FFT optimization considers FFTW/vendor-equivalent optimized execution before custom FFT code.
-10. A missed-vectorization scenario uses compiler/vectorization evidence before hand intrinsics.
-11. A portable x86 product does not silently become AVX-512-only; an explicitly AVX-512 Frozen target may use it.
-12. Native-thread, OpenMP, process-isolation, MPI, and nested-parallelism scenarios route differently according to workload/architecture.
-13. A CPU-only architecture does not activate CUDA/HIP/SYCL/OpenCL obligations.
-14. An explicitly GPU-enabled architecture does activate accelerator numerical-equivalence, transfer, memory, profiling, and target-device evidence.
-15. Debug/sanitizer versus release/native benchmark mismatch is rejected as performance evidence.
-16. Fast-math/reassociation is rejected without scientific equivalence authority.
-17. Generated installed bundles contain every reference they route to.
-18. Canonical repository acceptance commands succeed:
+1. **Doctrine preservation:** no change weakens Tier-1 product truth, Frozen architecture semantics, active simplification, acceptance integrity, convergence, snapshot completeness, or development-economy guarantees.
+2. **Shared/profile precedence:** a profile cannot override a shared scientific/security/testing/performance requirement.
+3. **Shared-reference purity:** generic references express durable rules independently of Python/C++, with language names appearing only as examples, explicit routes, or intentionally language/tool-specific sections.
+4. **Python-native design scenario:** a representative numerical/data task yields high-level Python orchestration plus appropriate compiled/vectorized primitives rather than a literal C++-style low-level translation.
+5. **C++-native design scenario:** the analogous task yields clear value/lifetime/resource semantics and native compiled execution rather than Python-like dynamic/process machinery.
+6. **Performance-versus-complexity scenario:** an obvious zero/low-complexity efficiency improvement is allowed without benchmark ceremony, while a complexity-increasing optimization requires representative evidence and total-system justification.
+7. **Common optimized-kernel scenario:** the same BLAS/FFT-class requirement routes through one shared optimized-library principle and then to different Python/C++ realizations.
+8. **Common parallelism scenario:** shared-memory, process isolation, and MPI/distributed execution are treated as generic architecture classes; Python and C++ choose different runtime mechanisms where justified.
+9. **Nested parallelism scenario:** Python/C++ outer execution plus BLAS/FFT/OpenMP/MPI layers cannot each independently claim the full machine.
+10. **Tool-routing scenario:** semantic, structural, property/generative, interprocedural, runtime-state, memory/UB, race, and performance questions route by capability and language rather than one fixed C++ stack.
+11. **C++ safety scenario:** memory/lifetime/UB/race risk can route to sanitizer/compiler/runtime evidence without making those tools universal gates.
+12. **C++ vectorization scenario:** missed vectorization is diagnosed before intrinsics; portable code does not become AVX-512-only without architecture authority.
+13. **Python performance scenario:** Python elementwise hot loops are challenged when compiled primitives exist, while bounded orchestration loops remain valid.
+14. **Security transfer scenario:** shared shell/deserialization/trust rules remain language-agnostic; Python/C++ profiles provide justified API-specific consequences without duplicating the trust model.
+15. **Scientific-equivalence scenario:** `fast-math`, dtype/precision/backend changes, vector/parallel reductions, and accelerators cannot obtain a pass by relaxing tolerances without authority.
+16. **Mixed-language scenario:** Python/C++ binding performance, copies, ownership, GIL/threading, exceptions, packaging, and real-boundary integration are evaluated together.
+17. **GPU gating:** CPU-only architecture loads no GPU implementation/tooling obligations; explicitly GPU-enabled architecture activates target-device numerical/performance/resource evidence in either Python or C++.
+18. **Documentation/routing parity:** root/source README, role entrypoints, PORTABILITY, qualification scenarios, and built skill bundles agree on the new routing model.
+19. **Package integrity:** every routed reference exists in each role bundle that links to it; unrelated specialists do not acquire unnecessary profile payload.
+20. **Repository-required final checks:** run the canonical Protocol 5.15 equivalent of:
 
 ```bash
 python -m pip install -r source/requirements-validation.txt
@@ -364,53 +409,61 @@ python source/check_dist.py --expected /tmp/protocol-dist --committed dist
 git diff --check
 ```
 
-Production qualification is unnecessary for the protocol repository itself. Downstream products require target-machine qualification when their Tier-1 claims depend on actual SIMD ISA, MPI topology, NUMA behavior, accelerator hardware, or production-scale performance.
+Production qualification is unnecessary for the protocol repository itself. Downstream products require target-machine qualification when their Tier-1 claims depend on actual CPU ISA, NUMA topology, MPI/network topology, accelerator hardware, production-scale I/O, or production-scale performance.
 
 ## Implementation sequence and genuine redesign / simplification triggers
 
-### Stage 1 — Semantic census and ownership boundary
+### Stage 1 — Protocol-wide language-specificity census
 
-Classify current performance/testing/tool/concurrency/release guidance as shared, Python-specific, C++-missing, or project-specific. Establish the smallest language/profile ownership before adding new documents.
+Audit canonical shared references and exposed routing/docs. Produce the minimal ownership map: shared rule, Python specialization, C++ specialization, or intentional tool-specific rule. Generalize shared language leakage before adding new language content.
 
-### Stage 2 — Profile routing and Python extraction
+Close with focused documentation/routing tests proving that existing Protocol 5.14 doctrine is still represented.
 
-Create deterministic profile routing and move/generalize existing Python-only performance rules without semantic regression.
+### Stage 2 — Install the three-layer routing architecture
 
-### Stage 3 — C++ semantic/safety/debugger tooling
+Add the thin language router and compact Python/C++ engineering profiles. Update role routing and skill packaging. Establish the shared > profile > implementation-local precedence rule and mixed-profile composition.
 
-Add Serena/clangd compilation-database guidance, compiler diagnostics/clang-tidy-class analysis, ASan/UBSan/TSan/MSan-class routing, debugger methodology, C++ generative/fuzzing routing, and precise Semgrep/CodeQL boundaries. Close focused qualification before performance breadth is added.
+Close routing/package tests before substantive profile expansion.
 
-### Stage 4 — Numerical kernels, compiler optimization, SIMD, and CPU parallelism
+### Stage 3 — Refactor shared performance/concurrency/tool/security ownership
 
-Add tuned-library priority, vectorization/ISA portability policy, optimized-build identity, native-thread/OpenMP/process/MPI selection, and nested-parallelism rules. Preserve scientific and generic performance ownership rather than duplicating them.
+Move common concepts out of C++-specific wording: optimized kernels, vectorization capability, parallelism classes, profiling, GPU gating, generic property relation, shell/deserialization wording. Preserve current valid Python behavior through the profile.
 
-### Stage 5 — Architecture-gated accelerators
+### Stage 4 — Complete Python and C++ language-native engineering profiles
 
-Add a compact accelerator route that remains dormant unless Tier-1/Frozen architecture explicitly enables GPU/accelerator support. Cover CUDA/HIP/SYCL/OpenCL classes without forcing one backend.
+Add general idiomatic engineering, performance realization, runtime/build/package semantics, tooling maps, and mixed-boundary consequences. Add C++ compiler/sanitizer/debugger/SIMD detail only here or in justified tool-specific references; keep generic owners clean.
 
-### Stage 6 — Packaging/version/final acceptance
+### Stage 5 — Qualification integration
 
-Bump to 5.15.0, update summaries, regenerate bundles, re-derive the final affected surface, run complete protocol regression/package checks, and inspect installed bundle routing.
+Add counterfactual scenarios for language-native design, shared-versus-profile ownership, performance-versus-complexity escalation, tool routing, optimized kernels, parallelism, security transfer, mixed Python/C++, and GPU gating. Update root/source documentation and portability qualification.
+
+### Stage 6 — Version/package/final acceptance
+
+Bump to 5.15.0, reconcile version history, regenerate `dist/`, re-derive final affected surfaces, run complete repository checks, and inspect built bundles for routing completeness and unnecessary duplication.
 
 ### Active simplification triggers
 
-Before adding another durable tool page, registry, or profile branch, simplify/re-derive if implementation shows:
+Before adding another durable file/tool abstraction/route, simplify or re-derive if implementation shows:
 
-- duplicated generic doctrine across Python/C++/GPU pages;
-- a fixed C++ tool pipeline instead of claim-directed routing;
-- separate Serena and clangd navigation architectures doing the same job;
-- tool references that merely list commands without a distinct reasoning method;
-- duplicated CPU-parallel doctrine across thread/OpenMP/MPI sections;
-- one abstraction layer wrapping BLAS/FFT/SIMD only to satisfy protocol wording without reducing product complexity;
-- qualification tests freezing exact file/tool names rather than semantic routing;
-- accelerator machinery leaking into CPU-only tasks.
+- shared doctrine copied into both profiles;
+- separate Python/C++ versions of performance, concurrency, security, or testing references;
+- a language router that becomes a policy owner instead of a thin selector;
+- a fixed C++ tool pipeline instead of relation-directed selection;
+- separate Serena and clangd semantic-navigation architectures solving the same problem;
+- one page per compiler/sanitizer/profiler with no distinct method;
+- duplicated MPI/GPU doctrine across Python and C++ profiles;
+- wrappers around BLAS/FFT/SIMD created only to satisfy protocol wording rather than reduce product complexity;
+- language profiles prescribing style preferences without material engineering effect;
+- qualification tests freezing exact prose/file/tool identity rather than semantic routing;
+- accelerator machinery leaking into CPU-only tasks;
+- cross-language rewrites being proposed before boundary/data-movement/algorithm simplification has been considered.
 
 ### Genuine redesign triggers
 
-Return to Design only if evidence demonstrates that shared doctrine plus conditional profiles cannot represent the required mixed-language/tool behavior, or that the Frozen CPU/GPU portability model itself must change. Ordinary tool/backend availability is not redesign.
+Return to Software Design only if evidence demonstrates that shared doctrine plus differential simultaneous profiles cannot represent the required product, or that the Frozen portability/accelerator architecture itself must change. Individual tool/backend availability, compiler choice, library choice, or idiomatic implementation preference is not redesign.
 
 ## Design verdict
 
-**PASS — ready for implementation.**
+**PASS — ready for implementation after this integration revision.**
 
-The revised plan closes the major missing C++ development-method gap without creating a second protocol. It reuses Serena, Semgrep, and CodeQL where they have genuine C++ value, adds the compiler-native semantic/sanitizer/debugger/profiler stack with higher return for C++ defect classes, makes tuned numerical libraries and compiler/vectorization evidence the default optimization path, treats shared-memory and distributed CPU parallelism as first-class protocol capabilities, and keeps GPU implementation strictly conditional on explicit architectural authority.
+The reviewed plan now preserves prior Protocol 5 doctrine as the sole shared authority, treats Python and C++ as language-native realizations rather than parallel protocols, moves common performance/parallelism/tool concepts back to shared owners, broadens profiles from performance appendices into complete engineering profiles, removes accidental tool/backend freezing, and makes performance-versus-complexity optimization explicit. This structure is intended to produce high-performance code with the minimum justified total code/system complexity in either language while remaining capable of clean mixed Python/C++ scientific software.
