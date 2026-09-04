@@ -1,16 +1,29 @@
-# Software Development Protocol 5.13
+# Software Development Protocol 5.14
 
-This directory is the canonical Protocol 5.13 source.
+This directory is the canonical Protocol 5.14 source.
 
-## Governing hierarchy and product truth
+## Governing hierarchy and authority boundary
 
 ```text
 product engineering fitness > minimum justified product/system complexity > development economy
 ```
 
-Build the stakeholder's intended durable product rather than optimizing for the appearance of satisfying a workplan, test, gate, metric, review, or report. Interpret requirements according to their protected engineering purpose. Do not trade material correctness, scientific fidelity, reliability, ownership, maintainability, operability, resource feasibility, target-scale behavior, hardware effectiveness, or required performance for lower complexity or development cost.
+Protocol 5.14 clarifies the operational meaning of that existing hierarchy.
 
-Protocol 5.13 preserves all material Protocol 5.4-5.12 guarantees. It strengthens deterministic progressive disclosure for optional engineering tools, adds CodeQL as a bounded interprocedural/data-flow capability, and performs a lossless control-plane compression pass. The two-role lifecycle, product-truth doctrine, implementation fidelity, proxy-proof acceptance, snapshot-complete handoff, stage-local/final affected regression, convergence/family-closure rules, review readiness, acceptance liveness, and revision economy remain unchanged in engineering meaning.
+- **Tier 1A — product/problem truth:** the stakeholder's research, computational, scientific, operational, correctness, reliability, compatibility, resource, performance, security, and governed external-contract demands.
+- **Tier 1B — Frozen high-level architecture:** material architecture/ownership/algorithm/data-representation/resource/compatibility decisions Software Design deliberately fixes for the current implementation cycle.
+- **Tier 2 — solution machinery:** everything beneath that boundary. Functions, helpers, wrappers, adapters, retries, caches, state machines, synchronization paths, intermediate representations, implementation-created invariants, and previous patches remain replaceable unless explicitly promoted into Frozen architecture by Design.
+- **Tier 3 — development economy:** optimize reasoning/context/tool/compute/I/O/wall-time only after the required product is achieved through the minimum justified Tier-2 system.
+
+Implementation machinery does not become Tier 1 through existence, dependency, tests, documentation, prior review, previous workplan wording, or previous repair. Correctness of a current mechanism and necessity of that mechanism are separate questions.
+
+## Active simplicity
+
+A first clean local defect remains a local owning-layer repair. But when repeated patches, patch-on-patch repair, duplicated/synchronized state, competing authorities, accumulating wrappers/fallbacks/special cases, repeated reconciliation machinery, or an evident materially simpler realization show that the Tier-2 solution has ossified, simplification/re-derivation is mandatory before another additive durable repair.
+
+Hold Tier-1 product truth and Frozen high-level architecture fixed, then prefer removing, narrowing, altering, consolidating, or refactoring the cause of solution-created problems. Add machinery only when a genuinely required capability remains absent or one canonical mechanism replaces broader existing complexity.
+
+Affected-surface expansion expands inspection, implementation impact, and acceptance coverage; it does not by itself expand the product requirement or freeze the current realization. Proxy-proof acceptance likewise follows the final real production owner of the accepted claim: naming a current Tier-2 owner for testing does not freeze that owner unless its identity is itself product/Frozen authority.
 
 ## Two-role lifecycle
 
@@ -18,55 +31,55 @@ Protocol 5.13 preserves all material Protocol 5.4-5.12 guarantees. It strengthen
 software-design -> software-implementation
 ```
 
-- `software-design` diagnoses the real problem, defines the engineering envelope, chooses/freezes the globally justified product design, translates task-specific intent losslessly, designs proportionate acceptance, and independently reviews substantial/high-risk implementations.
-- `software-implementation` realizes the accepted design against repository reality, incorporates newly discovered necessary consequences, closes coherent material stages semantically and functionally, completes final accepted-contract reconciliation plus affected-surface regression/integration, and delivers the candidate.
+- `software-design` diagnoses the real problem, classifies product/problem invariants versus cycle-scoped Frozen architecture versus delegated solution space, chooses the globally justified high-level design, defines active simplification triggers, translates task-specific intent losslessly, designs acceptance, and independently reviews substantial/high-risk implementations.
+- `software-implementation` realizes that contract adaptively, may simplify/replace delegated machinery while preserving Tier 1, closes coherent material stages semantically and functionally, performs active Tier-2 restoration when structural complexity triggers fire, and completes final accepted-contract reconciliation plus affected-surface regression/integration.
 
-Testing and independent review are activities/modes, not extra lifecycle roles. **Optional specialists** remain supporting capabilities, **not approval gates**.
+Testing and independent review are activities/modes, not extra lifecycle roles. Optional specialists remain supporting capabilities, not approval gates.
 
-## Canonical detailed owners and progressive disclosure
+## Deterministic progressive disclosure and tools
 
-Lifecycle entrypoints contain high-salience invariants and deterministic triggers. Detailed generic semantics live in canonical references:
+Protocol 5.14 preserves Protocol 5.13 deterministic per-question tool routing and optional-tool status:
 
-- lifecycle/workplans/authority/stages/handoff/rework -> `shared/references/workflow-and-workplans.md`;
-- recurrence/family closure/review readiness/saturation/revision economy -> `shared/references/convergence-and-cycle-economy.md`;
-- regression/integration/evidence reuse/proxy-proof acceptance/qualification -> `shared/references/testing-and-validation.md`;
-- architecture/ownership/redesign/complexity -> `shared/references/architecture-and-design.md`;
-- repository inspection/context economy -> `shared/references/repository-intake.md`;
-- common optional tool selection/composition/authority -> `shared/references/tool-assisted-engineering.md`;
-- Serena method -> `shared/references/tool-serena.md`;
-- Semgrep method -> `shared/references/tool-semgrep.md`;
-- Hypothesis method -> `shared/references/tool-hypothesis.md`;
-- CodeQL local/external and GitHub-managed/code-scanning method -> `shared/references/tool-codeql.md`;
-- protocol/workplan inheritance -> `shared/references/protocol-versioning-and-compatibility.md`;
-- other domain concerns -> their existing references.
+```text
+literal/path/text -> ordinary repository search/read
+symbol owner/definition/reference/caller -> Serena
+AST/syntax/structural pattern -> Semgrep
+broad Python input/state invariant -> Hypothesis
+interprocedural flow/taint/source-to-sink -> CodeQL
+```
 
-Role-critical routes are mandatory before the corresponding decision or closure. Specialized tool routing is **conditional but deterministic per material question**: classify the relation first, read the directly linked method when a specialized class fires, then use the available/reliable capability or take a concrete permitted fallback. Tool presence never creates a mandatory multi-tool pipeline.
+A specialized trigger directly routes to its tool-specific method. When availability is unknown, use a cheap non-mutating capability probe when practical; when the capability is available/current/supported and directly models the claim, presumptively use it, otherwise take a concrete permitted fallback. Tool presence never creates a fixed multi-tool pipeline.
 
-## Tool-assisted engineering in Protocol 5.13
+All analyzer output remains bounded evidence, not product truth or task authority. Tools do not replace focused tests, stage-local/final affected regression, real-boundary integration, repository/project-required checks, or production qualification where required.
 
-Serena remains the semantic-navigation/reference/bounded-editing instrument; Semgrep remains the AST/structural/variant instrument; Hypothesis remains the Python property/stateful-testing instrument. CodeQL adds optional interprocedural data-flow/taint/source-to-sink analysis.
+## Workplans and complete acceptance
 
-CodeQL evidence preserves provenance: a local/external CLI run, a separately executed GitHub-managed CodeQL run, and the GitHub code-scanning result/alert surface are not interchangeable concepts. Uploading SARIF from a local run to GitHub does not create an independent second execution. Generic protocol validity does not require GitHub or CodeQL; project-required hosted/local checks remain required when authority explicitly names them.
+A substantial accepted workplan is a compressed task-specific implementation contract, not a frozen proof script. It preserves product/problem invariants, Frozen high-level architecture, delegated solution space, task-specific acceptance boundaries, affected surfaces, and genuine redesign/simplification triggers.
 
-All analyzer output remains bounded evidence, not product truth or task authority. Specialized tools do not replace focused tests, stage-local/final affected regression, real-boundary integration, repository/project-required checks, or production qualification where required. Hosted/cloud analysis that receives source/findings/credentials remains subject to trust authorization.
-
-## Lossless control-plane compression
-
-Protocol 5.13 restores progressive disclosure after Protocol 5.11-5.12 growth without deleting safeguards. Tool-specific mechanics are split from the common tool router so a Serena question does not require loading Semgrep/Hypothesis/CodeQL manuals. Detailed convergence/cycle-economy mechanics move out of the common workflow owner while compact recurrence/review triggers remain visible in lifecycle/workflow surfaces.
-
-The optimization target is loaded context and duplicated doctrine, not ZIP size or an arbitrary per-file byte quota. Compression is valid only when historical failure-mode defenses remain discoverable at the point they are needed.
-
-## Lossless workplans and complete acceptance
-
-A substantial accepted workplan is a compressed task-specific implementation contract. It preserves protected concerns, required end states/constraints, known required implementation consequences, implementation authority, affected surfaces, and acceptance claims without copying generic protocol manuals. It distinguishes `Frozen / Delegated / Reopen only on evidence` and remains a minimum known contract rather than a ceiling on necessary consequences discovered during implementation.
-
-Before final Design -> Implementation handoff, accepted amendments/review corrections are consolidated into supplied current authority. Historical commits, prior chat/review state, superseded revisions, and unsupplied external links may remain provenance but cannot be the only storage location for a still-binding task requirement.
+The plan remains a minimum known contract rather than a ceiling only for newly discovered affected behavior and logically necessary consequences of already-binding product/Frozen semantics. Discovery does not mint new product requirements or grant incidental machinery invariant status.
 
 Executable changes still require focused checks, stage-local affected regression for every material behavior-changing stage, final affected-surface re-derivation/regression, real-boundary integration, and repository/project-required checks. Semantic conformance never substitutes for executable testing; green tests never prove an omitted obligation was implemented. Material real-owner acceptance remains proxy-proof while bounded fakes below/outside the owner remain valid. Full production qualification remains separate from routine functional acceptance.
 
+## Canonical detailed owners
+
+Lifecycle entrypoints retain high-salience invariants and deterministic triggers. Detailed semantics live in canonical references:
+
+- lifecycle/workplans/authority/stages/handoff/rework -> `shared/references/workflow-and-workplans.md`;
+- recurrence/active simplification/review readiness/revision economy -> `shared/references/convergence-and-cycle-economy.md`;
+- regression/integration/evidence reuse/proxy-proof acceptance/qualification -> `shared/references/testing-and-validation.md`;
+- Tier-1/Tier-2 boundary, architecture/ownership/redesign/complexity -> `shared/references/architecture-and-design.md`;
+- repository inspection/context economy -> `shared/references/repository-intake.md`;
+- optional tool selection/composition -> `shared/references/tool-assisted-engineering.md`;
+- Serena method -> `shared/references/tool-serena.md`;
+- Semgrep method -> `shared/references/tool-semgrep.md`;
+- Hypothesis method -> `shared/references/tool-hypothesis.md`;
+- CodeQL method -> `shared/references/tool-codeql.md`;
+- protocol/workplan inheritance -> `shared/references/protocol-versioning-and-compatibility.md`;
+- other domain concerns -> their existing references.
+
 ## Build and repository acceptance
 
-`source/` is canonical. `dist/skills/<skill-name>/` contains generated ready-to-install directory bundles; top-level ZIPs are generated from the same bundle tree for backward-compatible transport. `agents/openai.yaml` is separately validated adapter metadata, not generic Agent Skill validity. See `../PORTABILITY.md` for installation, reference-routing qualification, and bounded live tool-routing qualification.
+`source/` is canonical. `dist/skills/<skill-name>/` contains generated ready-to-install directory bundles; top-level ZIPs are generated from the same bundle tree for backward-compatible transport. `agents/openai.yaml` remains separately validated adapter metadata.
 
 Run:
 
