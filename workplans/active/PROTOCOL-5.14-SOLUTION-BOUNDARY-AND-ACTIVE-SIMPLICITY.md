@@ -352,3 +352,33 @@ Reopen Design only if implementation demonstrates that:
 - the target change is incompatible enough with historical Protocol 5 workplan semantics that 5.14 cannot honestly remain a backward-compatible minor release.
 
 Do not reopen merely because an existing test asserts superseded wording, because a historical workplan used `required implementation consequence`, or because preserving all existing control-plane machinery would be easier than simplifying it.
+
+## Review finding reconciliation — acceptance evidence must not freeze Tier-2 owners
+
+Independent review of the first 5.14 implementation found one blocking authority leak: proxy-proof acceptance could still promote a replaceable Tier-2 production owner into an effective invariant merely because the workplan or test named that owner/path. This is the same solution-reification defect through the evidence contract rather than through implementation-consequence language.
+
+The governing distinction is now explicit:
+
+- **The acceptance claim is authoritative.** Product/Frozen behavior must be established through the actual production semantic owner of the final accepted realization.
+- **Boundary fidelity is authoritative.** Evidence must fail when that final real owner is materially broken; mocks/fakes remain below or outside it.
+- **A delegated Tier-2 owner identity is not authoritative merely because acceptance currently names it.** If owner `A` is legitimately replaced by equivalent simpler owner `B` while product/problem invariants and Frozen high-level architecture remain satisfied, Implementation must invalidate/reconcile `A`-specific evidence and establish the same claim through real owner `B`.
+- **Exact owner/path identity is binding only when independently justified by Tier 1:** a governed external/product contract requires that identity, or Software Design explicitly freezes the owner/path at high-level architecture. Only then does changing it require Design reconsideration.
+
+Therefore proxy-proof acceptance must never become a hidden third Tier-1 class. A current owner/path may be recorded so tests exercise reality, but the record must state whether exact identity is product/Frozen authority or merely the current realization.
+
+### Required rework
+
+- `source/shared/references/testing-and-validation.md` must become explicit that proxy-proof acceptance binds the claim to the **final real owner**, not to an incidental historical Tier-2 owner. Owner replacement beneath Frozen architecture is local reconciliation; owner-specific evidence is invalidated and rerun/remapped rather than silently reused.
+- `source/shared/references/workflow-and-workplans.md` and the workplan template must preserve the claim/boundary and distinguish binding owner identity from a replaceable current owner mapping. They must not place generic acceptance-owner identity into `Frozen` authority.
+- Design and Implementation entrypoints must retain the salient real-owner safeguard while making the same distinction operational.
+- Existing proxy-proof and 5.14 contract tests must add the directional counterexample `delegated owner A -> simpler owner B -> acceptance remaps to real B`, while preserving rejection of tests that bypass the final real owner.
+- Historical Protocol 5.13 tool-routing tests must stop owning the current protocol-version assertion; current-version identity remains centralized in the current protocol contract tests.
+- Regenerate and validate all committed distributions after source/test changes.
+
+This finding is **implementation nonconformance under the existing 5.14 design**, not a redesign. Target version remains `5.14.0`; the three-tier authority model, active-simplicity rule, deterministic tool routing, and proxy-proof acceptance purpose remain Frozen.
+
+### Additional acceptance scenario
+
+11. **Acceptance owner replacement:** when a delegated Tier-2 semantic owner `A` is replaced by an equivalent simpler owner `B` without changing product truth or Frozen high-level architecture, the protocol requires proxy-proof acceptance through real owner `B` and invalidation/reconciliation of `A`-specific evidence; it must not require preservation of `A` or a Design reopen solely because an earlier workplan/test named `A`.
+
+Final acceptance additionally requires that no canonical protocol text treats an acceptance-owner mapping as independent Frozen authority unless exact identity is itself a product contract or explicitly Frozen architecture.

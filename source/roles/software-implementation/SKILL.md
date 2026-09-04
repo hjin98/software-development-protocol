@@ -103,7 +103,7 @@ If materially equivalent sibling behavior recurs, a canonical mechanism has bypa
 
 Each material stage closes semantically and functionally: accepted product/Frozen obligations remain satisfied, **newly discovered affected behavior** is accounted for, focused checks and relevant **stage-local affected regression** execute, and no unintended authority/stale path/unjustified complexity remains. Reuse still-valid intermediate evidence; green tests never prove an omitted obligation.
 
-When acceptance depends on a production owner/state transition/consumer, the **real semantic owner/path that constitutes the claim must execute**. Evidence that **could remain green** while it is broken cannot close the claim. **Bounded test doubles remain valid below or outside** that boundary. If the required boundary cannot execute, report **unavailable/blocking** rather than **silently proxy-passing** it.
+When acceptance depends on a production owner/state transition/consumer, the **real semantic owner/path of the final accepted realization that constitutes the claim must execute**. Evidence that **could remain green** while it is broken cannot close the claim. **Bounded test doubles remain valid below or outside** that boundary. A delegated Tier-2 owner named by earlier acceptance guidance may be replaced by an equivalent simpler owner when product/Frozen semantics survive; reconcile the acceptance mapping and invalidate/rerun owner-specific evidence against the new real owner. Do not treat that remapping as proxy-passing or Design reopening unless exact owner identity was itself product/Frozen authority. If a binding required boundary cannot execute, report **unavailable/blocking** rather than **silently proxy-passing** it.
 
 Before completion:
 

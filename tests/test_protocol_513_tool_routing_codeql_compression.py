@@ -25,8 +25,7 @@ class Protocol513RoutingPreservationTests(unittest.TestCase):
         self.workflow = lower("source/shared/references/workflow-and-workplans.md")
         self.convergence = lower("source/shared/references/convergence-and-cycle-economy.md")
 
-    def test_version_is_514_and_513_history_is_preserved(self) -> None:
-        self.assertEqual("5.14.0", read("source/PROTOCOL_VERSION").strip())
+    def test_513_history_is_preserved_without_owning_current_version(self) -> None:
         versioning = lower("source/shared/references/protocol-versioning-and-compatibility.md")
         self.assertIn("protocol 5.14 is a backward-compatible", versioning)
         self.assertIn("protocol 5.13 is a backward-compatible", versioning)

@@ -152,6 +152,15 @@ class ProtocolContractTests(unittest.TestCase):
             self.assertIn("presumptively use it", text)
             self.assertIn("concrete fallback", text)
 
+    def test_acceptance_evidence_does_not_promote_tier2_owner(self) -> None:
+        testing = read("source/shared/references/testing-and-validation.md").lower()
+        self.assertIn("actual production owner", testing)
+        self.assertIn("does **not** become frozen", testing)
+        self.assertIn("local reconciliation, not proxy-passing", testing)
+        self.assertIn("exact owner/path identity is binding only when", testing)
+        self.assertIn("do not elevate a delegated tier-2 owner into frozen authority", self.workflow)
+        self.assertIn("do not freeze a tier-2 owner merely because current acceptance executes it", self.template)
+
     def test_no_new_simplicity_bureaucracy_is_implied(self) -> None:
         combined = "\n".join((self.design, self.implementation, self.workflow, self.architecture, self.convergence, self.template))
         for forbidden in (

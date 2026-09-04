@@ -41,7 +41,7 @@ software-design -> software-implementation
 
 `software-design` separates the original product/problem invariants from cycle-scoped Frozen high-level architecture and delegated solution space. `software-implementation` preserves Tier 1 while remaining free to reduce, consolidate, refactor, or replace Tier-2 machinery. A change crossing the Frozen architecture boundary routes back to Design on evidence rather than being silently substituted.
 
-Affected-surface growth expands implementation/testing impact; it does not by itself create new product requirements or freeze the mechanism that exposed the surface.
+Affected-surface growth expands implementation/testing impact; it does not by itself create new product requirements or freeze the mechanism that exposed the surface. Proxy-proof acceptance follows the final real production owner of the accepted claim; naming a current Tier-2 owner for testing does not freeze it unless exact identity is product/Frozen authority.
 
 ## Deterministic progressive disclosure
 

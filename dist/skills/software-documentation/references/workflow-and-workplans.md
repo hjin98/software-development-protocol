@@ -69,7 +69,7 @@ The accepted plan is the **minimum known contract, not a ceiling** in this bound
 
 For material obligations, preserve as applicable: concern/rationale, required end state, required constraints/preservation/forbidden behavior, useful expected owning/affected surface, task-specific acceptance evidence, and stage/dependency where material. **Attach only when material**: a suggested realization, an **acceptance boundary** when proxy acceptance is a material risk, or an **anti-shortcut / integrity constraint** when local wording/evidence could defeat the stakeholder outcome.
 
-When material acceptance depends on a **real production owner/consumer boundary**, preserve the claim, required real owner/path, allowed doubles, forbidden substitutions, and observable evidence enough to prevent proxy acceptance.
+When material acceptance depends on a **real production owner/consumer boundary**, preserve the product/Frozen claim, the current real owner/path or owner class needed to exercise it, allowed doubles, forbidden substitutions, and observable evidence enough to prevent proxy acceptance. Do not elevate a delegated Tier-2 owner into Frozen authority merely by naming it for acceptance. Exact owner/path identity is binding only when a governed product contract or explicitly Frozen architecture requires that identity; otherwise an equivalent owner replacement reconciles the acceptance mapping and invalidates owner-specific evidence.
 
 ## Affected surface is not requirement surface
 
@@ -79,7 +79,7 @@ The affected surface can expand during implementation: additional callers, consu
 
 ## Snapshot-complete handoff
 
-The accepted current handoff artifact set must be **snapshot-complete** for still-binding task-specific product/problem invariants, Frozen architecture, non-goals, acceptance boundaries, and redesign/simplification triggers. Reconcile accepted amendments/review corrections into supplied current authority; do not leave a requirement only in Git history, prior chat/session context, PR/issue/review discussion, superseded revisions, or an external document not actually supplied.
+The accepted current handoff artifact set must be **snapshot-complete** for still-binding task-specific product/problem invariants, Frozen architecture, non-goals, acceptance claims/boundaries, and redesign/simplification triggers. Preserve exact acceptance-owner identity only when product/Frozen authority makes that identity binding; a replaceable current Tier-2 owner mapping is not normative history. Reconcile accepted amendments/review corrections into supplied current authority; do not leave a requirement only in Git history, prior chat/session context, PR/issue/review discussion, superseded revisions, or an external document not actually supplied.
 
 Current composition remains valid: a workplan may inherit generic rules from its declared `protocol_version` and reference current supplied protocol/specification/architecture/package authorities. Snapshot completeness is not a single-file rule and does not require copying generic doctrine into each workplan.
 

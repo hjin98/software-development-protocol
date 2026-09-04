@@ -32,7 +32,7 @@ Record task-specific obligations, not generic protocol prose or a frozen proof s
 Attach only when material:
 
 - **Suggested realization:** useful guidance, explicitly replaceable by an equivalent simpler realization.
-- **Acceptance boundary:** required real semantic owner/path, allowed doubles, forbidden substitutions, and observable evidence when proxy acceptance is a material risk.
+- **Acceptance boundary:** product/Frozen claim, current real semantic owner/path or owner class, allowed doubles, forbidden substitutions, and observable evidence when proxy acceptance is a material risk. State whether exact owner/path identity is itself product/Frozen authority or merely the current Tier-2 realization; if delegated, an equivalent replacement remaps acceptance to the new real owner rather than reopening Design.
 - **Stage/dependency:** when ordering materially reduces risk or rework.
 - **Anti-shortcut / integrity constraint:** a known way local compliance/evidence manipulation could appear to pass while defeating the stakeholder outcome.
 
@@ -44,7 +44,7 @@ The accepted plan is the minimum known contract, not a ceiling only for newly di
 
 ### Frozen
 
-<List only Tier-1 product/problem requirements and deliberately Frozen high-level architecture/acceptance decisions implementation must preserve.>
+<List only Tier-1 product/problem requirements, deliberately Frozen high-level architecture, and acceptance boundaries whose exact identity is independently required by product/Frozen authority. Do not freeze a Tier-2 owner merely because current acceptance executes it.>
 
 ### Delegated
 

@@ -23,7 +23,7 @@ A first clean local defect remains a local owning-layer repair. But when repeate
 
 Hold Tier-1 product truth and Frozen high-level architecture fixed, then prefer removing, narrowing, altering, consolidating, or refactoring the cause of solution-created problems. Add machinery only when a genuinely required capability remains absent or one canonical mechanism replaces broader existing complexity.
 
-Affected-surface expansion expands inspection, implementation impact, and acceptance coverage; it does not by itself expand the product requirement or freeze the current realization.
+Affected-surface expansion expands inspection, implementation impact, and acceptance coverage; it does not by itself expand the product requirement or freeze the current realization. Proxy-proof acceptance likewise follows the final real production owner of the accepted claim: naming a current Tier-2 owner for testing does not freeze that owner unless its identity is itself product/Frozen authority.
 
 ## Two-role lifecycle
 

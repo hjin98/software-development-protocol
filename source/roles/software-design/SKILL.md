@@ -90,7 +90,7 @@ Reopen Design only when evidence shows a Frozen high-level decision must change,
 
 Executable changes retain focused checks, **stage-local affected regression**, final affected-surface re-derivation/regression, integration through assembled real product/consumer boundaries, and repository/project-required checks. Green tests do not prove an omitted accepted obligation. Full production qualification remains separate.
 
-When a material acceptance claim depends on a real owner/path, identify the **required real semantic owner/path** and enough test-double constraints to prevent proxy acceptance. Evidence that **could remain green** while that semantic owner is broken cannot establish the claim.
+When a material acceptance claim depends on a real owner/path, identify the **product/Frozen claim and the real semantic owner/path of the current realization** plus enough test-double constraints to prevent proxy acceptance. Evidence that **could remain green** while that final owner is broken cannot establish the claim. Naming a delegated Tier-2 owner for acceptance does not freeze its identity: an equivalent owner replacement remaps and reruns owner-specific acceptance; exact owner identity is immutable only when a governed product contract or Frozen high-level architecture makes it so.
 
 Independent review starts from the highest-information current evidence:
 
