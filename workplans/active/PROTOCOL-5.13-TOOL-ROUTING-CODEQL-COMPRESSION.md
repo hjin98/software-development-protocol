@@ -3,11 +3,12 @@ kind: implementation-workplan
 workplan_id: PROTOCOL-5.13-TOOL-ROUTING-CODEQL-COMPRESSION
 protocol_version: 5.12.0
 target_protocol_version: 5.13.0
-status: active
+status: frozen
 created_date: 2026-09-03
 frozen_date: 2026-09-03
 reviewed_date: 2026-09-03
 reopened_date: 2026-09-03
+refrozen_date: 2026-09-03
 base_commit: b893eb428a81c71ee9f091d3e3b98417a656ac64
 ---
 
@@ -569,3 +570,52 @@ focused Protocol 5.11 directional/tool-assistance tests
 If only tests and this workplan change, generated `dist/` need not be regenerated merely to create byte churn; parity must still be rechecked. If canonical packaged source changes, regenerate `dist/` from canonical source before parity validation.
 
 Existing evidence for routing architecture, CodeQL methodology, source/package composition, and loaded-context reduction remains reusable until a repaired test or later change invalidates those claims. After the counterfactual-oracle family is closed, perform a new independent Software Design review on the exact assembled candidate. Do not close or archive this workplan before that review passes.
+
+## Software Design plan re-review closure — 2026-09-03
+
+**Plan verdict:** PASS and refrozen for implementation. The prior implementation verdict remains NO-PASS until the acceptance-oracle family above is repaired and independently re-reviewed.
+
+The re-review closes the remaining handoff ambiguity in the counterfactual-test requirement without changing Protocol 5.13 product/routing semantics.
+
+### Counterfactual oracle contract
+
+For every directional family required above, acceptance must exercise the **same semantic predicate/oracle against the actual current canonical source owner** and against explicit mutations of that policy. A helper tested only on toy strings is insufficient if no test proves that the current source is governed by that helper.
+
+Each protected family therefore needs, directly or through an equivalent shared helper:
+
+1. **Current-source positive:** the predicate accepts the current canonical source/section that owns the rule.
+2. **Positive fixture:** a minimal valid policy is accepted.
+3. **Positive-plus-contradiction mutation:** adding a material inverse to that valid policy makes the same predicate reject it.
+4. **Boundary-preservation case where conditionality matters:** the predicate accepts a legitimate exception/fallback that the frozen design permits, so the test does not accidentally strengthen a conditional rule into an unconditional one.
+
+A bounded clause/paragraph/section parser or equivalent deterministic matcher is sufficient. No general natural-language theorem prover, mutation-testing framework, semantic linter, or persistent policy DSL is required.
+
+### Required boundary-preservation cases
+
+The repaired tests must preserve both the positive rule and its legitimate boundary:
+
+- specialized tool routing is presumptive when the triggered capability is available/current/supported and directly models the claim, **but concrete permitted fallback remains valid**;
+- ordinary literal/local deterministic work remains ordinary and is not forced through a specialized tool;
+- relation-first security routing distinguishes structural/Semgrep-class claims from interprocedural-flow/CodeQL-class claims;
+- acceptance-critical **custom** CodeQL queries require representative validation, while this requirement must not be broadened into a universal rule that every built-in/project-governed query needs bespoke positive/negative fixtures;
+- local/external CodeQL can be sufficient when no hosted check is required, while an explicitly project-required hosted execution cannot be substituted by local analysis or SARIF rehosting;
+- CodeQL database/result reuse remains valid when no relevant candidate/extraction/query dimension changed, but becomes invalid when a changed relevant dimension can alter the claim;
+- bounded zero-result claims are valid inside the established database/query/model contract and invalid when generalized outside it.
+
+### Compression-ownership counterfactual scope
+
+Compression ownership is evaluated over **canonical normative `source/` ownership**, not generated package copies. `dist/` duplication produced by the canonical build is required derivative packaging and must not be treated as a control-plane ownership violation.
+
+The compression oracle must reject a representative mutation that copies tool-specific mechanics into lifecycle entrypoints, copies detailed convergence mechanics back into the role-critical workflow owner, or copies specific-tool mechanics back into the compact common tool owner **when that duplication would materially defeat progressive disclosure**. It need not reject compact dispatch triggers, role-critical invariants, direct links, or generated distribution copies that the frozen design explicitly requires.
+
+### Anti-gaming and test-integrity constraints
+
+Do not make the repaired suite pass by adding artificial sentinel phrases to normative source, by weakening a contradiction fixture, by scoping a predicate so narrowly that the contradictory clause falls outside the governed policy unit, or by defining helpers whose synthetic tests pass while the actual canonical source is never checked.
+
+Conversely, the tests need only reject representative explicit material inversions of the frozen rules. They are not required to recognize every possible paraphrase or become a generic natural-language policy analyzer. Test semantics and source readability outrank regex cleverness.
+
+### Refrozen handoff
+
+The accepted rework surface is now bounded to tests/helpers and this workplan unless a repaired source-linked oracle exposes a genuine contradiction in canonical normative source. If that happens, repair only the affected normative rule and regenerate packaged derivatives as required; do not reopen unrelated routing, CodeQL, convergence, versioning, or compression design.
+
+Implementation may choose helper/module organization freely, but final review must be able to demonstrate source linkage, nonvacuous contradiction rejection, legitimate-boundary preservation, unchanged Protocol 5.12 counterfactual strength, complete regression/build/package/parity checks, and an exact assembled candidate. The snapshot-loss counterfactual now recovers these requirements entirely from this workplan and the declared Protocol 5.12 base authority.
