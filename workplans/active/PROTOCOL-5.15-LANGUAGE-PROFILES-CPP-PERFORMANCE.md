@@ -519,8 +519,32 @@ Before adding another durable file/tool abstraction/route, simplify or re-derive
 
 Return to Software Design only if evidence demonstrates that shared doctrine plus differential simultaneous profiles cannot represent the required product, or that Frozen portability/accelerator/language-boundary architecture itself must change. Individual tool/backend availability, interpreter build mode, compiler choice, library choice, or idiomatic implementation preference is not redesign unless product/Frozen authority makes it so.
 
+## Independent review rework — implementation blockers
+
+Independent Design review of implementation commit `8ae1ba726931974d80b431c1189a4a73cde68e58` returned **NO PASS** on two implementation nonconformances. The Frozen three-layer architecture remains valid; this is bounded implementation repair, not redesign.
+
+### R1 — Complete Python accelerator specialization under the existing shared gate
+
+**Problem:** the shared performance owner correctly makes accelerator support dormant unless Tier-1/Frozen architecture enables it, and the C++ profile contains a differential enabled-accelerator realization, but the Python profile does not yet carry the corresponding language-specific realization required by O9/O14.
+
+**Required end state:** keep all generic accelerator policy, evidence thresholds, and scientific equivalence in shared owners. Add only the Python-specific consequences needed once accelerator architecture is enabled: project-compatible Python array/compiler/framework backend selection, established accelerator-library preference before custom kernels, dtype/precision/backend identity, transfer/synchronization/device-memory accounting, CPU/reference equivalence, package/runtime/device compatibility, and explicit fallback only when the product supports fallback. CPU-only architecture must incur no Python GPU dependency/probing/tooling obligation. Exact framework/tool identity remains delegated.
+
+**Acceptance:** a CPU-only counterfactual leaves accelerator machinery dormant; a GPU-enabled Python counterfactual activates language-specific realization while still routing numerical equivalence and performance evidence to shared owners. The profile must not encode absence of a particular framework name as the gating invariant.
+
+### R2 — Replace brittle wording/implementation-identity acceptance with directional semantic and real-package checks
+
+**Problem:** the initial 5.15 regression file primarily asserted selected prose, concrete tool names, exact profile filenames, and the internal `LANGUAGE_PROFILES` build variable. That can remain green in the presence of contradictory authority text and freezes delegated Tier-2 identities contrary to the accepted plan's simplification trigger.
+
+**Required end state:** retain lightweight structural tests only where structure is Frozen or objectively packaged. Derive active profile resources from lifecycle-entrypoint routing rather than duplicating their filenames/build-variable identity in the test oracle. Exercise the real package builder and verify that derived routed resources are present in lifecycle bundles and absent from unrelated specialists. Add directional/counterfactual checks for shared-over-profile authority, no global Python-vs-C++ precedence, runtime-sensitive Python concurrency, disabled-versus-enabled accelerator behavior, evidence-before-complexity escalation, and architecture-sensitive language boundaries. Keep named tools/frameworks as examples, not acceptance identities.
+
+**Acceptance integrity:** a representative contradictory shared/profile precedence statement or global language-precedence statement must be rejected by the directional guard; package acceptance must follow the real generated bundle rather than inspect an internal Python constant; changing a delegated tool/framework example must not by itself fail the protocol contract.
+
+### Rework scope and closure
+
+Expected repair surface is limited to the active workplan, `source/shared/references/python-engineering.md`, the existing Protocol 5.15 qualification scenarios, the Protocol 5.15 regression test, and generated `dist/` descendants. Do not add a new lifecycle role, policy layer, validator framework, tool page, compatibility wrapper, or accelerator dependency. Re-run the complete repository suite, canonical package generation/validation, committed-distribution parity, and whitespace checks on the assembled candidate.
+
 ## Design verdict
 
-**PASS — ready for implementation after final closure review.**
+**REOPENED — bounded implementation repair required; Frozen architecture unchanged.**
 
 The final reviewed plan preserves prior Protocol 5 doctrine as sole shared authority, treats Python and C++ as language-native realizations rather than parallel protocols, moves common performance/parallelism/tool concepts back to shared owners, broadens profiles into complete engineering profiles, removes accidental tool/backend freezing, distinguishes implementation permission from performance-claim evidence, handles modern Python runtime variants rather than assuming a universal GIL, protects optimized/release-build correctness, generalizes effective resource discovery and asynchronous execution, preserves historical/version-bound artifacts, and makes performance-versus-complexity optimization explicit. The structure is intended to produce high-performance code with minimum justified total code/system complexity in either language while remaining capable of clean mixed Python/C++ scientific software.

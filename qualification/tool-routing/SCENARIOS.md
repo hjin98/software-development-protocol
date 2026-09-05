@@ -139,6 +139,42 @@ Expected evidence:
 - no portable product silently made ISA-specific;
 - quantitative speedup claim only from comparable representative measurements.
 
+## Protocol 5.15 language-profile semantic counterfactuals
+
+These are protocol-level decision counterfactuals, not external-tool qualification. They challenge direction and ownership; exact prose, profile filenames, framework names, and build-script variable names are not the oracle.
+
+### Shared/profile conflict
+
+Given a language-local convenience that conflicts with shared scientific, security, testing, or performance doctrine, the expected decision is **shared owner wins; correct the profile/local realization**. A profile is never allowed to weaken the shared contract.
+
+### Mixed-language precedence
+
+Given a Python/C++ boundary, the expected decision is **compose both profiles by boundary ownership**. Reject both `Python globally outranks C++` and `C++ globally outranks Python`; neither language has global precedence.
+
+### Python runtime variants
+
+Given otherwise identical Python CPU work under a GIL-constrained runtime, a free-threaded runtime, and an extension with incompatible free-threading semantics, the expected thread/process/synchronization analysis must differ according to the actual runtime and extension behavior. Reject a universal `Python => GIL => processes` prescription.
+
+### Accelerator disabled versus enabled
+
+- CPU-only/Tier-1-no-accelerator architecture -> no accelerator dependency, probing, device initialization, profiler, or fallback obligation.
+- Explicitly accelerator-enabled Python architecture -> activate the Python accelerator realization; choose a project-compatible backend, preserve CPU/reference scientific equivalence, account for transfers/synchronization/device memory and packaged runtime compatibility, and require representative owning-path benefit.
+- Explicitly accelerator-enabled C++ architecture -> activate the corresponding C++ realization under the same shared evidence contract.
+
+The expected distinction is architectural gating versus enabled realization, not presence or absence of any one framework/tool name.
+
+### Performance versus complexity
+
+A semantically equivalent removal of redundant work/copies/allocation with no material complexity may proceed without a pre-change benchmark, but it cannot be reported as a measured speedup without comparable measurement. A new language boundary, bespoke kernel, SIMD dispatch layer, parallel runtime, backend matrix, or accelerator backend requires representative evidence before durable adoption.
+
+### Effective allocation
+
+If host APIs report more CPUs than scheduler/affinity/cgroup allocation, the smaller effective allocation governs resource planning in either language. Raw `os.cpu_count()` or `hardware_concurrency()`-class values cannot override the effective allocation.
+
+### Language-boundary architecture
+
+A cross-language rewrite that materially changes ownership, ABI, packaging, deployment, resource, portability, or performance architecture routes to Design. A local implementation substitution below those Frozen boundaries remains Implementation discretion.
+
 ## Qualification result format
 
 A release/PR closeout may record, without creating a mandatory persistent ledger:

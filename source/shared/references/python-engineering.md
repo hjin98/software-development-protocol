@@ -46,6 +46,20 @@ Use effective allocation from the shared performance owner. `os.cpu_count()` or 
 
 For long-running orchestration, keep worker counts overrideable and preserve a bounded serial/debug path when the product can support one cleanly.
 
+## Architecture-gated accelerator realization
+
+Accelerator work is **dormant unless** shared Tier-1/Frozen architecture enables accelerator support. CPU-only Python work must not acquire GPU probing, dependencies, device initialization, accelerator profilers, or backend fallback machinery merely because an accelerator stack is available.
+
+When enabled, map the shared accelerator contract through the project-compatible Python execution stack. CuPy, JAX, PyTorch, Numba, or equivalent array/compiler/framework backends are examples rather than required identities.
+
+- Prefer established accelerator array, BLAS/solver/FFT, framework, or domain kernels before custom device kernels when the computation maps cleanly.
+- Treat backend/device/runtime, dtype and precision policy, compilation/JIT mode, and materially relevant library versions as execution identity when they can change scientific or performance behavior.
+- Compare final governed observables against the accepted CPU/reference path under the shared scientific exact/tolerance/invariant rules; do not widen tolerances merely to accept an accelerator backend.
+- Include host-device conversion and copies, transfer, synchronization, compilation/warm-up, device-memory peak/batching, and fallback transitions in owning-path performance/resource evidence when material.
+- Preserve packaging/runtime/device compatibility for the supported consumer path. A fallback is required only when the product contract supports one; hardware/backend unavailability may instead be a clear unsupported configuration.
+
+Backend availability alone does not authorize acceleration, and a framework-specific API must not become shared doctrine. The shared performance and scientific owners remain authoritative for benefit, resource bounds, and numerical equivalence.
+
 ## Tools and validation
 
 Use shared relation-first tool routing, then select Python-appropriate evidence.
